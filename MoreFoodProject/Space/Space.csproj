@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{410D557C-5895-4F64-8921-103E110EEA88}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Space</RootNamespace>
+    <AssemblyName>Space</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- ===== 核心：入口 / 配置 / 世界运行时 ===== -->
+    <Compile Include="Core\SpaceMod.cs" />
+    <Compile Include="Core\SpaceConfig.cs" />
+    <Compile Include="Core\SpaceTemplates.cs" />
+    <Compile Include="Core\SpaceTestRuntime.cs" />
+    <Compile Include="Core\GlobalCacheVersion.cs" />
+    <Compile Include="Core\CachedValue.cs" />
+    <!-- ===== 星图：扩展补丁 / 视觉 / 裂隙 / 侧屏按钮 ===== -->
+    <Compile Include="StarMap\StarMapPatches.cs" />
+    <Compile Include="StarMap\StarMapVisuals.cs" />
+    <Compile Include="StarMap\SpaceRift.cs" />
+    <Compile Include="StarMap\StarmapLocator.cs" />
+    <Compile Include="StarMap\SpaceTestButtons.cs" />
+    <!-- ===== 贸易：数据 / 运行时 / 结算 / 站点 / 桥接 ===== -->
+    <Compile Include="Trade\TradeData.cs" />
+    <Compile Include="Trade\TradeValuation.cs" />
+    <Compile Include="Trade\TradeCatalog.cs" />
+    <Compile Include="Trade\TradeRuntime.cs" />
+    <Compile Include="Trade\TradeSettlement.cs" />
+    <Compile Include="Trade\TradeStationManager.cs" />
+    <Compile Include="Trade\TradeEventBridge.cs" />
+    <Compile Include="Trade\SpaceStation.cs" />
+    <!-- ===== 贸易 UI ===== -->
+    <Compile Include="Trade\UI\TradeScreen.cs" />
+    <Compile Include="Trade\UI\TradeUi.cs" />
+    <!-- ===== 任务 / 事件点 / 事件框架桥 ===== -->
+    <Compile Include="Quest\SpaceQuest.cs" />
+    <Compile Include="Quest\SpaceStarmapEvents.cs" />
+    <Compile Include="Quest\SpaceRealEvents.cs" />
+    <Compile Include="Quest\SpacePlanEvents.cs" />
+    <!-- ===== 战斗：数据 / 运行时 / 表现 / 存档 / UI（全部收在 Combat/，文件夹规则） ===== -->
+    <Compile Include="Combat\SpaceCombat.cs" />
+    <Compile Include="Combat\SpaceCombatFx.cs" />
+    <Compile Include="Combat\CombatDb.cs" />
+    <Compile Include="Combat\CombatRuntime.cs" />
+    <Compile Include="Combat\CombatResolver.cs" />
+    <Compile Include="Combat\CombatFx.cs" />
+    <Compile Include="Combat\CombatSaveData.cs" />
+    <Compile Include="Combat\CombatPatches.cs" />
+    <Compile Include="Combat\CombatTestButtons.cs" />
+    <Compile Include="Combat\RocketCombatState.cs" />
+    <Compile Include="Combat\RocketLoadout.cs" />
+    <Compile Include="Combat\RocketAmmoDictionary.cs" />
+    <Compile Include="Combat\RocketEmergencyExit.cs" />
+    <Compile Include="Combat\SpaceLootField.cs" />
+    <Compile Include="Combat\SpaceAsteroidBelt.cs" />
+    <Compile Include="Combat\AmmoItems.cs" />
+    <Compile Include="Combat\ModuleItems.cs" />
+    <Compile Include="Combat\CombatStrings.cs" />
+    <Compile Include="Combat\SpaceLanguageHelper.cs" />
+    <Compile Include="Combat\CombatAssembly.cs" />
+    <Compile Include="Combat\ControlStationModuleReceiver.cs" />
+    <Compile Include="Combat\SandboxDebugButtons.cs" />
+    <Compile Include="Combat\SpaceLootPools.cs" />
+    <Compile Include="Combat\AsteroidBeltPool.cs" />
+    <Compile Include="Combat\UI\CombatUi.cs" />
+    <Compile Include="Combat\UI\CombatBars.cs" />
+    <Compile Include="Combat\UI\CombatArrow.cs" />
+    <Compile Include="Combat\Codex\MonsterCodexFactory.cs" />
+    <Compile Include="Combat\UI\RocketPanelScreen.cs" />
+    <Compile Include="Combat\UI\RocketTabMount.cs" />
+    <Compile Include="Combat\UI\ManagementMenuGlowFix.cs" />
+    <!-- ===== 成就：注入 / 记账 ===== -->
+    <Compile Include="Achievement\SpaceAchievements.cs" />
+    <Compile Include="Achievement\SpaceAchievementInjector.cs" />
+    <!-- ===== 补丁（跨域）===== -->
+    <Compile Include="Patches\SpacePatches2.cs" />
+    <Compile Include="Patches\SpacePoiGuard.cs" />
+    <Compile Include="Patches\VanillaCollectorGuard.cs" />
+    <Compile Include="Patches\VanillaCollectorOverride.cs" />
+    <Compile Include="Patches\OxidizerTankInvalidItemPatch.cs" />
+    <Compile Include="Patches\SpaceBeltStoreHover.cs" />
+    <!-- ===== 跃迁 ===== -->
+    <Compile Include="Warp\WarpRuntime.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\dll\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\dll\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\dll\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json" Condition="Exists('..\..\..\..\dll\Newtonsoft.Json.dll')">
+      <HintPath>..\..\..\..\dll\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="vs_preset">
+      <HintPath>..\bin\Release\vs_preset.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\..\..\..\dll\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\dll\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\dll\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\..\..\..\dll\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>..\..\dll\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\dll\UnityEngine.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

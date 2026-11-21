@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <AssemblyName>vs_preset</AssemblyName>
+    <RootNamespace>vs_preset</RootNamespace>
+    <ProjectGuid>{E49A50E7-329B-4BC7-8276-4653F605AA9D}</ProjectGuid>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Deterministic>true</Deterministic>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>$(NoWarn);CS1701;CS1702;CS0618</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugType>portable</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Log\ContentDiag.cs" />
+    <Compile Include="Log\MFLog.cs" />
+    <Compile Include="Log\YamlLoad.cs" />
+    <Compile Include="Buffs\CountedBuffDisplay.cs" />
+    <Compile Include="CarePackagePatch.cs" />
+    <Compile Include="CarnivorePatch.cs" />
+    <Compile Include="Critters\PredatorCrowdingPatch.cs" />
+    <Compile Include="DropFactory.cs" />
+    <Compile Include="FoodConfigs.cs" />
+    <Compile Include="Fixes\FoodNameFix.cs" />
+    <Compile Include="Foods.cs" />
+    <Compile Include="IngredientConfigs.cs" />
+    <Compile Include="Fixes\SettingLocFix.cs" />
+    <Compile Include="Fixes\VanillaLocFix.cs" />
+    <Compile Include="Fixes\ToolTipLocFix.cs" />
+    <Compile Include="Init.cs" />
+    <Compile Include="ModYaml.cs" />
+    <Compile Include="UI\EventUiKit.cs" />
+    <Compile Include="UI\EventPanelStyleKeeper.cs" />
+    <Compile Include="UI\EventPanelDrag.cs" />
+    <Compile Include="UI\UiSkin.cs" />
+    <Compile Include="UI\UiModalBlocker.cs" />
+    <Compile Include="UI\UiIconResolver.cs" />
+    <Compile Include="UI\PanelTextRenderer.cs" />
+    <Compile Include="UI\AdvancedSettingsInjector.cs" />
+    <Compile Include="UI\AdvancedSettingsPanel.cs" />
+    <Compile Include="Compat\LocalGapRepair.cs" />
+    <Compile Include="Compat\ManagementMenuLocGuard.cs" />
+    <Compile Include="Options\ModOptions.cs" />
+    <Compile Include="Options\AdvancedGameplaySettings.cs" />
+    <Compile Include="Perf\ModPerfProbe.cs" />
+    <Compile Include="LanguageHelper.cs" />
+    <Compile Include="Plants.cs" />
+    <Compile Include="PlantsConfig.cs" />
+    <Compile Include="Recipes.cs" />
+    <Compile Include="RecipeScroll\RecipeScrollRegistry.cs" />
+    <Compile Include="RecipeScroll\RecipeScrollItems.cs" />
+    <Compile Include="RecipeScroll\RecipeScrollPatches.cs" />
+    <Compile Include="Strings.cs" />
+    <Compile Include="Codex\CodexScanner.cs" />
+    <Compile Include="Codex\CodexCategoryUtil.cs" />
+    <Compile Include="Codex\DrinkCodexCategory.cs" />
+    <Compile Include="Codex\MonsterCodexCategory.cs" />
+    <Compile Include="Buffs\BuffConfig.cs" />
+    <Compile Include="Buffs\Buffs.cs" />
+    <Compile Include="Buffs\Behaviors\WorkRush.cs" />
+    <Compile Include="Buffs\Behaviors\ImprovPerformance.cs" />
+    <Compile Include="Buffs\Behaviors\ImprovArtwork.cs" />
+    <Compile Include="Buffs\Behaviors\JoyReaction.cs" />
+    <Compile Include="Drink\DrinkConfig.cs" />
+    <Compile Include="Drink\Drinks.cs" />
+    <Compile Include="Drink\DrinkChore.cs" />
+    <Compile Include="Drink\DrinkDatabase.cs" />
+    <Compile Include="Drink\DrinkDesireMonitor.cs" />
+    <Compile Include="Drink\UI\HydrationItemDescriptor.cs" />
+    <Compile Include="Drink\UI\HydrationVitalsRow.cs" />
+    <Compile Include="Drink\Consume\ConsumeProfile.cs" />
+    <Compile Include="Drink\Consume\ConsumeRegistry.cs" />
+    <Compile Include="Drink\Consume\HydrationSettlement.cs" />
+    <Compile Include="Drink\Consume\HydratingFoodPatch.cs" />
+    <Compile Include="Drink\DrinkConsumableUI.cs" />
+    <Compile Include="Drink\DrinkRestrictionTracker.cs" />
+    <Compile Include="Drink\DrinkTableScreen.cs" />
+    <Compile Include="Drink\Yaml\DrinkYamlDef.cs" />
+    <Compile Include="Drink\Yaml\DrinkEffectRegistry.cs" />
+    <Compile Include="Drink\Yaml\DrinkYamlLoader.cs" />
+    <Compile Include="Drink\Garnish\DrinkGarnishRegistry.cs" />
+    <Compile Include="Drink\Garnish\DiningTablePatches.cs" />
+    <Compile Include="Drink\Garnish\GarnishActivatePatch.cs" />
+    <Compile Include="Drink\Effects\**\*.cs" />
+    <Compile Include="Buildings\EspressoMachinePatches.cs" />
+    <Compile Include="Buildings\SodaFountainPatches.cs" />
+    <Compile Include="Buildings\WaterCoolerPatches.cs" />
+    <Compile Include="Buildings\AutoMiner\AutoMinerHarvestMode.cs" />
+    <Compile Include="Buildings\AutoMiner\AutoMinerReflector.cs" />
+    <Compile Include="Buildings\AutoMiner\AutoMinerHarvestScheduler.cs" />
+    <Compile Include="Buildings\AutoMiner\AutoMinerPatches.cs" />
+    <Compile Include="Buildings\AutoMiner\AutoMinerSideScreen.cs" />
+    <Compile Include="Buildings\AutoMiner\AutoMinerText.cs" />
+    <Compile Include="Scroll\ScrollItems.cs" />
+    <Compile Include="Scroll\ScrollReadWindow.cs" />
+    <Compile Include="Event\Save\EventSaveData.cs" />
+    <Compile Include="Event\Save\EventBuffSave.cs" />
+    <Compile Include="Compat\CompatGuard.cs" />
+    <Compile Include="Compat\RonivansLegacy_Compat.cs" />
+    <Compile Include="Space\Core\SpaceMod.cs" />
+    <Compile Include="Space\Core\SpaceConfig.cs" />
+    <Compile Include="Space\Core\SpaceTemplates.cs" />
+    <Compile Include="Space\Core\SpaceTestRuntime.cs" />
+    <Compile Include="Space\Core\GlobalCacheVersion.cs" />
+    <Compile Include="Space\Core\CachedValue.cs" />
+    <Compile Include="Space\StarMap\StarMapPatches.cs" />
+    <Compile Include="Space\StarMap\StarMapVisuals.cs" />
+    <Compile Include="Space\StarMap\SpaceRift.cs" />
+    <Compile Include="Space\StarMap\StarmapLocator.cs" />
+    <Compile Include="Space\StarMap\SpaceTestButtons.cs" />
+    <Compile Include="Space\StarMap\StarMapPathCleanup.cs" />
+    <Compile Include="Space\Trade\TradeData.cs" />
+    <Compile Include="Space\Trade\TradeValuation.cs" />
+    <Compile Include="Space\Trade\TradeCatalog.cs" />
+    <Compile Include="Space\Trade\TradeRuntime.cs" />
+    <Compile Include="Space\Trade\TradeSettlement.cs" />
+    <Compile Include="Space\Trade\TradeStationManager.cs" />
+    <Compile Include="Space\Trade\SpaceStation.cs" />
+    <Compile Include="Space\Trade\StarMapIntel.cs" />
+    <Compile Include="Space\Trade\UI\TradeScreen\TradeScreenState.Core.cs" />
+    <Compile Include="Space\Trade\UI\TradeScreen\TradeScreenState.Settle.cs" />
+    <Compile Include="Space\Trade\UI\TradeScreen\TradeScreenState.Build.cs" />
+    <Compile Include="Space\Trade\UI\TradeScreen\TradeScreenState.Donate.cs" />
+    <Compile Include="Space\Trade\UI\TradeScreen\TradeScreenState.Remote.cs" />
+    <Compile Include="Space\Trade\UI\TradeScreen\TradeScreen.cs" />
+    <Compile Include="Space\Trade\UI\TradeUi.cs" />
+    <Compile Include="Space\Trade\UI\DebugHotkeyGuard.cs" />
+    <Compile Include="Space\Trade\UI\Refuel\RefuelScreen.cs" />
+    <Compile Include="Space\Trade\UI\Refuel\RefuelScreenState.cs" />
+    <Compile Include="Space\Trade\UI\TradeNotifyTier.cs" />
+    <Compile Include="Space\Quest\SpaceQuest.cs" />
+    <Compile Include="Space\Quest\SpaceStarmapEvents.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Ticker.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Bindings.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Runtime.Core.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Runtime.Buff.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Runtime.World.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Runtime.Freighter.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Manager.Core.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Manager.Helpers.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Manager.Geyser.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Events.Story.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Events.Station.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Events.Loot.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Events.Anomaly.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Events.Mood.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Events.BuffOnOff.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Manager.Restore.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\GeneShuffle.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Patches.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\Patches.Dropper.cs" />
+    <Compile Include="Space\Quest\SpaceRealEventBuffHub.cs" />
+    <Compile Include="Space\Quest\SpacePlanEvents.cs" />
+    <Compile Include="Space\Quest\TelepadEventDebugButtons.cs" />
+    <Compile Include="Space\Combat\SpaceCombat.cs" />
+    <Compile Include="Space\Combat\SpaceCombatFx.cs" />
+    <Compile Include="Space\Combat\CombatDb\CombatDb.Raw.cs" />
+    <Compile Include="Space\Combat\CombatDb\CombatDb.Defs.cs" />
+    <Compile Include="Space\Combat\CombatDb\CombatDb.Load.cs" />
+    <Compile Include="Space\Combat\CombatDb\CombatDb.BuildMonsters.cs" />
+    <Compile Include="Space\Combat\CombatDb\CombatDb.BuildContent.cs" />
+    <Compile Include="Space\Combat\CombatDb\CombatDb.Query.cs" />
+    <Compile Include="Space\Combat\CombatDb\CombatDb.Shared.cs" />
+    <Compile Include="Space\Combat\CombatRuntime\CombatRuntime.Types.cs" />
+    <Compile Include="Space\Combat\CombatRuntime\CombatRuntime.Core.cs" />
+    <Compile Include="Space\Combat\CombatRuntime\CombatRuntime.Craft.cs" />
+    <Compile Include="Space\Combat\CombatRuntime\CombatRuntime.Spawn.cs" />
+    <Compile Include="Space\Combat\CombatRuntime\CombatRuntime.Kill.cs" />
+    <Compile Include="Space\Combat\CombatRuntime\CombatRuntime.MonsterTick.cs" />
+    <Compile Include="Space\Combat\CombatRuntime\CombatRuntime.Weapons.cs" />
+    <Compile Include="Space\Combat\CombatRuntime\CombatRuntime.Persist.cs" />
+    <Compile Include="Space\Combat\CombatResolver.cs" />
+    <Compile Include="Space\Combat\CombatFx.cs" />
+    <Compile Include="Space\Combat\CombatSaveData.cs" />
+    <Compile Include="Space\Combat\CombatPatches.cs" />
+    <Compile Include="Space\Combat\CombatTestButtons.cs" />
+    <Compile Include="Space\Combat\RocketCombatState.cs" />
+    <Compile Include="Space\Combat\RocketValidity.cs" />
+    <Compile Include="Space\Combat\RocketLoadout.cs" />
+    <Compile Include="Space\Combat\RocketAmmoDictionary.cs" />
+    <Compile Include="Space\Combat\RocketEmergencyExit.cs" />
+    <Compile Include="Space\Combat\SpaceLootField.cs" />
+    <Compile Include="Space\Combat\SpaceAsteroidBelt.cs" />
+    <Compile Include="Space\Combat\AmmoItems.cs" />
+    <Compile Include="Space\Combat\ModuleItems.cs" />
+    <Compile Include="Space\Combat\CombatStrings.cs" />
+    <Compile Include="Space\Combat\SpaceLanguageHelper.cs" />
+    <Compile Include="Space\Combat\CombatAssembly.cs" />
+    <Compile Include="Space\Combat\ControlStationModuleReceiver.cs" />
+    <Compile Include="Space\Combat\SandboxDebugButtons.cs" />
+    <Compile Include="Space\Combat\SpaceLootPools.cs" />
+    <Compile Include="Space\Combat\AsteroidBeltPool.cs" />
+    <Compile Include="Space\Combat\UI\CombatUi.cs" />
+    <Compile Include="Space\Combat\UI\CombatBars.cs" />
+    <Compile Include="Space\Combat\UI\CombatArrow.cs" />
+    <Compile Include="Space\Combat\Codex\MonsterCodexFactory.cs" />
+    <Compile Include="Space\Combat\UI\RocketPanelScreen\RocketPanelScreen.Lifecycle.cs" />
+    <Compile Include="Space\Combat\UI\RocketPanelScreen\RocketPanelScreen.Layout.cs" />
+    <Compile Include="Space\Combat\UI\RocketPanelScreen\RocketPanelScreen.Assembly.cs" />
+    <Compile Include="Space\Combat\UI\RocketPanelScreen\RocketPanelScreen.Picker.cs" />
+    <Compile Include="Space\Combat\UI\RocketPanelScreen\RocketPanelScreen.Monsters.cs" />
+    <Compile Include="Space\Combat\UI\RocketPanelScreen\PanelHoverGuard.cs" />
+    <Compile Include="Space\Combat\UI\RocketTabMount.cs" />
+    <Compile Include="Space\Combat\UI\ManagementMenuGlowFix.cs" />
+    <Compile Include="Space\Achievement\SpaceAchievements.cs" />
+    <Compile Include="Space\Achievement\SpaceAchievementInjector.cs" />
+    <Compile Include="Space\Patches\SpacePatches2.cs" />
+    <Compile Include="Space\Patches\SpacePoiGuard.cs" />
+    <Compile Include="Space\Patches\VanillaCollectorGuard.cs" />
+    <Compile Include="Space\Patches\VanillaCollectorOverride.cs" />
+    <Compile Include="Space\Patches\OxidizerTankInvalidItemPatch.cs" />
+    <Compile Include="Space\Patches\SpaceBeltStoreHover.cs" />
+    <Compile Include="Space\Warp\WarpRuntime.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EventFramework">
+      <HintPath>..\EventFramework\artifacts\Release\EventFramework.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>..\dll\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\dll\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\dll\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="PLib">
+      <HintPath>..\dll\PLib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json" Condition="Exists('..\dll\Newtonsoft.Json.dll')">
+      <HintPath>..\dll\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\dll\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\dll\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\dll\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\dll\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\dll\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\dll\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>..\dll\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+</Project>

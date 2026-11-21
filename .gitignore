@@ -1,0 +1,43 @@
+# 构建产物
+bin/
+obj/
+artifacts/
+**/bin/
+**/obj/
+**/artifacts/
+
+# 游戏程序集与本地工具（不入库）
+dll/
+_tools/
+**/dll/
+
+# 备份
+**/_backup*/
+
+# 二进制与调试文件
+*.dll
+*.pdb
+*.exe
+*.cache
+*.Up2Date
+*.zip
+*.7z
+*.rar
+
+# IDE 与本地配置
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.log
+*.bak
+*.tmp
+
+# 系统文件
+Thumbs.db
+.DS_Store
+
+# 敏感信息
+.env
+*.secret
