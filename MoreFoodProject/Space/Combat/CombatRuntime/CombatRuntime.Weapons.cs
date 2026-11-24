@@ -384,8 +384,7 @@ namespace MoreFood_KFC
             }
             st.orderedTargetUid = rt.uid;
             rt.ordered = true;
-            st.inCombat = true;
-            st.lastAttackAt = TradeRegistry.Now();
+            // 下令只锁目标，不置交战态；lastAttackAt 仅由实际开火(FireOnce)写入
             // ★ Bug2：不改写 selector 目的地 —— 攻击只设定目标，不干扰玩家"选择目的地"。
             MFLog.Verbose(LogCat.Combat,"[Space] " + craft.Name + " 接到攻击指令：" + rt.def.name + "（" + rt.defId + "）@"
                 + SpaceCfg.Pos(rt.Cell) + "，进入射程即开火");

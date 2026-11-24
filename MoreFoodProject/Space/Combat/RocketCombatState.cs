@@ -373,14 +373,42 @@ namespace MoreFood_KFC
             }
         }
 
+        /// <summary>清空火箭侧交战态（脱战/强制脱战共用，C-37：务必连指令目标与箭头一起清）。</summary>
+        internal void ClearCombatState(string reason)
+        {
+            inCombat = false;
+            disengageTimer = 0f;
+            orderedTargetUid = 0;
+            lastAttackAt = 0f;
+            lastDamageAt = 0f;
+            CombatBars.RemoveCraft(craft);   // 脱战 → 迷你条隐藏
+            CombatRuntime.StopCraft(craft);  // 停掉本 mod 的攻击目的地
+            CombatArrow.Hide();              // 收起自绘攻击箭头
+            MFLog.Verbose(LogCat.Combat,"[Space] " + (craft != null ? craft.Name : "?") + " 清交战态（" + reason + "）");
+        }
+
         private void TickDisengage(float now)
         {
             try
             {
             CombatSharedCfg sh = CombatDb.Shared;
+
+            // 不在星图或 HP=1 且无法开火时两层一起清，立即解锁飞行与拆除
+            if (CombatRuntime.ShouldDisengageFromCraft(craft))
+            {
+                if (inCombat || orderedTargetUid != 0 || lastAttackAt > 0f || lastDamageAt > 0f)
+                {
+                    string why = craft.Status == Clustercraft.CraftStatus.Grounded
+                        ? "火箭不在星图(在星球上)" : "HP=1且无法开火";
+                    CombatRuntime.ForceDisengageBothLayers(craft, now, why);
+                }
+                return;
+            }
+
+            // 目标在射程内且本火箭实际开火过才算交战，避免无弹药指令锁住状态
             bool hasTargetInRange = false;
             MonsterRuntime target = CombatRuntime.FindByUid(orderedTargetUid);
-            if (target != null && target.IsAlive && target.monster != null)
+            if (target != null && target.IsAlive && target.monster != null && lastAttackAt > 0f)
             {
                 int d = SpaceCfg.Distance(craft.Location, target.monster.Location);
                 float range = CombatRuntime.AttackRangeOf(craft);
@@ -411,13 +439,8 @@ namespace MoreFood_KFC
             }
             if (now >= disengageTimer)
             {
-                inCombat = false;
-                disengageTimer = 0f;
-                orderedTargetUid = 0;
-                CombatBars.RemoveCraft(craft);   // 脱战 → 迷你条隐藏
-                CombatRuntime.StopCraft(craft);  // ★ 问题3：脱战清攻击箭头（不再残留）
-                CombatArrow.Hide();              // ★ 问题11：脱战收起自绘攻击箭头
-                RocketPanelScreen.RequestRebuild();   // ★ 第十八轮-2/8：脱战 → 面板重建（交战区/怪卡收起）
+                ClearCombatState("脱战计时到点");   // 复用统一清理
+                RocketPanelScreen.RequestRebuild();  // 脱战重建面板
             }
             }
             catch (System.Exception e) { MFLog.HotFail("tick:RocketCombatState", e); }

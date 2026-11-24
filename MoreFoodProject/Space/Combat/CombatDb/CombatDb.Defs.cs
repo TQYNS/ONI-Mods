@@ -168,8 +168,8 @@ namespace MoreFood_KFC
         public int maxMonsters = 10;
         public int spawnCountMin = 1;
         public int spawnCountMax = 1;
-        public float spawnIntervalMin = 400f;
-        public float spawnIntervalMax = 800f;
+        public float spawnIntervalMin = 800f;
+        public float spawnIntervalMax = 1600f;
         public float idleMin = 3f;
         public float idleMax = 10f;
         public float idleChance = 0.4f;

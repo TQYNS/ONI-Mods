@@ -159,6 +159,15 @@ namespace MoreFood_KFC
                 ClearAggro(rt);
                 return;
             }
+            // 目标火箭不在星图或 HP=1 且无法开火 → 怪物侧直接脱战，与火箭侧共用同一判定
+            if (ShouldDisengageFromCraft(craft))
+            {
+                MFLog.Verbose(LogCat.Combat,"[Space] " + rt.def.name + " 脱战（目标火箭不在星图或无法开火）；目标 " + craft.Name);
+                ClearAggro(rt);
+                rt.deaggroUntil = now + rt.def.deaggroSeconds;
+                RocketPanelScreen.RequestRebuild();
+                return;
+            }
             int d = SpaceCfg.Distance(rt.Cell, craft.Location);
             // 跨星图（子↔主）轴坐标距离没有意义，视作无穷远；距离达到警戒 +2 立刻脱战，不留延迟
             if (RegionOf(craft.Location) != rt.region || d >= rt.def.alertRange + 2)

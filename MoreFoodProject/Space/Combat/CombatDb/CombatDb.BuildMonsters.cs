@@ -206,12 +206,12 @@ namespace MoreFood_KFC
             d.canFlee = r.can_flee ?? false;   // ★ 默认不逃跑（用户口径：不配置 = False）
             d.fleeHpPct = Mathf.Clamp01(r.flee_hp_pct ?? 0.25f);
             d.fleeInstantStepOnce = r.flee_instant_step_once ?? true;
-            // ★ 漫游切换间隔默认 [360,1200] 秒（与 CombatMonsterDef.idleMin/idleMax 保持一致）
-            float iMin = 360f;
-            float iMax = 1200f;
+            // 漫游切换间隔默认 [600,3600] 秒（与 CombatMonsterDef.idleMin/idleMax 保持一致）
+            float iMin = 600f;
+            float iMax = 3600f;
             if (r.idle_seconds != null && r.idle_seconds.Length >= 2 && r.idle_seconds[1] > 0f)
             {
-                iMin = r.idle_seconds[0] > 0f ? r.idle_seconds[0] : 360f;
+                iMin = r.idle_seconds[0] > 0f ? r.idle_seconds[0] : 600f;
                 iMax = r.idle_seconds[1] > 0f ? r.idle_seconds[1] : iMin;
                 if (iMax < iMin)
                 {

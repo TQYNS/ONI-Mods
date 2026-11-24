@@ -148,6 +148,67 @@ namespace MoreFood_KFC
             }
         }
 
+        // 不在星图或 HP=1 且无可用弹药时判定火箭脱战
+        internal static bool ShouldDisengageFromCraft(Clustercraft craft)
+        {
+            if (craft == null)
+            {
+                return true;
+            }
+            // 在星球上视为不在星图飞行
+            if (craft.Status == Clustercraft.CraftStatus.Grounded)
+            {
+                return true;
+            }
+            // HP 触底且无可用武器弹药
+            RocketCombatState st = craft.GetComponent<RocketCombatState>();
+            if (st != null && st.Hp <= CombatDb.Shared.rocketMinHp + 0.001f && !CanRocketFire(craft))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // 火箭能否开火：只看有无 weapon 与匹配且非空的弹药，不计 CD
+        internal static bool CanRocketFire(Clustercraft craft)
+        {
+            if (craft == null)
+            {
+                return false;
+            }
+            if (craft.Status == Clustercraft.CraftStatus.Grounded)
+            {
+                return false;
+            }
+            try
+            {
+                RocketLoadout lo = RocketLoadout.Get(craft);
+                if (lo == null || lo.weaponModuleIds.Count == 0)
+                {
+                    return false;
+                }
+                Dictionary<string, float> dict = RocketAmmoDictionary.Build(craft);
+                for (int i = 0; i < lo.weaponModuleIds.Count; i++)
+                {
+                    ModuleDef wdef = CombatDb.FindModule(lo.weaponModuleIds[i]);
+                    if (wdef == null || wdef.slotType != "weapon")
+                    {
+                        continue;
+                    }
+                    AmmoDef ammo = ResolveCurrentAmmo(lo, i, wdef, dict);
+                    if (ammo != null && StockOf(dict, ammo) > 0f)
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MFLog.HotFail("combat:canFire", e);
+            }
+            return false;
+        }
+
         // 区域 / 格子工具
 
         internal static string RegionOf(AxialI cell)

@@ -485,67 +485,14 @@ namespace MoreFood_KFC
 
         private static void AlertOnCraftMoved(Clustercraft craft)
         {
-            string craftRegion = RegionOf(craft.Location);
-            float now = TradeRegistry.Now();
-            for (int i = 0; i < Monsters.Count; i++)
-            {
-                MonsterRuntime rt = Monsters[i];
-                if (rt == null || !rt.IsAlive || rt.aggroCraft != null)
-                {
-                    continue;
-                }
-                if (rt.deaggroUntil > now)
-                {
-                    continue;   // 刚脱战，冷却中不重新上仇
-                }
-                if (!rt.def.hostile && !rt.ordered)
-                {
-                    continue;
-                }
-                if (rt.region != craftRegion)
-                {
-                    continue;
-                }
-                if (SpaceCfg.Distance(rt.Cell, craft.Location) > rt.def.alertRange)
-                {
-                    continue;
-                }
-                SetAggro(rt, craft);
-            }
+            // 仇恨只由实际伤害引起，火箭移动不再被动上仇，避免群体围攻
+            return;
         }
 
         private static void OnMonsterMoved(MonsterRuntime rt)
         {
-            if (rt.aggroCraft != null)
-            {
-                return;
-            }
-            if (!rt.def.hostile && !rt.ordered)
-            {
-                return;
-            }
-            if (rt.deaggroUntil > TradeRegistry.Now())
-            {
-                return;   // 刚脱战，冷却中不重新上仇
-            }
-            for (int i = 0; i < Crafts.Count; i++)
-            {
-                Clustercraft craft = Crafts[i];
-                if (craft == null)
-                {
-                    continue;
-                }
-                if (RegionOf(craft.Location) != rt.region)
-                {
-                    continue;
-                }
-                if (SpaceCfg.Distance(rt.Cell, craft.Location) > rt.def.alertRange)
-                {
-                    continue;
-                }
-                SetAggro(rt, craft);
-                break;
-            }
+            // 仇恨只由实际伤害引起，怪物移动不再被动上仇，避免群体围攻
+            return;
         }
 
         internal static void SetAggro(MonsterRuntime rt, Clustercraft craft)
@@ -598,6 +545,40 @@ namespace MoreFood_KFC
                 MFLog.Verbose(LogCat.Combat,"[Space] 跨星图瞬移 → " + n + " 只怪立刻脱战（目标 " + craft.Name + "）");
                 RocketPanelScreen.RequestRebuild();   // 交战面板的怪物卡同步消失
             }
+        }
+
+        // 强制脱战清两层：怪物侧仇恨与火箭侧交战态，避免只清一层卡住
+        internal static void ForceDisengageBothLayers(Clustercraft craft, float now, string reason)
+        {
+            if (craft == null)
+            {
+                return;
+            }
+            // 清怪物侧对该 craft 的仇恨并加冷却
+            int n = 0;
+            for (int i = 0; i < Monsters.Count; i++)
+            {
+                MonsterRuntime rt = Monsters[i];
+                if (rt == null || rt.aggroCraft != craft)
+                {
+                    continue;
+                }
+                ClearAggro(rt);
+                rt.deaggroUntil = now + rt.def.deaggroSeconds;
+                n++;
+            }
+            // 清火箭侧交战态、指令目标、迷你条与攻击箭头
+            RocketCombatState st = craft.GetComponent<RocketCombatState>();
+            if (st != null)
+            {
+                st.ClearCombatState("强制脱战(" + reason + ")");
+            }
+            if (n > 0 || st != null)
+            {
+                RocketPanelScreen.RequestRebuild();
+            }
+            MFLog.Verbose(LogCat.Combat,"[Space] " + craft.Name + " 强制脱战（" + reason + "）：怪物侧 " + n
+                + " 只清仇恨；火箭侧交战态清空");
         }
     }
 }
