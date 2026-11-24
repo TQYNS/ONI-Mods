@@ -6,6 +6,66 @@ using UnityEngine;
 
 namespace MoreFood_KFC
 {
+    // 交易数字统一归一化：金额按分截断，份数按整份截断，燃料按 0.1kg 截断
+    internal static class TradeNumber
+    {
+        internal static float Money(float v)
+        {
+            return Truncate(v, 100f);
+        }
+
+        internal static int Units(float v)
+        {
+            if (float.IsNaN(v) || float.IsInfinity(v) || v <= 0.0001f)
+            {
+                return 0;
+            }
+            return Mathf.FloorToInt(v + 0.0001f);
+        }
+
+        internal static int SignedUnits(float v)
+        {
+            return v < 0f ? -Units(-v) : Units(v);
+        }
+
+        internal static int LowerBound(float v)
+        {
+            return float.IsNaN(v) || float.IsInfinity(v) ? 0 : Mathf.CeilToInt(v - 0.0001f);
+        }
+
+        internal static int UpperBound(float v)
+        {
+            if (float.IsNaN(v) || float.IsInfinity(v))
+            {
+                return 0;
+            }
+            return Mathf.Max(0, Mathf.FloorToInt(v + 0.0001f));
+        }
+
+        internal static float FuelKg(float v)
+        {
+            return Mathf.Max(0f, Truncate(v, 10f));
+        }
+
+        private static float Truncate(float v, float scale)
+        {
+            if (float.IsNaN(v) || float.IsInfinity(v))
+            {
+                return 0f;
+            }
+            float scaled = v * scale;
+            if (scaled > 0f)
+            {
+                scaled = Mathf.Floor(scaled + 0.0001f);
+            }
+            else if (scaled < 0f)
+            {
+                scaled = Mathf.Ceil(scaled - 0.0001f);
+            }
+            return scaled / scale;
+        }
+    }
+
     internal sealed class TradeStockEntry
     {
         internal string id;
@@ -67,7 +127,7 @@ namespace MoreFood_KFC
             if (StartingCreditsGranted) return;
             StartingCreditsGranted = true;
             int add = Mathf.Max(0, ModOptions.Current.StartingCredits);
-            if (add > 0) Currency = Mathf.Max(0f, Currency) + add;
+            if (add > 0) Currency = TradeNumber.Money(Mathf.Max(0f, Currency) + add);
         }
 
         // ★ 本会话是否见过猎人协会站（不存档）：读档恢复会覆盖 Flags/Currency，
@@ -101,7 +161,7 @@ namespace MoreFood_KFC
             if (!sessionBegun)
             {
                 sessionBegun = true;
-                Currency = TradeDb.Config.currency_start;
+                Currency = TradeNumber.Money(TradeDb.Config.currency_start);
             }
             MFLog.Verbose(LogCat.Trade,"[Space] 贸易初始化：星币=" + Currency + " 声望=" + RankName() + "(" + Rep + ")"
                 + " 站点配置=" + TradeDb.Stations.Count);
@@ -319,7 +379,7 @@ namespace MoreFood_KFC
 
         internal static void AddCurrency(float delta)
         {
-            Currency = Mathf.Max(0f, Currency + delta);
+            Currency = TradeNumber.Money(Mathf.Max(0f, TradeNumber.Money(Currency) + TradeNumber.Money(delta)));
             SpaceAchievements.CheckMilestones();
         }
 
@@ -394,7 +454,7 @@ namespace MoreFood_KFC
                 return 0.01f;
             }
             float k = def != null ? def.k : 0f;
-            return Mathf.Max(0.01f, v.price * TradeValuation.BuyBase * (1f + k));
+            return TradeNumber.Money(Mathf.Max(0.01f, v.price * TradeValuation.BuyBase * (1f + k)));
         }
 
         internal static float SellUnit(StationDef def, TradeItemValue v)
@@ -404,7 +464,7 @@ namespace MoreFood_KFC
                 return 0.01f;
             }
             float tpi = TradeValuation.TpiOf(RankIndex());
-            return Mathf.Max(0.01f, v.price * TradeValuation.SellBase * (1f + tpi));
+            return TradeNumber.Money(Mathf.Max(0.01f, v.price * TradeValuation.SellBase * (1f + tpi)));
         }
 
         internal static bool PirateClosed(TradeStationState st)
@@ -533,7 +593,7 @@ namespace MoreFood_KFC
             {
                 st.currency = UnityEngine.Random.Range(lo, hi);
             }
-            st.currency *= ModOptions.Current.TraderCreditsMultiplier;
+            st.currency = TradeNumber.Money(st.currency * ModOptions.Current.TraderCreditsMultiplier);
         }
 
         // ★ 与 MoreFood 的唯一代码接入点（其余全走 YAML）：这张配方卷轴对应的配方是否已查阅。
@@ -586,7 +646,7 @@ namespace MoreFood_KFC
             RollCurrency(st, def);
             st.cooldownEnd = Now() + RefreshSeconds(def);
             MFLog.Verbose(LogCat.Trade,"[Space] 站点 " + def.id + " 刷新#" + st.refreshCount + " 条目=" + st.shelf.Count
-                + "/" + want + " 星币=" + st.currency.ToString("0")
+                + "/" + want + " 星币=" + TradeNumber.Money(st.currency).ToString("0.00")
                 + " 下次冷却结束=" + Mathf.RoundToInt(st.cooldownEnd) + "秒");
         }
 
@@ -780,7 +840,7 @@ namespace MoreFood_KFC
                 lo = hi;
                 hi = t;
             }
-            e.stock = Mathf.Max(1f, Mathf.Round((hi <= lo ? lo : UnityEngine.Random.Range(lo, hi))
+            e.stock = Mathf.Max(1, TradeNumber.Units((hi <= lo ? lo : UnityEngine.Random.Range(lo, hi))
                 * ModOptions.Current.StockMultiplier));
             st.shelf.Add(e);
         }
@@ -941,7 +1001,7 @@ namespace MoreFood_KFC
             }
             MFLog.Verbose(LogCat.Trade,"[SAVE-TRACE] S3 捕获落点(贸易)：活跃站点=" + TradeRegistry.States.Count
                 + " 活跃任务=" + SpaceQuestRuntime.Active.Count
-                + " 星币=" + TradeRegistry.Currency + " Flags=" + TradeRegistry.Flags
+                + " 星币=" + TradeNumber.Money(TradeRegistry.Currency) + " Flags=" + TradeRegistry.Flags
                 + " 载体#" + GetInstanceID() + "@"
                 + (gameObject != null ? gameObject.name + "#" + gameObject.GetInstanceID() : "(null)"));
             if (!mirroring)
@@ -963,7 +1023,7 @@ namespace MoreFood_KFC
                     mirroring = false;
                 }
             }
-            currency = TradeRegistry.Currency;
+            currency = TradeNumber.Money(TradeRegistry.Currency);
             startingCreditsGranted = TradeRegistry.StartingCreditsGranted;
             rep = TradeRegistry.Rep;
             flags = TradeRegistry.Flags;
@@ -1001,12 +1061,12 @@ namespace MoreFood_KFC
                 stationIds.Add(st.id);
                 stationCooldown.Add(st.cooldownEnd);
                 stationRefreshCount.Add(st.refreshCount);
-                stationCurrency.Add(st.currency);
+                stationCurrency.Add(TradeNumber.Money(st.currency));
                 for (int i = 0; i < st.shelf.Count; i++)
                 {
                     shelfStation.Add(idx);
                     shelfId.Add(st.shelf[i].id);
-                    shelfStock.Add(st.shelf[i].stock);
+                    shelfStock.Add(TradeNumber.Units(st.shelf[i].stock));
                     shelfRecycle.Add(st.shelf[i].recycleLeft);
                 }
             }
@@ -1019,7 +1079,7 @@ namespace MoreFood_KFC
         internal void Restore()
         {
             SpaceRealEventRuntime.GeneShuffleBonus = geneShuffleOverclock;
-            TradeRegistry.Currency = currency;
+            TradeRegistry.Currency = TradeNumber.Money(currency);
             TradeRegistry.StartingCreditsGranted = startingCreditsGranted;
             TradeRegistry.Rep = Mathf.Clamp(rep, 0, 550);
             TradeRegistry.Flags = flags;
@@ -1079,7 +1139,7 @@ namespace MoreFood_KFC
                 st.id = id;
                 st.cooldownEnd = GetAt(stationCooldown, i, 0f);
                 st.refreshCount = GetAt(stationRefreshCount, i, 0);
-                st.currency = versionOk ? GetAt(stationCurrency, i, 0f) : 0f;
+                st.currency = versionOk ? TradeNumber.Money(GetAt(stationCurrency, i, 0f)) : 0f;
                 TradeRegistry.States[id] = st;
                 stationsKept++;
             }
@@ -1104,7 +1164,7 @@ namespace MoreFood_KFC
                     }
                     TradeStockEntry e = new TradeStockEntry();
                     e.id = itemId;
-                    e.stock = GetAt(shelfStock, i, 0f);
+                    e.stock = TradeNumber.Units(GetAt(shelfStock, i, 0f));
                     e.recycleLeft = GetAt(shelfRecycle, i, 0f);
                     st.shelf.Add(e);
                     // ★ 0 配额也要写：否则读档后 RecycleLeft() 会重新掷配额，把「已收够」复活
@@ -1123,7 +1183,7 @@ namespace MoreFood_KFC
                     + " 条（站点 " + stationsKept + "/" + stationIds.Count
                     + "，货架 " + (shelfId.Count - shelfDropped) + "/" + shelfId.Count + "），其余照常恢复");
             }
-            MFLog.Verbose(LogCat.Trade,"[Space] 贸易读档：星币=" + TradeRegistry.Currency + " 声望=" + TradeRegistry.Rep
+            MFLog.Verbose(LogCat.Trade,"[Space] 贸易读档：星币=" + TradeNumber.Money(TradeRegistry.Currency) + " 声望=" + TradeRegistry.Rep
                 + "（" + TradeRegistry.RankName() + "）站点=" + stationsKept
                 + " 已交付食材=" + deliveredKept + " 任务=" + questsKept
                 + " 已解锁子图格=" + revealedKept);

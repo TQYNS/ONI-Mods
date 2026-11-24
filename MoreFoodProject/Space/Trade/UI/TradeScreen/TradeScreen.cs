@@ -73,7 +73,7 @@ namespace MoreFood_KFC
             st.title = TradeUi.Text("title", window.transform, 26f, 12f, 620f, 36f,
                 def.name + (donate ? "  ·  捐款" : ""), 22f, TradeUi.TextMain, false);
             st.wallet = TradeUi.Text("wallet", window.transform, 660f, 12f, 420f, 36f,
-                "星币 " + TradeRegistry.Currency.ToString("0.00"), 20f, TradeUi.Gold, true);
+                "星币 " + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00"), 20f, TradeUi.Gold, true);
             st.status = TradeUi.Text("status", window.transform, 28f, 69f, 1120f, 26f, "", 15f,
                 TradeUi.TextDim, false);
             TradeUi.MakeCloseButton(window.transform, 1122f, 11f, TradeUi.CloseWindow);
@@ -85,7 +85,7 @@ namespace MoreFood_KFC
             }
             st.Rebuild();
             MFLog.Info(LogCat.Trade,"[Space] 打开贸易窗口：站点=" + def.id + " 条目=" + state.shelf.Count
-                + " 本店星币=" + state.currency.ToString("0"));
+                + " 本店星币=" + TradeNumber.Money(state.currency).ToString("0.00"));
         }
 
         internal static void BuildRemote(SpaceStation station, ref GameObject remote, bool donate)

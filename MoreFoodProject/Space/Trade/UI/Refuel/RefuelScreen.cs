@@ -107,18 +107,18 @@ namespace MoreFood_KFC
             if (oxidizerMode)
             {
                 st.fuelName = TradeDb.OxidizerDisplayName(selectedOx.Name);
-                st.price = TradeDb.OxidizerPricePerKg(selectedOx.Name);
-                st.capacity = TradeExecutor.OxidizerCapacityOf(st.oxStorages);
+                st.price = TradeNumber.Money(TradeDb.OxidizerPricePerKg(selectedOx.Name));
+                st.capacity = TradeNumber.FuelKg(TradeExecutor.OxidizerCapacityOf(st.oxStorages));
             }
             else
             {
-                st.price = TradeDb.FuelPricePerKg(fuelTag);
-                st.capacity = mi.FuelCapacity;
+                st.price = TradeNumber.Money(TradeDb.FuelPricePerKg(fuelTag));
+                st.capacity = TradeNumber.FuelKg(mi.FuelCapacity);
             }
             TradeUi.Text("title", window.transform, 26f, 12f, 360f, 36f,
                 station.StationName + (oxidizerMode ? "  ·  补充氧化剂" : "  ·  加油"), 21f, TradeUi.TextMain, false);
             st.wallet = TradeUi.Text("wallet", window.transform, 396f, 12f, 240f, 36f,
-                "星币 " + TradeRegistry.Currency.ToString("0.00"), 18f, TradeUi.Gold, true);
+                "星币 " + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00"), 18f, TradeUi.Gold, true);
             TradeUi.MakeCloseButton(window.transform, 652f, 10f, TradeUi.CloseRefuel);
             if (oxTags.Count == 0)
             {
@@ -154,7 +154,7 @@ namespace MoreFood_KFC
             st.Init();
             MFLog.Info(LogCat.Trade,"[Space] 打开" + (oxidizerMode ? "氧化剂" : "加油") + "窗口：站点="
                 + station.stationId + " 品类=" + st.fuelName + " 单价=" + st.price.ToString("0.00")
-                + " 容量=" + st.capacity.ToString("0") + "千克");
+                + " 容量=" + st.capacity.ToString("0.0") + "千克");
         }
 
         // 燃料/氧化剂切换 + 氧化剂种类选择：每次点击重建窗口，复用同一套滑条与结算

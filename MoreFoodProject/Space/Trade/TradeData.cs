@@ -1157,7 +1157,7 @@ namespace MoreFood_KFC
         internal static float OxidizerPricePerKg(string tag)
         {
             OxidizerEntryDef fd = FindOxidizerByTag(tag);
-            return fd != null && fd.price_per_kg > 0f ? fd.price_per_kg : 1f;
+            return fd != null && fd.price_per_kg > 0f ? TradeNumber.Money(fd.price_per_kg) : 1f;
         }
 
         internal static string OxidizerDisplayName(string tag)
@@ -1174,7 +1174,7 @@ namespace MoreFood_KFC
         internal static float FuelPricePerKg(string tag)
         {
             FuelEntryDef fd = FindFuelByTag(tag);
-            return fd != null && fd.price_per_kg > 0f ? fd.price_per_kg : 1f;
+            return fd != null && fd.price_per_kg > 0f ? TradeNumber.Money(fd.price_per_kg) : 1f;
         }
 
         internal static string FuelDisplayName(string tag)

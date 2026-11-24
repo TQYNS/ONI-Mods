@@ -231,14 +231,16 @@ namespace MoreFood_KFC
             return sum;
         }
 
-        private static float OxidizerCapacity(Clustercraft craft)
+        // 一次遍历同时取质量与容量：顶栏分子分母同源，且不多一次模块枚举
+        private static void OxidizerAmounts(Clustercraft craft, out float remaining, out float capacity)
         {
-            float sum = 0f;
+            remaining = 0f;
+            capacity = 0f;
             try
             {
                 if (craft == null || craft.ModuleInterface == null)
                 {
-                    return 0f;
+                    return;
                 }
                 foreach (Ref<RocketModuleCluster> r in craft.ModuleInterface.ClusterModules)
                 {
@@ -250,15 +252,15 @@ namespace MoreFood_KFC
                     OxidizerTank t = m.GetComponent<OxidizerTank>();
                     if (t != null && t.storage != null)
                     {
-                        sum += t.storage.capacityKg;
+                        capacity += t.storage.capacityKg;
+                        remaining += t.storage.MassStored();
                     }
                 }
             }
             catch (Exception)
             {
-                return sum;
+                // expected: 模块枚举失败时保留已累计的部分值
             }
-            return sum;
         }
 
         private float BuildRocketCard(RocketCombatState st)
@@ -286,12 +288,10 @@ namespace MoreFood_KFC
                 delegate { return new Color(0.36f, 0.62f, 0.94f, 1f); },
                 delegate { return st != null ? "装甲 " + Mathf.Round(st.armor) + " / " + Mathf.Round(st.maxArmor) : "装甲 —"; });
             float fuel = 0f;
-            float ox = 0f;
             string hexText = "—";
             if (selected.ModuleInterface != null)
             {
                 fuel = selected.ModuleInterface.FuelRemaining;
-                ox = selected.ModuleInterface.OxidizerPowerRemaining;
                 float per = selected.FuelPerDistance;
                 hexText = per > 0.0001f
                     ? Mathf.FloorToInt(Mathf.Max(0f,
@@ -299,7 +299,9 @@ namespace MoreFood_KFC
                     : "—";
             }
             float fuelCap = FuelCapacity(selected);
-            float oxCap = OxidizerCapacity(selected);
+            float ox;
+            float oxCap;
+            OxidizerAmounts(selected, out ox, out oxCap);   // 顶栏分子分母同为 kg，推进当量不能当质量用
             BarLine("rfuel", 14f, top + 52f, 210f,
                 delegate { return fuelCap > 0f ? Mathf.Clamp01(fuel / fuelCap) : 0f; },
                 delegate { return new Color(0.93f, 0.66f, 0.3f, 1f); },
@@ -307,7 +309,7 @@ namespace MoreFood_KFC
             BarLine("rox", 430f, top + 52f, 210f,
                 delegate { return oxCap > 0f ? Mathf.Clamp01(ox / oxCap) : 0f; },
                 delegate { return new Color(0.36f, 0.78f, 0.82f, 1f); },
-                delegate { return oxCap > 0f ? "氧化剂 " + Mathf.Round(ox) + " / " + Mathf.Round(oxCap) : "氧化剂 " + Mathf.Round(ox); });
+                delegate { return oxCap > 0f ? "氧化剂 " + Mathf.Round(ox) + " / " + Mathf.Round(oxCap) + " kg" : "氧化剂 " + Mathf.Round(ox) + " kg"; });
 
             TradeUi.Text("rrange", rightRoot.transform, 14f, top + 78f, 800f, 20f,
                 "预计可运动 " + hexText + " 格    防御 "

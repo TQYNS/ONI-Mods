@@ -211,7 +211,7 @@ namespace MoreFood_KFC
         private float StockOf(string id)
         {
             TradeStockEntry e = state != null ? state.Find(id) : null;
-            return e != null ? e.stock : 0f;
+            return TradeNumber.Units(e != null ? e.stock : 0f);
         }
 
         // 筛选判定：仅售卖 = 在收购清单且船上有货；仅购买 = 本站有库存
@@ -249,15 +249,12 @@ namespace MoreFood_KFC
             TradeStockEntry e = state.Find(id);
             float buyUnit = v != null ? TradeRegistry.BuyUnit(def, v) : 1f;
             float sellUnit = v != null ? TradeRegistry.SellUnit(def, v) : 1f;
-            float stock = e != null ? e.stock : 0f;
+            float stock = TradeNumber.Units(e != null ? e.stock : 0f);
             // ★ 新增「持有」列：与结算校验同一口径（仓内 + 内舱地面 + 单件物品运输仓），
             //   数值来自本轮唯一的持有量快照，逐行复用，不再每行重扫全舱
-            float carried = CarriedOf(id);
-            // ★ 列表侧同样做 NaN/负值清洗：脏数据不得变成"可输入的负数上界"
-            if (float.IsNaN(stock) || stock < 0f) { stock = 0f; }
-            if (float.IsNaN(carried) || carried < 0f) { carried = 0f; }
+            float carried = TradeNumber.Units(CarriedOf(id));
             // ★ 列名只叫「售价」：本站卖给你的按站方售价显示；只有回收价的（船上带来的）显示回收价
-            float shown = stock > 0.0001f ? buyUnit : sellUnit;
+            float shown = stock > 0f ? buyUnit : sellUnit;
             TradeRarity rar = v != null ? v.rarity : TradeRarity.Common;
             return Row(y, id, TradeUtil.DisplayName(id), shown, stock, carried, rar);
         }
@@ -285,18 +282,18 @@ namespace MoreFood_KFC
             TradeUi.Text("unit", row.transform, 196f, 0f, 76f, 34f, unit.ToString("0.00"), 14f,
                 TradeUi.TextMain, true);
             TradeUi.Text("stock", row.transform, 280f, 0f, 68f, 34f,
-                Mathf.Round(stock).ToString("0"), 13f, TradeUi.TextDim, true);
+                stock.ToString("0"), 13f, TradeUi.TextDim, true);
             // ★ 持有量：火箭上可交易的总数（与结算校验同源），为 0 时灰色提示
             TradeUi.Text("hold", row.transform, 352f, 0f, 68f, 34f,
-                Mathf.Floor(carried + 0.0001f).ToString("0"), 13f,
-                carried > 0.0001f ? TradeUi.Pos : TradeUi.TextOff, true);
+                carried.ToString("0"), 13f,
+                carried > 0f ? TradeUi.Pos : TradeUi.TextOff, true);
 
             Color amountColor = a > 0f ? TradeUi.Pos : (a < 0f ? TradeUi.Neg : TradeUi.TextDim);
             // 回收不设上限：卖出下限只受持有量限制
-            float sellFloor = -Mathf.Max(0f, carried);
-            float buyCeil = Mathf.Max(stock, 0f);
-            bool atFloor = a <= sellFloor + 0.0001f;
-            bool atCeil = a >= buyCeil - 0.0001f;
+            float sellFloor = -carried;
+            float buyCeil = stock;
+            bool atFloor = a <= sellFloor;
+            bool atCeil = a >= buyCeil;
 
             GameObject numBox = TradeUi.Node("num", row.transform, 428f, 2f, 90f, 30f);
             TradeUi.RoundPanel("numbg", numBox.transform, 0f, 0f, 90f, 30f, 5, TradeUi.Panel).raycastTarget = true;   // 数字框要能接收点击进编辑态
@@ -305,7 +302,7 @@ namespace MoreFood_KFC
             amountText.alignment = TextAlignmentOptions.Center;
             TradeUi.NumberBox nb = numBox.AddComponent<TradeUi.NumberBox>();
             nb.label = amountText;
-            nb.value = Mathf.RoundToInt(a);
+            nb.value = (int)a;
             nb.min = sellFloor;
             nb.max = buyCeil;
             nb.onCommit = delegate(int val) { SetAmountLive(id, val); };
@@ -350,9 +347,9 @@ namespace MoreFood_KFC
             TradeUi.RoundPanel("sidebg", side.transform, 0f, 0f, 400f, 600f, 12, TradeUi.Panel);
             TradeUi.Text("t1", side.transform, 18f, 12f, 364f, 26f, "结算预览", 16f, TradeUi.Accent, false);
             TradeUi.Text("shop", side.transform, 18f, 42f, 364f, 24f,
-                "本店星币   " + (state != null ? state.currency.ToString("0.00") : "—"), 14f, TradeUi.Gold, false);
+                "本店星币   " + (state != null ? TradeNumber.Money(state.currency).ToString("0.00") : "—"), 14f, TradeUi.Gold, false);
             TradeUi.Text("cash", side.transform, 18f, 66f, 364f, 24f,
-                "预期结余   " + TradeRegistry.Currency.ToString("0.00"), 15f, TradeUi.TextMain, false);
+                "预期结余   " + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00"), 15f, TradeUi.TextMain, false);
 
             float y = 100f;
             TradeUi.Text("sh", side.transform, 18f, y, 364f, 24f, "── 出售 ──", 14f, TradeUi.Pos, false);

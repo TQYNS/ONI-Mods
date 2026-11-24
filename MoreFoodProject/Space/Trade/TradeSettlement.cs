@@ -1277,6 +1277,7 @@ namespace MoreFood_KFC
                 reason = "火箭或站点未就绪";
                 return false;
             }
+            amount = TradeNumber.Units(amount);
             if (amount <= 0f)
             {
                 reason = "数量为 0";
@@ -1290,30 +1291,26 @@ namespace MoreFood_KFC
                 return false;
             }
             Tag tag = new Tag(itemId);
-            float have = RocketInventory.Available(craft, tag);
-            if (float.IsNaN(have) || have < 0f)
-            {
-                have = 0f;   // ★ NaN 安全：NaN 与任何数比较都 false，会绕过下面的不足判定
-            }
-            if (have + 0.0001f < amount)
+            float have = TradeNumber.Units(RocketInventory.Available(craft, tag));
+            if (have < amount)
             {
                 reason = TradeUtil.DisplayName(itemId) + " 火箭里只有 " + Mathf.Round(have) + "，不足 " + Mathf.Round(amount);
                 return false;
             }
             float unit = TradeRegistry.SellUnit(def, v);
-            float pay = unit * amount;
+            float pay = TradeNumber.Money(unit * amount);
             if (st.currency + 0.0001f < pay)
             {
                 reason = "本店剩余星币 " + st.currency.ToString("0.00") + "，本次回收应付 "
                     + pay.ToString("0.00") + "，超出 " + (pay - st.currency).ToString("0.00");
                 return false;
             }
-            float taken = RocketInventory.Consume(craft, tag, amount);
-            if (taken + 0.0001f < amount)
+            float taken = TradeNumber.Units(RocketInventory.Consume(craft, tag, amount));
+            if (taken < amount)
             {
                 // ★ 修订：扣物不足时必须把已扣部分退回。旧实现扣了就返回 false，物品直接消失，
                 //   且下一轮判定与显示不一致（表现为"持有量对不上/越卖越多"）。
-                if (taken > 0.0001f)
+                if (taken > 0f)
                 {
                     // ★ 计量口径：taken 是「份」，退回时换算回质量（单件物品 = 份 × 单位质量）
                     RocketInventory.Grant(craft, tag, RocketInventory.PieceMass(tag, taken), 293.15f);
@@ -1322,7 +1319,7 @@ namespace MoreFood_KFC
                 return false;
             }
             gained = pay;
-            st.currency = Mathf.Max(0f, st.currency - pay);
+            st.currency = TradeNumber.Money(Mathf.Max(0f, st.currency - pay));
             TradeRegistry.AddCurrency(pay);
             TradeRegistry.OnFoodDelivered(itemId);
 
@@ -1335,7 +1332,7 @@ namespace MoreFood_KFC
                 e.value = v;
                 st.shelf.Add(e);
             }
-            e.stock += amount;
+            e.stock = TradeNumber.Units(e.stock + amount);
             MFLog.Info(LogCat.Trade, "[Space] 卖出 " + itemId + " " + amount + " × " + unit.ToString("0.00")
                 + " = +" + pay.ToString("0.00") + " 星币（站点 " + def.id + " 星币余 "
                 + st.currency.ToString("0.00") + "，玩家余额 " + TradeRegistry.Currency.ToString("0.00") + "）");
@@ -1358,12 +1355,14 @@ namespace MoreFood_KFC
                 reason = TradeUtil.DisplayName(itemId) + " 不在本站售卖清单";
                 return false;
             }
+            amount = TradeNumber.Units(amount);
             if (amount <= 0f)
             {
                 reason = "数量为 0";
                 return false;
             }
-            if (entry.stock + 0.0001f < amount)
+            entry.stock = TradeNumber.Units(entry.stock);
+            if (entry.stock < amount)
             {
                 reason = TradeUtil.DisplayName(itemId) + " 本站库存只剩 " + Mathf.Round(entry.stock);
                 return false;
@@ -1385,7 +1384,7 @@ namespace MoreFood_KFC
                 entry.value = v;
             }
             float unit = TradeRegistry.BuyUnit(def, v);
-            cost = unit * amount;
+            cost = TradeNumber.Money(unit * amount);
             if (TradeRegistry.Currency + 0.0001f < cost)
             {
                 reason = "星币不足：需要 " + cost.ToString("0.00") + "，只有 " + TradeRegistry.Currency.ToString("0.00");
@@ -1398,10 +1397,10 @@ namespace MoreFood_KFC
                 reason = depositReason ?? (TradeUtil.DisplayName(itemId) + " 装不进火箭");
                 return false;
             }
-            entry.stock = Mathf.Max(0f, entry.stock - amount);
-            st.currency += cost;
+            entry.stock = Mathf.Max(0f, TradeNumber.Units(entry.stock - amount));
+            st.currency = TradeNumber.Money(st.currency + cost);
             TradeRegistry.AddCurrency(-cost);
-            if (entry.stock <= 0.0001f)
+            if (entry.stock <= 0f)
             {
                 st.shelf.Remove(entry);
             }
@@ -1412,10 +1411,11 @@ namespace MoreFood_KFC
         }
 
         internal static bool TryRefuel(Clustercraft craft, StationDef def, TradeStationState st,
-            float wantKg, out float cost, out string reason)
+            float wantKg, out float cost, out string reason, out float storedKg)
         {
             cost = 0f;
             reason = null;
+            storedKg = 0f;
             if (craft == null || def == null || !def.fuel_refill)
             {
                 reason = "该站不支持燃料补充";
@@ -1433,18 +1433,19 @@ namespace MoreFood_KFC
                 reason = "火箭没有引擎";
                 return false;
             }
-            float room = Mathf.Max(0f, mi.FuelCapacity - mi.FuelRemaining);
-            if (room <= 0.0001f)
+            wantKg = TradeNumber.FuelKg(wantKg);
+            float room = TradeNumber.FuelKg(Mathf.Max(0f, mi.FuelCapacity - mi.FuelRemaining));
+            if (room <= 0f)
             {
                 reason = "燃料仓已满（容量 " + Mathf.Round(mi.FuelCapacity) + "kg）";
                 return false;
             }
-            float amount = Mathf.Min(wantKg, room);
-            float pricePerKg = TradeDb.FuelPricePerKg(engine.fuelTag.Name);
-            cost = pricePerKg * amount;
+            float amount = TradeNumber.FuelKg(Mathf.Min(wantKg, room));
+            float pricePerKg = TradeNumber.Money(TradeDb.FuelPricePerKg(engine.fuelTag.Name));
+            cost = TradeNumber.Money(pricePerKg * amount);
             if (TradeRegistry.Currency + 0.0001f < cost)
             {
-                reason = "星币不足：补 " + Mathf.Round(amount) + "kg 需要 " + cost.ToString("0.00");
+                reason = "星币不足：补 " + amount.ToString("0.0") + "kg 需要 " + cost.ToString("0.00");
                 return false;
             }
             int stored = StoreFuel(craft, engine.fuelTag, amount);
@@ -1453,10 +1454,11 @@ namespace MoreFood_KFC
                 reason = "燃料没存进燃料仓（燃料仓类型不匹配？）";
                 return false;
             }
+            storedKg = amount;   // 按请求量扣款，完成提示也用同一数值
             TradeRegistry.AddCurrency(-cost);
             if (st != null)
             {
-                st.currency += cost;   // 与买入同口径：玩家付的星币进本店账上
+                st.currency = TradeNumber.Money(st.currency + cost);   // 与买入同口径：玩家付的星币进本店账上
             }
             MFLog.Info(LogCat.Trade, "[Space] 补充燃料 " + engine.fuelTag.Name + " " + amount.ToString("0.0") + "kg × "
                 + pricePerKg.ToString("0.00") + " = -" + cost.ToString("0.00") + " 星币"
@@ -1570,10 +1572,11 @@ namespace MoreFood_KFC
         }
 
         internal static bool TryRefuelOxidizer(Clustercraft craft, StationDef def, TradeStationState st,
-            Tag tag, float wantKg, out float cost, out string reason)
+            Tag tag, float wantKg, out float cost, out string reason, out float storedKg)
         {
             cost = 0f;
             reason = null;
+            storedKg = 0f;
             if (craft == null || def == null || !def.fuel_refill)
             {
                 reason = "该站不支持燃料补充";
@@ -1585,32 +1588,34 @@ namespace MoreFood_KFC
                 reason = "火箭氧化剂舱不接受「" + tag.Name + "」";
                 return false;
             }
+            wantKg = TradeNumber.FuelKg(wantKg);
             float capacity = OxidizerCapacityOf(craft);
-            float room = Mathf.Max(0f, capacity - OxidizerRemainingOf(craft));
-            if (room <= 0.0001f)
+            float room = TradeNumber.FuelKg(Mathf.Max(0f, capacity - OxidizerRemainingOf(craft)));
+            if (room <= 0f)
             {
                 reason = "氧化剂舱已满（容量 " + Mathf.Round(capacity) + "kg）";
                 return false;
             }
-            float amount = Mathf.Min(wantKg, room);
-            float pricePerKg = TradeDb.OxidizerPricePerKg(tag.Name);
-            cost = pricePerKg * amount;
+            float amount = TradeNumber.FuelKg(Mathf.Min(wantKg, room));
+            float pricePerKg = TradeNumber.Money(TradeDb.OxidizerPricePerKg(tag.Name));
+            cost = TradeNumber.Money(pricePerKg * amount);
             if (TradeRegistry.Currency + 0.0001f < cost)
             {
-                reason = "星币不足：补 " + Mathf.Round(amount) + "kg 需要 " + cost.ToString("0.00");
+                reason = "星币不足：补 " + amount.ToString("0.0") + "kg 需要 " + cost.ToString("0.00");
                 return false;
             }
-            float stored = StoreOxidizer(craft, tag, amount);
-            if (stored <= 0.0001f)
+            float stored = TradeNumber.FuelKg(StoreOxidizer(craft, tag, amount));
+            if (stored <= 0f)
             {
                 reason = "氧化剂没存进舱（舱类型不匹配？）";
                 return false;
             }
-            cost = pricePerKg * stored;   // 只按真正入库的质量收费，避免部分入库时多扣
+            cost = TradeNumber.Money(pricePerKg * stored);   // 只按真正入库的质量收费，避免部分入库时多扣
+            storedKg = stored;   // 提示与日志复用真正入库的质量，不由金额反推
             TradeRegistry.AddCurrency(-cost);
             if (st != null)
             {
-                st.currency += cost;
+                st.currency = TradeNumber.Money(st.currency + cost);
             }
             MFLog.Info(LogCat.Trade, "[Space] 补充氧化剂 " + tag.Name + " " + stored.ToString("0.0") + "kg × "
                 + pricePerKg.ToString("0.00") + " = -" + cost.ToString("0.00") + " 星币");

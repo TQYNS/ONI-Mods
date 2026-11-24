@@ -765,7 +765,7 @@ namespace MoreFood_KFC
                             {
                                 TradeSaveData.Attach()?.Capture();
                             }
-                            Notify("调试", "星币 +10000（当前 " + TradeRegistry.Currency.ToString("0.00") + "）");
+                            Notify("调试", "星币 +10000（当前 " + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00") + "）");
                         }
                         catch (Exception e)
                         {
@@ -1210,8 +1210,8 @@ namespace MoreFood_KFC
             }
 
             // 上下界取「不越界」方向取整：下界向上、上界向下，避免 120.4 可卖却钳到 121
-            private int Lo() { return Mathf.CeilToInt(min); }
-            private int Hi() { return Mathf.FloorToInt(max); }
+            private int Lo() { return TradeNumber.LowerBound(min); }
+            private int Hi() { return TradeNumber.UpperBound(max); }
 
             // ★ 修订：区间必须有效（lo ≤ hi ≤ …）。库存/收购量/持有量异常（NaN、负值、
             //   上下界交叉）时，旧实现会让 Clamp 结果落在非法一侧 —— 这正是"持有 0 却能卖出"的入口。

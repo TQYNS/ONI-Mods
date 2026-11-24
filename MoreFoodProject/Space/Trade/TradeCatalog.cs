@@ -504,7 +504,7 @@ namespace MoreFood_KFC
             {
                 return null;
             }
-            v.price = Mathf.Max(0f, (float)Math.Round(v.price, 2));
+            v.price = Mathf.Max(0f, TradeNumber.Money(v.price));
             if (v.price <= 0f)
             {
                 return null;
@@ -515,8 +515,8 @@ namespace MoreFood_KFC
             float[] stock = chainStock != null ? chainStock : bestStock;
             if (stock != null)
             {
-                v.stockMin = stock[0];
-                v.stockMax = stock.Length > 1 ? stock[1] : stock[0];
+                v.stockMin = TradeNumber.Units(stock[0]);
+                v.stockMax = Mathf.Max(v.stockMin, TradeNumber.Units(stock.Length > 1 ? stock[1] : stock[0]));
                 v.hasStock = v.stockMax > 0f;
             }
 

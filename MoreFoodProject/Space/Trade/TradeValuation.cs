@@ -79,6 +79,8 @@ namespace MoreFood_KFC
                             kv.Value.stock[1] = t;
                             MFLog.Warn(LogCat.Trade, "[Space] Tag " + kv.Key + " 的 stock 区间反转，已交换");
                         }
+                        kv.Value.stock[0] = TradeNumber.Units(kv.Value.stock[0]);
+                        kv.Value.stock[1] = Mathf.Max(kv.Value.stock[0], TradeNumber.Units(kv.Value.stock[1]));
                         if (kv.Value.x <= 0f)
                         {
                             kv.Value.x = 0.12f;

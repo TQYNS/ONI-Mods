@@ -113,7 +113,7 @@ namespace MoreFood_KFC
 
         internal void SetAmountLive(string id, float v)
         {
-            amounts[id] = v;
+            amounts[id] = TradeNumber.SignedUnits(v);
             RowRef r;
             if (rowRefs.TryGetValue(id, out r) && r != null)
             {
@@ -199,22 +199,22 @@ namespace MoreFood_KFC
                 }
                 if (kv.Value < 0f)
                 {
-                    float v = UnitOf(kv.Key, -1f) * (-kv.Value);
-                    gain += v;
+                    float v = TradeNumber.Money(UnitOf(kv.Key, -1f) * (-kv.Value));
+                    gain = TradeNumber.Money(gain + v);
                     sellLines.Add(TradeUtil.DisplayName(kv.Key) + "   ×" + Mathf.Round(-kv.Value)
                         + "   " + v.ToString("0.00"));
                 }
                 else
                 {
-                    float v = UnitOf(kv.Key, 1f) * kv.Value;
-                    cost += v;
+                    float v = TradeNumber.Money(UnitOf(kv.Key, 1f) * kv.Value);
+                    cost = TradeNumber.Money(cost + v);
                     buyLines.Add(TradeUtil.DisplayName(kv.Key) + "   ×" + Mathf.Round(kv.Value)
                         + "   " + v.ToString("0.00"));
                 }
             }
-            SetSideText("shop", "本店星币   " + (state != null ? state.currency.ToString("0.00") : "—"));
+            SetSideText("shop", "本店星币   " + (state != null ? TradeNumber.Money(state.currency).ToString("0.00") : "—"));
             // ★ 原来这里是"我的星币 + 净变化 + 预期结余"三行，实测溢出面板 ⇒
-            float keep = TradeRegistry.Currency + gain - cost;
+            float keep = TradeNumber.Money(TradeRegistry.Currency + gain - cost);
             SetSideText("cash", "预期结余   " + keep.ToString("0.00"));
             SetSideColor("cash", keep < -0.0001f ? TradeUi.Neg : TradeUi.TextMain);
             for (int i = 0; i < 7; i++)
@@ -232,8 +232,8 @@ namespace MoreFood_KFC
                 r.amount.text = v.ToString("0");
                 r.amount.color = v > 0f ? TradeUi.Pos : (v < 0f ? TradeUi.Neg : TradeUi.TextDim);
             }
-            bool atFloor = v <= r.floor + 0.0001f;
-            bool atCeil = v >= r.ceil - 0.0001f;
+            bool atFloor = v <= (float)TradeNumber.LowerBound(r.floor);
+            bool atCeil = v >= (float)TradeNumber.UpperBound(r.ceil);
             if (r.minusImg != null)
             {
                 r.minusImg.color = atFloor ? TradeUi.TextOff : TradeUi.Border;
@@ -282,7 +282,7 @@ namespace MoreFood_KFC
             {
                 float left = Mathf.Max(0f, state.cooldownEnd - TradeRegistry.Now());
                 int leftSec = left <= 0f ? 0 : Mathf.CeilToInt(left);
-                int currency = Mathf.FloorToInt(state.currency + 0.5f);   // 对齐 ToString("0") 的显示粒度
+                int currency = Mathf.FloorToInt(TradeNumber.Money(state.currency) * 100f + 0.5f);   // 对齐 ToString("0") 的显示粒度
                 int rep = (int)TradeRegistry.Rep;
                 // TPI 对所有站点的卖价生效，声望信息始终显示
                 // ★ 仅当决定文本的数值/引用变化时才重写（原实现每帧重写）
@@ -296,7 +296,7 @@ namespace MoreFood_KFC
                     int tpiPercent = Mathf.RoundToInt(TradeValuation.TpiOf(TradeRegistry.RankIndex()) * 100f);
                     string rankInfo = "   声望 " + TradeRegistry.RankName() + "（" + TradeRegistry.Rep
                         + "/550）出售 +" + tpiPercent + "%";
-                    string money = "   本店星币 " + state.currency.ToString("0");
+                    string money = "   本店星币 " + TradeNumber.Money(state.currency).ToString("0.00");
                     status.text = leftSec <= 0
                         ? "库存冷却已结束：下次打开窗口时重新抽签" + rankInfo + money
                         : "冷却中 " + leftSec + " 秒 · 本次数据来自上次刷新" + rankInfo + money;
@@ -305,11 +305,11 @@ namespace MoreFood_KFC
             }
             if (wallet != null)
             {
-                int cents = Mathf.FloorToInt(TradeRegistry.Currency * 100f + 0.5f);
+                int cents = Mathf.FloorToInt(TradeNumber.Money(TradeRegistry.Currency) * 100f + 0.5f);
                 if (cents != lastWalletCents)
                 {
                     lastWalletCents = cents;
-                    wallet.text = "星币 " + TradeRegistry.Currency.ToString("0.00");
+                    wallet.text = "星币 " + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00");
                 }
             }
             }
@@ -363,7 +363,7 @@ namespace MoreFood_KFC
         internal float CarriedOf(string id)
         {
             float v;
-            return HoldSnap().TryGetValue(id, out v) && v > 0f ? v : 0f;
+            return TradeNumber.Units(HoldSnap().TryGetValue(id, out v) ? v : 0f);
         }
 
         /// <summary>作废行清单与持有量快照（库存/持有量/筛选变化时调用）。</summary>

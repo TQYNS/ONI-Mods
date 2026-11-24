@@ -181,7 +181,14 @@ namespace MoreFood_KFC
             });
         }
 
-        private static void Postfix(ref List<AxialI> __result)
+        private static bool IsFlightSelector(object[] args)
+        {
+            if (args == null || args.Length < 3) return false;
+            ClusterDestinationSelector sel = args[2] as ClusterDestinationSelector;
+            return sel != null && sel.GetComponent<ClusterMapMeteorShowerVisualizer>() != null;
+        }
+
+        private static void Postfix(ref List<AxialI> __result, object[] __args)
         {
             try
             {
@@ -206,6 +213,12 @@ namespace MoreFood_KFC
             if (SpaceTearCell.Hosts(from) || SpaceTearCell.Hosts(to))
             {
                 MFLog.Info(LogCat.Space,"[Space] 闸门放行：端点含时间裂口 " + SpaceCfg.Pos(to));
+                return;
+            }
+            // 流星与灾星共用同一 visualizer，飞行路径不能置 null
+            if (IsFlightSelector(__args))
+            {
+                MFLog.Info(LogCat.Space,"[Space] 闸门放行：流星/灾星飞行路径 " + SpaceCfg.Pos(from) + " -> " + SpaceCfg.Pos(to));
                 return;
             }
             __result = null;

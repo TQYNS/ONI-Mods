@@ -48,7 +48,7 @@ namespace MoreFood_KFC
                 int left = TradeRegistry.ChannelLeft(ch);
                 if (ch.kind == "money")
                 {
-                    float per = Mathf.Max(1f, ch.credit_per_point);
+                    float per = Mathf.Max(1f, TradeNumber.Money(ch.credit_per_point));
                     DonateRowDef d = new DonateRowDef();
                     d.id = "__money@" + ch.key;
                     d.itemId = null;
@@ -58,7 +58,7 @@ namespace MoreFood_KFC
                     d.label = ch.name;
                     d.points = 1;
                     d.unitCost = per;
-                    d.maxAmount = Mathf.Max(0f, Mathf.Min(Mathf.Floor(TradeRegistry.Currency / per), left));
+                    d.maxAmount = Mathf.Max(0f, Mathf.Min(Mathf.Floor(TradeNumber.Money(TradeRegistry.Currency) / per), left));
                     d.isFood = false;
                     rows.Add(d);
                     continue;
@@ -82,7 +82,7 @@ namespace MoreFood_KFC
                     {
                         continue;
                     }
-                    float max = Mathf.Min(Mathf.Floor(kv.Value), Mathf.Floor(left / (float)perUnit));
+                    float max = Mathf.Min(TradeNumber.Units(kv.Value), Mathf.Floor(left / (float)perUnit));
                     int lim = TradeDb.DonationItemLimit(def != null ? def.id : null, ch, kv.Key);
                     if (lim > 0)
                     {
@@ -178,7 +178,7 @@ namespace MoreFood_KFC
                 TradeUi.RarityColor[(int)TradeRarity.Legendary], false);
             TradeUi.Text("pts", row.transform, 276f, 0f, 110f, 34f, "+" + d.points, 15f, TradeUi.Gold, true);
             TradeUi.Text("max", row.transform, 396f, 0f, 90f, 34f,
-                Mathf.Round(d.maxAmount).ToString("0"), 13f, TradeUi.TextDim, true);
+                TradeNumber.Units(d.maxAmount).ToString("0"), 13f, TradeUi.TextDim, true);
 
             Color amountColor = a > 0f ? TradeUi.Pos : TradeUi.TextDim;
             GameObject numBox = TradeUi.Node("num", row.transform, 496f, 2f, 84f, 30f);
@@ -188,7 +188,7 @@ namespace MoreFood_KFC
             amountText.alignment = TextAlignmentOptions.Center;
             TradeUi.NumberBox nb = numBox.AddComponent<TradeUi.NumberBox>();
             nb.label = amountText;
-            nb.value = Mathf.RoundToInt(a);
+            nb.value = (int)a;
             nb.min = 0f;
             nb.max = Mathf.Max(0f, d.maxAmount);
             string rid = d.id;
@@ -218,7 +218,7 @@ namespace MoreFood_KFC
             rr.plusImg = plus.GetComponent<Image>();
             rr.plusTxt = plus.GetComponentInChildren<TextMeshProUGUI>();
             TradeUi.Text("cost", row.transform, 668f, 0f, 56f, 34f,
-                d.unitCost > 0f ? ("−" + (d.unitCost * Mathf.Max(0f, a)).ToString("0")) : "",
+                d.unitCost > 0f ? ("−" + TradeNumber.Money(d.unitCost * Mathf.Max(0f, a)).ToString("0.00")) : "",
                 11f, TradeUi.Neg, true);
         }
 
@@ -271,12 +271,12 @@ namespace MoreFood_KFC
                     continue;
                 }
                 points += Mathf.RoundToInt(a) * rows[i].points;
-                money += a * rows[i].unitCost;
+                money = TradeNumber.Money(money + TradeNumber.Money(TradeNumber.Units(a) * rows[i].unitCost));
             }
             SetSideText("cash", "预期声望   " + (TradeRegistry.Rep + points)
                 + "（" + TradeRegistry.RankName() + "）");
             SetSideText("keep", "本次荣誉点   " + points);
-            SetSideText("spend", "本次星币支出   " + money.ToString("0"));
+            SetSideText("spend", "本次星币支出   " + money.ToString("0.00"));
         }
 
         internal void ConfirmDonate()
@@ -297,21 +297,21 @@ namespace MoreFood_KFC
             float money = 0f;
             for (int i = 0; i < rows.Count; i++)
             {
-                float a = Amount(rows[i].id);
+                float a = TradeNumber.Units(Amount(rows[i].id));
                 if (a <= 0f)
                 {
                     continue;
                 }
-                if (a > rows[i].maxAmount + 0.0001f)
+                if (a > TradeNumber.Units(rows[i].maxAmount))
                 {
-                    Fail(rows[i].id, rows[i].label + " 超出可捐数量（上限 " + Mathf.Round(rows[i].maxAmount) + "）");
+                    Fail(rows[i].id, rows[i].label + " 超出可捐数量（上限 " + TradeNumber.Units(rows[i].maxAmount) + "）");
                     return;
                 }
-                money += a * rows[i].unitCost;
+                money = TradeNumber.Money(money + TradeNumber.Money(TradeNumber.Units(a) * rows[i].unitCost));
             }
             if (TradeRegistry.Currency + 0.0001f < money)
             {
-                Fail(null, "星币不足：本次需 " + money.ToString("0") + "，只有 " + TradeRegistry.Currency.ToString("0"));
+                Fail(null, "星币不足：本次需 " + money.ToString("0.00") + "，只有 " + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00"));
                 return;
             }
 
@@ -321,16 +321,16 @@ namespace MoreFood_KFC
             for (int i = 0; i < rows.Count; i++)
             {
                 DonateRowDef d = rows[i];
-                float a = Amount(d.id);
+                float a = TradeNumber.Units(Amount(d.id));
                 if (a <= 0f)
                 {
                     continue;
                 }
-                int n = Mathf.RoundToInt(a);
+                int n = (int)a;
                 if (d.isFood)
                 {
-                    float taken = RocketInventory.Consume(craft, new Tag(d.itemId), n);
-                    if (taken + 0.0001f < n)
+                    float taken = TradeNumber.Units(RocketInventory.Consume(craft, new Tag(d.itemId), n));
+                    if (taken < n)
                     {
                         MFLog.Warn(LogCat.Trade,"[Space] 捐款：只扣到 " + taken + "/" + n + " 份 " + d.itemId);
                     }
@@ -342,11 +342,11 @@ namespace MoreFood_KFC
                 }
                 else
                 {
-                    float cost = n * d.unitCost;
-                    spent += cost;
+                    float cost = TradeNumber.Money(n * d.unitCost);
+                    spent = TradeNumber.Money(spent + cost);
                     points += n * d.points;
                     TradeRegistry.AddChannelPoints(d.channelKey, n * d.points);
-                    MFLog.Info(LogCat.Trade,"[Space] ★ 捐款（" + d.channelName + "）：" + cost.ToString("0")
+                    MFLog.Info(LogCat.Trade,"[Space] ★ 捐款（" + d.channelName + "）：" + cost.ToString("0.00")
                         + " 星币 → 荣誉点 +" + (n * d.points));
                 }
                 done++;
@@ -360,7 +360,7 @@ namespace MoreFood_KFC
                 TradeRegistry.AddRep(points);
                 TradeUi.Notify("美食猎人协会", "捐款 " + points + " 荣誉点：声望 +" + points);
             }
-            MFLog.Info(LogCat.Trade,"[Space] 捐款完成 " + done + " 项，荣誉点 +" + points + "，支出 " + spent.ToString("0")
+            MFLog.Info(LogCat.Trade,"[Space] 捐款完成 " + done + " 项，荣誉点 +" + points + "，支出 " + spent.ToString("0.00")
                 + "星币，声望 " + TradeRegistry.Rep + "（" + TradeRegistry.RankName() + "）");
             amounts.Clear();
             if (TradeSaveData.Attach() != null)

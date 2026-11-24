@@ -27,8 +27,8 @@ namespace MoreFood_KFC
             List<string> ids = new List<string>(amounts.Keys);
             for (int i = 0; i < ids.Count; i++)
             {
-                float a = amounts[ids[i]];
-                if (Mathf.Abs(a) < 0.0001f)
+                float a = TradeNumber.SignedUnits(amounts[ids[i]]);
+                if (a == 0f)
                 {
                     continue;
                 }
@@ -40,7 +40,7 @@ namespace MoreFood_KFC
                         Fail(ids[i], TradeUtil.DisplayName(ids[i]) + " 不在本站售卖清单");
                         return;
                     }
-                    if (entry.stock + 0.0001f < a)
+                    if (TradeNumber.Units(entry.stock) < a)
                     {
                         Fail(ids[i], TradeUtil.DisplayName(ids[i]) + " 库存不足（" + Mathf.Round(entry.stock) + "）");
                         return;
@@ -55,12 +55,8 @@ namespace MoreFood_KFC
                         Fail(ids[i], TradeUtil.DisplayName(ids[i]) + " 不在本站收购清单");
                         return;
                     }
-                    float have = RocketInventory.Available(craft, new Tag(ids[i]));
-                    if (float.IsNaN(have) || have < 0f)
-                    {
-                        have = 0f;
-                    }
-                    if (have + 0.0001f < want)
+                    float have = TradeNumber.Units(RocketInventory.Available(craft, new Tag(ids[i])));
+                    if (have < want)
                     {
                         Fail(ids[i], TradeUtil.DisplayName(ids[i]) + " 火箭里只有 " + Mathf.Round(have));
                         return;
@@ -72,27 +68,27 @@ namespace MoreFood_KFC
             float gain = 0f;
             for (int i = 0; i < ids.Count; i++)
             {
-                float a = amounts[ids[i]];
-                if (Mathf.Abs(a) < 0.0001f)
+                float a = TradeNumber.SignedUnits(amounts[ids[i]]);
+                if (a == 0f)
                 {
                     continue;
                 }
                 if (a > 0f)
                 {
-                    cost += UnitOf(ids[i], 1f) * a;
+                    cost = TradeNumber.Money(cost + TradeNumber.Money(UnitOf(ids[i], 1f) * a));
                 }
                 else
                 {
-                    gain += UnitOf(ids[i], -1f) * (-a);
+                    gain = TradeNumber.Money(gain + TradeNumber.Money(UnitOf(ids[i], -1f) * (-a)));
                 }
             }
             if (TradeRegistry.Currency + gain + 0.0001f < cost)
             {
                 Fail(null, "星币不足：需要 " + cost.ToString("0.00") + "，只有 "
-                    + TradeRegistry.Currency.ToString("0.00") + "（含卖出 " + gain.ToString("0.00") + "）");
+                    + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00") + "（含卖出 " + TradeNumber.Money(gain).ToString("0.00") + "）");
                 return;
             }
-            if (gain > 0.0001f && state.currency + 0.0001f < gain)
+            if (gain > 0f && TradeNumber.Money(state.currency) + 0.0001f < gain)
             {
                 ShowPartialDialog(gain);
                 return;
@@ -114,11 +110,11 @@ namespace MoreFood_KFC
             TradeUi.HLine("top", dialog.transform, 0f, 0f, 680f, TradeUi.Gold);
             TradeUi.Text("t", dialog.transform, 28f, 22f, 624f, 34f, "本店星币不足", 22f, TradeUi.Gold, false);
             TradeUi.Text("l1", dialog.transform, 28f, 74f, 624f, 28f,
-                "本店剩余星币：" + state.currency.ToString("0.00"), 16f, TradeUi.TextMain, false);
+                "本店剩余星币：" + TradeNumber.Money(state.currency).ToString("0.00"), 16f, TradeUi.TextMain, false);
             TradeUi.Text("l2", dialog.transform, 28f, 106f, 624f, 28f,
-                "本次回收应付：" + gain.ToString("0.00"), 16f, TradeUi.TextMain, false);
+                "本次回收应付：" + TradeNumber.Money(gain).ToString("0.00"), 16f, TradeUi.TextMain, false);
             TradeUi.Text("l3", dialog.transform, 28f, 138f, 624f, 28f,
-                "超出：" + (gain - state.currency).ToString("0.00"), 16f, TradeUi.Neg, false);
+                "超出：" + TradeNumber.Money(gain - state.currency).ToString("0.00"), 16f, TradeUi.Neg, false);
             TradeUi.Text("l4", dialog.transform, 28f, 176f, 624f, 24f,
                 "部分结算：按物品列表顺序逐条结算，直到本店星币耗尽", 14f, TradeUi.TextDim, false);
             TradeUi.MakeButton("部分结算", dialog.transform, 260f, 228f, 180f, 48f,
@@ -218,24 +214,20 @@ namespace MoreFood_KFC
             float totalGain = 0f;
             for (int i = 0; i < ids.Count; i++)
             {
-                float a = amounts[ids[i]];
-                if (a >= -0.0001f)
+                float a = TradeNumber.SignedUnits(amounts[ids[i]]);
+                if (a >= 0f)
                 {
                     continue;
                 }
                 float want = -a;
                 // 回收不设上限：出售下限只钳到当前持有量，防"面板打开后飞船状态变化"
-                float haveNow = RocketInventory.Available(craft, new Tag(ids[i]));
-                if (float.IsNaN(haveNow) || haveNow < 0f)
-                {
-                    haveNow = 0f;
-                }
+                float haveNow = TradeNumber.Units(RocketInventory.Available(craft, new Tag(ids[i])));
                 float cap = haveNow;
                 if (want > cap)
                 {
                     want = cap;
                 }
-                if (!(want > 0.0001f))
+                if (!(want > 0f))
                 {
                     reason = TradeUtil.DisplayName(ids[i]) + " 可卖 0（船上持有 " + Mathf.Floor(haveNow) + "）";
                     break;
@@ -243,8 +235,8 @@ namespace MoreFood_KFC
                 if (allowPartial)
                 {
                     float unit = UnitOf(ids[i], -1f);
-                    float affordable = unit > 0.0001f ? Mathf.Floor(state.currency / unit) : 0f;
-                    if (affordable <= 0.0001f)
+                    float affordable = unit > 0f ? Mathf.Floor(TradeNumber.Money(state.currency) / unit) : 0f;
+                    if (affordable <= 0f)
                     {
                         MFLog.Info(LogCat.Trade,"[Space] 部分结算：本店星币耗尽，余下收购项跳过");
                         break;
@@ -265,8 +257,8 @@ namespace MoreFood_KFC
             }
             for (int i = 0; i < ids.Count; i++)
             {
-                float a = amounts[ids[i]];
-                if (a <= 0.0001f)
+                float a = TradeNumber.SignedUnits(amounts[ids[i]]);
+                if (a <= 0f)
                 {
                     continue;
                 }
@@ -279,7 +271,7 @@ namespace MoreFood_KFC
                 done++;
             }
             MFLog.Info(LogCat.Trade,"[Space] 本次交易完成 " + done + " 项，卖出收入 " + totalGain.ToString("0.00")
-                + "，余额 " + TradeRegistry.Currency.ToString("0.00")
+                + "，余额 " + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00")
                 + "，本店星币 " + state.currency.ToString("0.00"));
             if (done > 0)
             {
