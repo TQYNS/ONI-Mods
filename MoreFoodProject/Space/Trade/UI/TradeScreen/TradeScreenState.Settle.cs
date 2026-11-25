@@ -112,7 +112,7 @@ namespace MoreFood_KFC
                 TradeUi.PanelAlt, TradeUi.Border, TradeUi.TextMain, delegate { CloseDialog(); });
         }
 
-        /// <summary>★ 第二十一轮-1/2：内部结果弹窗（成功/失败/异常统一走这里；不用左侧通知）。
+        // 第二十一轮-1/2：内部结果弹窗（成功/失败/异常统一走这里；不用左侧通知）。
         internal void ShowResultDialog(string title, string message, bool neg)
         {
             CloseDialog();
@@ -136,7 +136,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>★ 第十九轮-4：点击遮罩（窗口外非交互区）→ 优先关内部弹窗，其次关本窗口。</summary>
+        // 第十九轮-4：点击遮罩（窗口外非交互区）→ 优先关内部弹窗，其次关本窗口。
         internal void HandleBlockerClick()
         {
             if (dialog != null)
@@ -154,7 +154,7 @@ namespace MoreFood_KFC
             }
         }
 
-        private bool settling;   // ★ 防连点：一次确认只允许走到结算结束，避免重复结算/卡死
+        private bool settling;   // 防连点：一次确认只允许走到结算结束，避免重复结算/卡死
 
         private void Settle(bool allowPartial)
         {
@@ -163,7 +163,7 @@ namespace MoreFood_KFC
                 return;   // 上一次结算尚未收尾（双击/连点）→ 直接忽略，不再叠一次
             }
             settling = true;
-            // ★ 结算异常统一弹窗（不暴露堆栈）
+            // 结算异常统一弹窗（不暴露堆栈）
             try
             {
                 SettleCore(allowPartial);
@@ -176,7 +176,7 @@ namespace MoreFood_KFC
             finally
             {
                 settling = false;
-                // ★ 关键：无论成功、失败还是中途抛异常，都必须清空本项目数量。
+                // 关键：无论成功、失败还是中途抛异常，都必须清空本项目数量。
                 //   旧实现只在 SettleCore 正常走完时清空，一旦中途异常/中止，残留的数量会在
                 //   下一次点“确认交易”时被重复结算（表现为同一件物品反复成交、库存/收购量错位）。
                 amounts.Clear();
@@ -380,7 +380,7 @@ namespace MoreFood_KFC
                 TradeSaveData.Attach()?.Capture();
             }
             // 刷新统一交给 Settle 的 finally（那时 amounts 已清空），见 交易.md P-51
-            // ★ 交易结果统一走"内部弹窗"（成功/中止都用弹窗，含具体原因）
+            // 交易结果统一走"内部弹窗"（成功/中止都用弹窗，含具体原因）
             if (!string.IsNullOrEmpty(reason))
             {
                 ShowResultDialog("交易未完成", reason, true);
@@ -394,7 +394,7 @@ namespace MoreFood_KFC
 
         private void Fail(string rowId, string message)
         {
-            InvalidateStatusCache();   // ★ 性能修复：Fail 直接改 status，须让下一帧 Update 重新接管
+            InvalidateStatusCache();   // 性能修复：Fail 直接改 status，须让下一帧 Update 重新接管
             if (status != null)
             {
                 status.text = message;
@@ -403,7 +403,7 @@ namespace MoreFood_KFC
             MFLog.Warn(LogCat.Trade,"[Space] 交易被拒绝：" + message);
             pendingShakeId = rowId;
             Rebuild();
-            // ★ 交易失败用"内部弹窗"提示具体原因（不再用左侧通知）
+            // 交易失败用"内部弹窗"提示具体原因（不再用左侧通知）
             ShowResultDialog("交易失败", string.IsNullOrEmpty(message) ? "交易失败" : message, true);
         }
 
@@ -425,7 +425,7 @@ namespace MoreFood_KFC
             pendingShake = null;
             shakeLabel = null;
             rowRefs.Clear();
-            // ★ 整窗重建 ⇒ 行清单与持有量快照一起作废（库存/持有量在两次重建之间可能已变）
+            // 整窗重建 ⇒ 行清单与持有量快照一起作废（库存/持有量在两次重建之间可能已变）
             InvalidateRows();
             if (remote)
             {

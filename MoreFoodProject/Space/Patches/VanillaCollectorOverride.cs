@@ -68,7 +68,7 @@ namespace MoreFood_KFC
                 want = Mathf.Min(want, Mathf.Floor(capacity)); // 容量也取整
                 if (want < 1f)
                 {
-                    // ★ 边界：货舱容不下"一份"（≥1kg）→ 不再继续入库，停止采收，
+                    // 边界：货舱容不下"一份"（≥1kg）→ 不再继续入库，停止采收，
                     __result = true;
                     return false;
                 }
@@ -188,7 +188,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>检查 cell 上是否存在 Mod 自定义小行星带。</summary>
+        // 检查 cell 上是否存在 Mod 自定义小行星带。
         private static bool IsAsteroidBeltCell(RocketModuleHexCellCollector.Instance smi)
         {
             try
@@ -301,7 +301,7 @@ namespace MoreFood_KFC
 
     internal static class CraftHelper
     {
-        /// <summary>从 StatesInstance 获取 Clustercraft（钻头/货舱共用）。</summary>
+        // 从 StatesInstance 获取 Clustercraft（钻头/货舱共用）。
         internal static Clustercraft GetCraft(StateMachine.Instance smi)
         {
             try

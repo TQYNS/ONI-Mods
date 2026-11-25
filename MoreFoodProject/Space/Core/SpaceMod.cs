@@ -9,7 +9,7 @@ namespace MoreFood_KFC
     {
         public static void OnLoad(Harmony harmony)
         {
-            // ★ 防回归（K1）：基类 KMod.UserMod2.OnLoad 自带 harmony.PatchAll(this.assembly)。
+            // 防回归（K1）：基类 KMod.UserMod2.OnLoad 自带 harmony.PatchAll(this.assembly)。
             try
             {
                 SpaceTestRuntime.LogConfig();

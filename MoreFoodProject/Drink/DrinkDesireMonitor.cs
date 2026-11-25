@@ -98,7 +98,7 @@ namespace MoreFood_KFC
         // 每秒驱动：按当前水位决定挂「脱水」buff，并推进饮水欲望状态
         public void Sim1000ms(float dt)
         {
-            // ★ 性能修复：移除每复制人每秒 2× GC.GetTotalMemory 性能探针（正式版无必要）
+            // 性能修复：移除每复制人每秒 2× GC.GetTotalMemory 性能探针（正式版无必要）
             try
             {
                 this.Sim1000ms_Internal(dt);

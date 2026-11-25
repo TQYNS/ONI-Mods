@@ -8,13 +8,13 @@ namespace MoreFood_KFC
 {
     // 战斗存档载体（§17 + K4/K11）
 
-    /// <summary>★★★ 2026-10-06【探针定案】存档数据宿主实体。
+    // 【探针定案】存档数据宿主实体。
     internal sealed class SpaceSaveHost : KMonoBehaviour
     {
         internal const string HostPrefabId = "SpaceSaveHost";
         private static GameObject prefab;
 
-        /// <summary>★★ 载入完成闸：站点实体等"随档对象"在【载入途中】就会调
+        // 载入完成闸：站点实体等"随档对象"在【载入途中】就会调
         internal static bool LoadFinished;
 
         internal static void RegisterPrefab()
@@ -25,7 +25,7 @@ namespace MoreFood_KFC
             }
             GameObject go = EntityTemplates.CreateEntity(HostPrefabId, "SpaceSaveHost", true);
             SaveLoadRoot slr = go.AddOrGet<SaveLoadRoot>();
-            slr.SetRegistered(true);              // ★ 必须显式注册（C-09 的 default 反向：我们的怪要 false，这里要 true）
+            slr.SetRegistered(true);              // 必须显式注册（C-09 的 default 反向：我们的怪要 false，这里要 true）
             go.AddOrGet<SpaceSaveHost>();
             go.AddOrGet<TradeSaveData>();
             go.AddOrGet<CombatSaveData>();
@@ -35,7 +35,7 @@ namespace MoreFood_KFC
             MFLog.Info(LogCat.Save,"[Space] 注册 prefab " + HostPrefabId + "（存档宿主，随档保存）");
         }
 
-        /// <summary>数据量打分：多个宿主时挑"正主"（空壳=0）。</summary>
+        // 数据量打分：多个宿主时挑"正主"（空壳=0）。
         private int DataScore()
         {
             int n = 0;
@@ -56,7 +56,7 @@ namespace MoreFood_KFC
             return n;
         }
 
-        /// <summary>场景里是否已有存档宿主实体（排除 prefab 资产）。
+        // 场景里是否已有存档宿主实体（排除 prefab 资产）。
         internal static bool HasSceneHost()
         {
             SpaceSaveHost[] all = Resources.FindObjectsOfTypeAll<SpaceSaveHost>();
@@ -138,7 +138,7 @@ namespace MoreFood_KFC
         }
     }
 
-    // ★★ 真根因（反编译实证）：KSerialization.SerializationTemplate 对没有
+    // 真根因（反编译实证）：KSerialization.SerializationTemplate 对没有
     internal sealed class CombatSaveData : KMonoBehaviour, ISaveLoadable
     {
         // 怪物（K4：我方权威；原版持久化已 SetRegistered(false) 关掉）
@@ -184,7 +184,7 @@ namespace MoreFood_KFC
         public List<float> monsterAttackUntil = new List<float>();
         [Serialize]
         public List<float> monsterDeaggroUntil = new List<float>();
-        // ★ 离场闹钟 + 逃跑窗口（K18）：不带存档就会读档后闹钟断裂
+        // 离场闹钟 + 逃跑窗口（K18）：不带存档就会读档后闹钟断裂
         [Serialize]
         public List<float> monsterLeaveAt = new List<float>();
         [Serialize]
@@ -195,7 +195,7 @@ namespace MoreFood_KFC
         public float spawnerMainNextAt;
         [Serialize]
         public float spawnerSubNextAt;
-        // ★ 暂停态（名额满 → 闹钟停表；空位由通知恢复）：不带存档就会读档后闹钟断裂
+        // 暂停态（名额满 → 闹钟停表；空位由通知恢复）：不带存档就会读档后闹钟断裂
         [Serialize]
         public bool spawnerMainPaused;
         [Serialize]
@@ -223,12 +223,12 @@ namespace MoreFood_KFC
         [Serialize]
         public List<int> lootFieldCounts = new List<int>();
 
-        private static GameObject host;   // ★ 当前宿主（= SpaceSaveHost 实体）
-        // ★★ 实测"写进 Clone 的载体、存档里却没有数据" ⇒ 被序列化的对象
+        private static GameObject host;   // 当前宿主（= SpaceSaveHost 实体）
+        // 实测"写进 Clone 的载体、存档里却没有数据" ⇒ 被序列化的对象
         internal static readonly List<CombatSaveData> AllCarriers = new List<CombatSaveData>();
         private static bool mirroring;
 
-        /// <summary>★ 2026-10-06：同 TradeSaveData.AttachTo —— 存档组件必须挂在
+        // 同 TradeSaveData.AttachTo —— 存档组件必须挂在
         internal static CombatSaveData Attach()
         {
             SpaceSaveHost hostEntity = SpaceSaveHost.FindOrCreate();
@@ -247,7 +247,7 @@ namespace MoreFood_KFC
             return mine;
         }
 
-        // ★★★ 全链路打点：KSerialization 写完本组件字段后 / 读完本组件字段后回调这里。
+        // 全链路打点：KSerialization 写完本组件字段后 / 读完本组件字段后回调这里。
         [OnSerialized]
         public void TraceOnSerialized()
         {
@@ -280,7 +280,7 @@ namespace MoreFood_KFC
             MFLog.Info(LogCat.Save,"[Space] 战斗存档捕获：怪物 " + combatMonsterIds.Count + " 只，小行星带 "
                 + lootFieldCellQ.Count + " 个（载体实例 " + GetInstanceID() + "，宿主="
                 + (gameObject != null ? gameObject.name + "#" + gameObject.GetInstanceID() : "(null)") + "）");
-            // ★ 镜像：把同一份数据写进所有挂过载体的实例（谁被序列化都不落空）
+            // 镜像：把同一份数据写进所有挂过载体的实例（谁被序列化都不落空）
             if (!mirroring)
             {
                 mirroring = true;

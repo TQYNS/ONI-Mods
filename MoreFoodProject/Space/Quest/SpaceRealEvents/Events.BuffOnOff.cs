@@ -176,7 +176,7 @@ namespace MoreFood_KFC
                 MFLog.Verbose(LogCat.Event,"[Space] ★ 重力异常：全体复制人运动 " + value.ToString("+0;-0")
                     + "（属性 " + attrId + "），命中 " + hit + " 人，持续 " + Mathf.Round(seconds)
                     + " 秒（" + (seconds / 600f).ToString("0.0") + " 周期）；期间新加入的复制人将自动补挂");
-                // ★ 只给数值，句式由 yaml tooltip 决定
+                // 只给数值，句式由 yaml tooltip 决定
                 inst.SetNoticeArg("delta", value.ToString("+0;-0"));
                 inst.SetNoticeArg("total_cycles", Mathf.Max(0f, seconds / 600f).ToString("0.0"));
             }
@@ -287,7 +287,7 @@ namespace MoreFood_KFC
                 MFLog.Verbose(LogCat.Event,"[Space] ★ 丰饶季：植物生长速度 +" + Mathf.Round(pct * 100f) + "%（属性 " + attrId
                     + " 乘算），命中 " + hit + "/" + plants.Count + " 株，持续 " + Mathf.Round(seconds)
                     + " 秒（" + (seconds / 600f).ToString("0.0") + " 周期）");
-                // ★ 只给数值，句式由 yaml tooltip 决定
+                // 只给数值，句式由 yaml tooltip 决定
                 inst.SetNoticeArg("pct", "+" + Mathf.Round(pct * 100f) + "%");
                 inst.SetNoticeArg("total_cycles", Mathf.Max(0f, seconds / 600f).ToString("0.0"));
             }
@@ -324,7 +324,7 @@ namespace MoreFood_KFC
                 MFLog.Verbose(LogCat.Event,"[Space] ★ 孢子云：产病菌作物 " + emitters + " 株喷发量 ×2（毛刺花/同伴芽/孢子兰，"
                     + "DiseaseDropper 配置）；病菌半衰期改为倍增期（"
                     + pollen.id + " / " + zombie.id + " 全元素）；持续 " + Mathf.Round(seconds) + " 秒");
-                // ★ 只给数值，句式由 yaml tooltip 决定
+                // 只给数值，句式由 yaml tooltip 决定
                 inst.SetNoticeArg("total_cycles", Mathf.Max(0f, seconds / 600f).ToString("0.0"));
             }
             catch (Exception e)
@@ -405,7 +405,7 @@ namespace MoreFood_KFC
                 SpaceRealEventRuntime.MagneticStormMul = 0.7f;
                 MFLog.Verbose(LogCat.Event,"[Space] ★ 全球磁暴：太阳能发电 -30%（WorldContainer.currentSunlightIntensity ×0.7，"
                     + "SolarPanel 读 Grid.LightIntensity），持续 " + Mathf.Round(seconds) + " 秒");
-                // ★ 只给数值，句式由 yaml tooltip 决定
+                // 只给数值，句式由 yaml tooltip 决定
                 inst.SetNoticeArg("total_cycles", Mathf.Max(0f, seconds / 600f).ToString("0.0"));
             }
             catch (Exception e)
@@ -509,7 +509,7 @@ namespace MoreFood_KFC
                 MFLog.Verbose(LogCat.Event,"[Space] ★ 旱季：带液体需求的作物耗液 +" + Mathf.Round(pct * 100f) + "%（属性 "
                     + attrId + " 加算，命中 " + hit + "/" + plants.Count + " 株），持续 "
                     + Mathf.Round(seconds) + " 秒；事件期间新种下的作物由 OnPlantPlanted 自动补挂");
-                // ★ 只给数值，句式由 yaml tooltip 决定
+                // 只给数值，句式由 yaml tooltip 决定
                 inst.SetNoticeArg("pct", "+" + Mathf.Round(pct * 100f) + "%");
                 inst.SetNoticeArg("total_cycles", Mathf.Max(0f, seconds / 600f).ToString("0.0"));
                 inst.SetNoticeArg("count", hit.ToString());
@@ -544,7 +544,7 @@ namespace MoreFood_KFC
                     + Mathf.Round((mul - 1f) * 100f) + "%，WorldContainer.currentCosmicIntensity），"
                     + "植物变异概率 ×3（SeedProducer.RollForMutation 三连掷），持续 "
                     + Mathf.Round(seconds) + " 秒");
-                // ★ 只给数值，句式由 yaml tooltip 决定
+                // 只给数值，句式由 yaml tooltip 决定
                 inst.SetNoticeArg("pct", "+" + Mathf.Round((mul - 1f) * 100f) + "%");
                 inst.SetNoticeArg("total_cycles", Mathf.Max(0f, seconds / 600f).ToString("0.0"));
             }

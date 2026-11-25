@@ -84,7 +84,7 @@ namespace MoreFood_KFC
 
         public static void Clear() { _forbidden.Clear(); }
 
-        // ★ 真实管制：读写【我们自己的】DrinkRestrictionTracker
+        // 真实管制：读写【我们自己的】DrinkRestrictionTracker
         public static bool IsUsableBy(GameObject duplicant, string drinkTag)
         {
             try
@@ -97,7 +97,7 @@ namespace MoreFood_KFC
             catch { return true; }
         }
 
-        // ★ 被管制而跳过的日志（每个「小人 × 饮品」只打一次，防刷屏）
+        // 被管制而跳过的日志（每个「小人 × 饮品」只打一次，防刷屏）
         private static readonly HashSet<string> _skipLogged = new HashSet<string>();
 
         // 某候选因管制被跳过时调用（节流：同人同饮品只报一次）。
@@ -118,7 +118,7 @@ namespace MoreFood_KFC
             catch { /* expected: 禁饮提示打印失败，不影响饮用目标挑选 */ }
         }
 
-        // ★ 按优先级从候选里挑一个饮品 tag。
+        // 按优先级从候选里挑一个饮品 tag。
         public static Tag PickByPriority(IList<Tag> candidates, GameObject duplicant = null)
         {
             try

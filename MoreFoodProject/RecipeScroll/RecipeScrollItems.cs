@@ -45,7 +45,7 @@ namespace MoreFood_KFC
             }
             // 散落物一律走 IngredientConfigs.CreateStandard 的标准口径（Front +
             // RECTANGLE 0.8×0.4 + EntitySplitter），与 37 个原料 / 模块 / 弹药完全一致。
-            // ★ 禁止回退到 CIRCLE 0.35：《战斗.md》§3.7 已实证 CIRCLE 分支把半径
+            // 禁止回退到 CIRCLE 0.35：《战斗.md》§3.7 已实证 CIRCLE 分支把半径
             //   当成支撑高度，落地求解会把 transform 抬高 0.36 格，贴图随之悬空。
             // 沙盒实体列表是【过滤器驱动】的，Tag 仍由 ScrollTags() 同源提供。
             GameObject go = IngredientConfigs.CreateStandard(
@@ -69,7 +69,7 @@ namespace MoreFood_KFC
                 screen.AddDefaultOK(true);
             });
 
-            // ★ 工厂化收尾：注册即打标 —— 追加卷轴专属 Tag（幂等，与 additionalTags 同源）。
+            // 工厂化收尾：注册即打标 —— 追加卷轴专属 Tag（幂等，与 additionalTags 同源）。
             RecipeScrollRegistry.EnsureScrollTag(go);
 
             return go;
@@ -82,7 +82,7 @@ namespace MoreFood_KFC
         }
     }
 
-    // 卷轴正文 —— ★ 用户口径：只要"已解锁 + 去哪儿看"，不写配方怎么做。
+    // 卷轴正文 —— 用户口径：只要"已解锁 + 去哪儿看"，不写配方怎么做。
     internal static class RecipeScrollText
     {
         // foodId：food id
@@ -92,7 +92,7 @@ namespace MoreFood_KFC
         }
 
         // 「xx 配方已解锁 / 请在 xx 的配方列表查看」——纯文本。
-        // ★ alreadyRead 必须是「本次阅读之前」的快照，由调用方在 MarkRead 之前取好。
+        // alreadyRead 必须是「本次阅读之前」的快照，由调用方在 MarkRead 之前取好。
         //   不能在这里查 IsReadFood：查阅补丁先写已读再取正文，就地查会永远命中
         //   ALREADY_FMT，导致首次阅读也显示「之前已经解锁过了」。
         internal static string UnlockText(string foodId, bool alreadyRead)

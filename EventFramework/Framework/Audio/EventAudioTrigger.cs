@@ -62,7 +62,7 @@ namespace EventFramework
                     int hash;
                     if (_signalHashes.TryGetValue(kv.Key, out hash))
                     {
-                        var game = _subscribedGame != null ? _subscribedGame : Game.Instance;   // ★ 用绑定时的实例退订
+                        var game = _subscribedGame != null ? _subscribedGame : Game.Instance;   // 用绑定时的实例退订
                         if (game != null) game.Unsubscribe(hash, kv.Value);
                     }
                     else
@@ -85,7 +85,7 @@ namespace EventFramework
             _bySignal.Clear();
             _byFlag.Clear();
 
-            // ★ 退订开关变化：否则换档后会重复订阅（旧回调仍挂在静态事件上）
+            // 退订开关变化：否则换档后会重复订阅（旧回调仍挂在静态事件上）
             if (_flagHooked)
             {
                 AudioSwitch.OnChanged -= OnFlagChanged;

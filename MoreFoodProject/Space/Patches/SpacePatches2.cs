@@ -34,18 +34,18 @@ namespace MoreFood_KFC
         {
             try
             {
-                // ★ 先复位恢复闸，再跑 Init：Init 里也会尝试补跑恢复，
+                // 先复位恢复闸，再跑 Init：Init 里也会尝试补跑恢复，
                 SpaceRestoreGate.Pending = true;
                 SpaceRestoreGate.Deserialized = false;
                 SpaceSaveHost.LoadFinished = false;   // 新会话重新等心跳第一拍
                 ImpactorGate.ResetSession();          // 闸口镜像不跨会话（随档值由 EventSaveData 恢复）
                 TradeRegistry.Init();
                 SpaceTestRuntime.RegisterPrefabs();
-                // ★【探针定案】：不再挂 SaveGame（它不在存档对象列表里，写了也不落盘）。
+                // 【探针定案】：不再挂 SaveGame（它不在存档对象列表里，写了也不落盘）。
                 SpaceSaveHost.RegisterPrefab();
                 SpaceAchievements.Register();
                 CombatRuntime.inited = false;      // 让战斗运行时按新会话重建（刷怪器/prefab）
-                // ★ 改走 BeginSession —— 以前只把 inited 置 false，
+                // 改走 BeginSession —— 以前只把 inited 置 false，
                 TradeRegistry.BeginSession();
                 MFLog.Verbose(LogCat.Space,"[Space] 存档宿主 prefab 已注册（实体承载；载体在 Attach/读档时挂到宿主上）");
                 if (__instance != null && __instance.gameObject.GetComponent<SpaceHost>() == null)
@@ -102,19 +102,19 @@ namespace MoreFood_KFC
         internal static bool Pending;
         internal static bool Deserialized;
 
-        /// <summary>★★ 2026-10-06【真根因】读档恢复必须在【星图环数扩到 27 之后】跑。
+        // 【真根因】读档恢复必须在【星图环数扩到 27 之后】跑。
         internal static void RunDeferredRestores()
         {
             if (!Pending)
             {
                 return;
             }
-            // ★★【真根因·第二次踩同一个坑】：以前先消费闸再判 Deserialized。
+            // 【真根因·第二次踩同一个坑】：以前先消费闸再判 Deserialized。
             if (!Deserialized)
             {
                 return;
             }
-            // ★ 宿主实体还没载入就别消费闸：否则会建空壳/读到 0，之后再也补不回来。
+            // 宿主实体还没载入就别消费闸：否则会建空壳/读到 0，之后再也补不回来。
             if (!SpaceSaveHost.HasSceneHost() && !SpaceSaveHost.LoadFinished)
             {
                 return;
@@ -241,7 +241,7 @@ namespace MoreFood_KFC
                 CombatDb.Load();
                 CombatDb.OverlayMods();
                 CombatDb.Build();
-                // ★ 问题15：Monsters 就绪后才生成百科（CodexCacheInit 早于此处，那时 Monsters 还空）
+                // 问题15：Monsters 就绪后才生成百科（CodexCacheInit 早于此处，那时 Monsters 还空）
                 CodexFactory.Reset();
                 CodexFactory.EnsureRegistered();
             }
@@ -267,7 +267,7 @@ namespace MoreFood_KFC
             {
                 MFLog.Exc(LogCat.Space, e, "[Space] 装载后初始化补跑异常");
             }
-            // ★ 读档恢复不在这里做 —— 此刻星图还只有 12 环，我们的格子全被判"无效"。
+            // 读档恢复不在这里做 —— 此刻星图还只有 12 环，我们的格子全被判"无效"。
         }
     }
 
@@ -561,7 +561,7 @@ namespace MoreFood_KFC
     {
         private static void Postfix(Clustercraft __instance)
         {
-            // ★ 着陆 → 立刻清掉星图上残留的飞行路线/箭头（mapPath 只在状态变化时才会被重绘）
+            // 着陆 → 立刻清掉星图上残留的飞行路线/箭头（mapPath 只在状态变化时才会被重绘）
             try
             {
                 if (__instance != null && __instance.Status == Clustercraft.CraftStatus.Grounded)
@@ -600,7 +600,7 @@ namespace MoreFood_KFC
                 {
                     return;
                 }
-                // ★ 设计变更：这里不再刷新按钮排。交易/加油的可用态只在「显示前」现算 +
+                // 设计变更：这里不再刷新按钮排。交易/加油的可用态只在「显示前」现算 +
                 //   「点击时」校验，避免依赖事件导致漏刷新/错误点亮。
             }
             catch (Exception e)
@@ -639,7 +639,7 @@ namespace MoreFood_KFC
         {
             try
             {
-                // ★ 性能：仅在装载阶段（active）写 Debug.Log。
+                // 性能：仅在装载阶段（active）写 Debug.Log。
                 if (!active)
                 {
                     return;

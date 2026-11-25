@@ -14,11 +14,11 @@ namespace MoreFood_KFC
         internal StationDef def;
         internal TradeStationState state;
         internal bool remote;
-        internal bool donate;      // ★ 捐款窗模式（只有美食猎人协会）
+        internal bool donate;      // 捐款窗模式（只有美食猎人协会）
         internal int page;
         internal string remoteTag;          // 远程视图当前选中的分类 Tag
         internal string blockReason;
-        // ★ 交易列表筛选标签：仅临时改变显示，窗口每次重建（重新打开）都是新实例 ⇒ 自动复位为均不勾选
+        // 交易列表筛选标签：仅临时改变显示，窗口每次重建（重新打开）都是新实例 ⇒ 自动复位为均不勾选
         internal bool filterSellOnly;
         internal bool filterBuyOnly;
         internal readonly Dictionary<string, float> amounts = new Dictionary<string, float>();
@@ -41,7 +41,7 @@ namespace MoreFood_KFC
         private TextMeshProUGUI pageLabel;
         private int pageCount = 1;
 
-        // ★ 性能修复：运行时文本去抖 —— 仅在数值变化时重写 status/wallet（避免每帧拼接 + ToString 分配）
+        // 性能修复：运行时文本去抖 —— 仅在数值变化时重写 status/wallet（避免每帧拼接 + ToString 分配）
         private TradeStationState lastStatusState;
         private int lastStatusLeftSec = int.MinValue;
         private int lastStatusCurrency = int.MinValue;
@@ -74,7 +74,7 @@ namespace MoreFood_KFC
 
         internal Clustercraft Craft()
         {
-            // ★ Bug4：同格或相邻一格都算"本站"（与火箭侧、交易站按钮判定统一）。
+            // Bug4：同格或相邻一格都算"本站"（与火箭侧、交易站按钮判定统一）。
             return station != null
                 ? TradeUtil.CraftNear(station.Location)
                 : TradeUtil.FindCraftAt(AxialI.ZERO);
@@ -254,7 +254,7 @@ namespace MoreFood_KFC
             float cost, gain;
             ComputeTotals(out cost, out gain);
             SetSideText("shop", "本店星币   " + (state != null ? TradeNumber.Money(state.currency).ToString("0.00") : "—"));
-            // ★ 原来这里是"我的星币 + 净变化 + 预期结余"三行，实测溢出面板 ⇒
+            // 原来这里是"我的星币 + 净变化 + 预期结余"三行，实测溢出面板 ⇒
             // 与结算同式：结余 = 余额 −（买入总额 − 卖出总额），避免两条路径各自截断出 0.01 的差
             float net = TradeNumber.Money(cost - gain);
             float keep = TradeNumber.Money(TradeRegistry.Currency - net);
@@ -328,7 +328,7 @@ namespace MoreFood_KFC
                 int currency = Mathf.FloorToInt(TradeNumber.Money(state.currency) * 100f + 0.5f);   // 对齐 ToString("0") 的显示粒度
                 int rep = (int)TradeRegistry.Rep;
                 // TPI 对所有站点的卖价生效，声望信息始终显示
-                // ★ 仅当决定文本的数值/引用变化时才重写（原实现每帧重写）
+                // 仅当决定文本的数值/引用变化时才重写（原实现每帧重写）
                 if (state != lastStatusState || leftSec != lastStatusLeftSec || currency != lastStatusCurrency
                     || rep != lastStatusRep)
                 {
@@ -359,7 +359,7 @@ namespace MoreFood_KFC
             catch (System.Exception e) { MFLog.HotFail("update:TradeScreen", e); }
         }
 
-        // ★ 性能修复：外部直接改过 status（如 Fail 的提示）后调用，强制下一帧重写
+        // 性能修复：外部直接改过 status（如 Fail 的提示）后调用，强制下一帧重写
         private void InvalidateStatusCache()
         {
             lastStatusState = null;
@@ -389,7 +389,7 @@ namespace MoreFood_KFC
             return amounts.TryGetValue(id, out v) ? v : 0f;
         }
 
-        /// <summary>本轮显示用的「火箭持有量」快照（prefabId → 份数）：整窗重建时失效，窗口内只扫一遍。</summary>
+        // 本轮显示用的「火箭持有量」快照（prefabId → 份数）：整窗重建时失效，窗口内只扫一遍。
         private Dictionary<string, float> HoldSnap()
         {
             if (holdSnap == null)
@@ -402,14 +402,14 @@ namespace MoreFood_KFC
             return holdSnap;
         }
 
-        /// <summary>该物品在火箭上可交易的份数（与结算校验同源：货舱 + 内舱散落 + 单件物品运输仓）。</summary>
+        // 该物品在火箭上可交易的份数（与结算校验同源：货舱 + 内舱散落 + 单件物品运输仓）。
         internal float CarriedOf(string id)
         {
             float v;
             return TradeNumber.Units(HoldSnap().TryGetValue(id, out v) ? v : 0f);
         }
 
-        /// <summary>作废行清单与持有量快照（库存/持有量/筛选变化时调用）。</summary>
+        // 作废行清单与持有量快照（库存/持有量/筛选变化时调用）。
         private void InvalidateRows()
         {
             rowCache = null;
@@ -425,7 +425,7 @@ namespace MoreFood_KFC
 
         internal void Confirm()
         {
-            // ★ 任何原因导致的失败都弹"具体原因"；发生异常则弹"交易异常，请查看日志"（不暴露堆栈）
+            // 任何原因导致的失败都弹"具体原因"；发生异常则弹"交易异常，请查看日志"（不暴露堆栈）
             try
             {
                 ConfirmCore();

@@ -7,7 +7,7 @@ namespace MoreFood_KFC
 {
     public static class SpaceNameHelper
     {
-        /// <summary>prefabId → po key（命名空间.树路径）映射；未登记返回 null。</summary>
+        // prefabId → po key（命名空间.树路径）映射；未登记返回 null。
         internal static string GetDisplayName(string prefabId)
         {
             string key;
@@ -48,7 +48,7 @@ namespace MoreFood_KFC
         }
     }
 
-    /// <summary>选中信息卡 / 头顶显示名</summary>
+    // 选中信息卡 / 头顶显示名
     [HarmonyPatch(typeof(KSelectable), "GetName")]
     public static class SpaceDisplayNamePatch
     {
@@ -65,7 +65,7 @@ namespace MoreFood_KFC
         }
     }
 
-    /// <summary>标签 / 提示（TagManager.ProperNames → 回退 tag.Name）</summary>
+    // 标签 / 提示（TagManager.ProperNames → 回退 tag.Name）
     [HarmonyPatch(typeof(TagManager), "GetProperName")]
     public static class SpaceProperNamePatch
     {

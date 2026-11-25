@@ -179,7 +179,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>原版就可达的关键格（裂口/我们的带）可作为跃迁落点。</summary>
+        // 原版就可达的关键格（裂口/我们的带）可作为跃迁落点。
         private static bool IsWarpFriendlyCell(List<ClusterGridEntity> contents)
         {
             bool friendly = false;
@@ -270,7 +270,7 @@ namespace MoreFood_KFC
             CombatUi.RefreshBar();
         }
 
-        /// <summary>裂口进出用：直接瞬移到配对格，不播飞行动画。</summary>
+        // 裂口进出用：直接瞬移到配对格，不播飞行动画。
         internal static void InstantJump(Clustercraft craft, AxialI to)
         {
             if (craft == null || craft.gameObject == null)
@@ -287,7 +287,7 @@ namespace MoreFood_KFC
                 + " → " + SpaceCfg.Pos(to));
         }
 
-        /// <summary>跃迁/瞬移共用：落点 + 停飞行 SM + 强制视觉定位 + 两端爆闪。</summary>
+        // 跃迁/瞬移共用：落点 + 停飞行 SM + 强制视觉定位 + 两端爆闪。
         private static void ApplyInstantRelocate(Clustercraft craft, AxialI from, AxialI to)
         {
             try

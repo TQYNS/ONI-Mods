@@ -35,10 +35,10 @@ namespace EventFramework
         // 选择屏上的一句话风格说明（空 = 按参数自动拼）
         public string Description = null;
 
-        // ★ 开关：false 的叙事者不会被 Director 激活
+        // 开关：false 的叙事者不会被 Director 激活
         public bool Enabled = true;
 
-        // ★ 默认叙事者：Director 无参调取时取它（多个时取第一个 Enabled 的）
+        // 默认叙事者：Director 无参调取时取它（多个时取第一个 Enabled 的）
         public bool IsDefault = false;
 
         // ① 调取方式
@@ -47,7 +47,7 @@ namespace EventFramework
         // multi 模式每次连抽几个
         public int MultiPickCount = 2;
 
-        // ★ 本叙事者的默认事件池（主闹钟只抽这个池；槽可以指定别的池）
+        // 本叙事者的默认事件池（主闹钟只抽这个池；槽可以指定别的池）
         public string Pool = "normal";
 
         private readonly List<EventSchedulerSlot> _slots = new List<EventSchedulerSlot>();
@@ -159,7 +159,7 @@ namespace EventFramework
         private NarratorState _lastState;
         private float _lastIMean;
 
-        // ★抽取追踪：每次抽取打一整块日志（谁参选 / 谁被拒 / 为什么 / 抽没抽到）。
+        // 抽取追踪：每次抽取打一整块日志（谁参选 / 谁被拒 / 为什么 / 抽没抽到）。
 // 改动代码即可开关（本框架没有 yaml 开关，见规划 §17.10）
         public static bool TracePicks = true;
 
@@ -602,7 +602,7 @@ namespace EventFramework
 
         private static string FailReasonRest(EventDef def)
         {
-            // ★ 开局时间门槛（M3）：yaml 的 time.start（秒）。未写 time 段的事件
+            // 开局时间门槛（M3）：yaml 的 time.start（秒）。未写 time 段的事件
             //   取 EventTimeBlock 的默认 600s（= 1 周期），这是既有设计，不是疏漏。
             if (def.time != null && def.time.start > 0f)
             {
@@ -638,7 +638,7 @@ namespace EventFramework
 
             float now = EventSystem.GetGameTime();
 
-            // ★ 冷却优先：事件成功执行时已 roll 一次 [min_interval, max_interval] 并固定，
+            // 冷却优先：事件成功执行时已 roll 一次 [min_interval, max_interval] 并固定，
             //   冷却期间不重掷、不重抽；到点后本次冷却结束。
             float until;
             if (EventSystem.TryGetCooldown(def.id, out until))

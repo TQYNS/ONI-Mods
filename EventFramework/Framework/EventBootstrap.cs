@@ -22,7 +22,7 @@ namespace EventFramework
                 Debug.Log("[MoreFood/Event] ── 阶段① 注册处理器（Db.Initialize 之后）");
                 EventHandlers.RegisterAll();
                 EventNotifyStyles.EnsureBuiltins();
-                EventCustomNotifyRegistry.EnsureBuiltins();   // ★ 修复：状态行外观（含灾星倒计时）也提前注册
+                EventCustomNotifyRegistry.EnsureBuiltins();   // 修复：状态行外观（含灾星倒计时）也提前注册
             }
             catch (Exception e)
             {
@@ -73,7 +73,7 @@ namespace EventFramework
                 EventNarratorDirector.Deactivate();
                 EventNotifier.Clear();
                 EventPanel.CloseCurrent("ResetAll");
-                EventPanel.ClearQueue();      // ★v3.2
+                EventPanel.ClearQueue();      // v3.2
                 EventSystem.Reset();
 
                 _handlersDone = false;

@@ -50,7 +50,7 @@ namespace MoreFood_KFC
                 }
                 y += advance;
             }
-            // ★ 问题8：交战时模块下方显示红色"交战锁定"提示文本
+            // 问题8：交战时模块下方显示红色"交战锁定"提示文本
             if (st != null && st.inCombat)
             {
                 TradeUi.Text("combatlock", rightRoot.transform, 0f, y, 860f, 22f,

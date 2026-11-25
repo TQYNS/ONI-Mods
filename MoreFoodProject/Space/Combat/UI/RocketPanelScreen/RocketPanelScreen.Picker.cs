@@ -58,7 +58,7 @@ namespace MoreFood_KFC
             bool has = lo != null && lo.virtualStorage.Contains(def.id);
             if (!has && !string.IsNullOrEmpty(def.prefabId))
             {
-                // ★ 模块实物可能在货舱/内舱地面/模块自带 Storage —— 按"全仓"统计
+                // 模块实物可能在货舱/内舱地面/模块自带 Storage —— 按"全仓"统计
                 has = RocketInventory.AvailableAnywhere(selected, new Tag(def.prefabId)) >= 0.9f;
             }
             bool can = canEquip && has;
@@ -129,7 +129,7 @@ namespace MoreFood_KFC
                 y += 30f;
                 return;
             }
-            // ★ 交战时不再隐藏弹药区（问题4）：改为锁定态（置灰+禁点+装弹进度仍显示），脱战自动复原。
+            // 交战时不再隐藏弹药区（问题4）：改为锁定态（置灰+禁点+装弹进度仍显示），脱战自动复原。
             TradeUi.Text("ammoh", rightRoot.transform, 0f, y, 860f, 22f,
                 locked ? "发射药（交战中锁定）" : "发射药", 14f, TradeUi.Gold, false);
             y += 24f;
@@ -163,7 +163,7 @@ namespace MoreFood_KFC
                 float pRatio = AmmoKgOf(dict, primary) / Mathf.Max(1f, maxKg);
                 float bRatio = AmmoKgOf(dict, backup) / Mathf.Max(1f, maxKg);
                 AmmoBar(pb, 220f, pRatio, AmmoTierColor(pRatio));
-                ReloadBar(pb, 220f, captured, reloadRatio);   // ★ 第十八轮-7：局部刷新灰条
+                ReloadBar(pb, 220f, captured, reloadRatio);   // 第十八轮-7：局部刷新灰条
                 System.Action bClick = locked ? (System.Action)null : delegate
                 {
                     ammoPickerOpen = true;
@@ -176,12 +176,12 @@ namespace MoreFood_KFC
                     locked ? TradeUi.Panel : TradeUi.PanelAlt, TradeUi.Line,
                     locked ? TradeUi.TextDim : TradeUi.TextDim, bClick);
                 AmmoBar(bb, 220f, bRatio, AmmoTierColor(bRatio));
-                ReloadBar(bb, 220f, captured, reloadRatio);   // ★ 第十八轮-7：局部刷新灰条
+                ReloadBar(bb, 220f, captured, reloadRatio);   // 第十八轮-7：局部刷新灰条
                 y += 34f;
             }
         }
 
-        /// <summary>★ 第十八轮-7：装弹灰条改为"局部可刷新" —— 战斗节拍只更新这条灰色遮罩的宽度，
+        // 第十八轮-7：装弹灰条改为"局部可刷新" —— 战斗节拍只更新这条灰色遮罩的宽度，
         private void ReloadBar(Button btn, float w, int weaponIndex, float ratio)
         {
             if (btn == null)
@@ -513,7 +513,7 @@ namespace MoreFood_KFC
             return null;
         }
 
-        /// <summary>★ 问题14：等级排序权重（S 最高）。</summary>
+        // 问题14：等级排序权重（S 最高）。
         private static int TierRank(string tier)
         {
             switch (string.IsNullOrEmpty(tier) ? "" : tier.ToUpperInvariant())
@@ -529,7 +529,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>★ 问题14：等级颜色（S红/A橙/B紫/C蓝/D绿/E·F白）。</summary>
+        // 问题14：等级颜色（S红/A橙/B紫/C蓝/D绿/E·F白）。
         private static Color TierColor(string tier)
         {
             switch (string.IsNullOrEmpty(tier) ? "" : tier.ToUpperInvariant())

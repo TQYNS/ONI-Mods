@@ -34,12 +34,12 @@ namespace EventFramework
         // 本实例是否带持续时间
         public bool  hasDuration = false;
 
-        // ---- ★ 驻留（等玩家选择）——与 duration 完全解耦 ----
+        // ---- 驻留（等玩家选择）——与 duration 完全解耦 ----
         public float residentRemaining = 0f;
         // 本实例是否有驻留计时
         public bool  hasResident = false;
 
-        // ---- ★ 到期时刻（运行时，不存盘）----
+        // ---- 到期时刻（运行时，不存盘）----
         [NonSerialized] public float triggerEffectEndsAt = 0f;   // 根级效果槽
         [NonSerialized] public float choiceEffectEndsAt  = 0f;   // 决策效果槽
         [NonSerialized] public float residentEndsAt      = 0f;   // 选择轴（resident）
@@ -53,16 +53,16 @@ namespace EventFramework
             _noticeArgs[key] = value;
         }
 
-        // ★ 分支变体键（对应 yaml notification.variants 的键）；null/空 = 走默认模板。
+        // 分支变体键（对应 yaml notification.variants 的键）；null/空 = 走默认模板。
         //   随实例存盘：读档重推状态行时仍能取到正确变体。
         public string notifyVariant = null;
         public void SetNoticeVariant(string key) { notifyVariant = key; }
 
-        // ★ 冻结文案（随实例存盘）：创建时从 def.variants 抽一组，之后面板/通知/历史一律读它。
+        // 冻结文案（随实例存盘）：创建时从 def.variants 抽一组，之后面板/通知/历史一律读它。
         //   空 = 该事件没配 variants，回落 def 根级 name/description。
         public string shownName = null;
         public string shownDescription = null;
-        // ★ 狩猎规格（不存盘）：创建时从 def.hunt 取；读档同样从 def 取回（规格本身不随机）
+        // 狩猎规格（不存盘）：创建时从 def.hunt 取；读档同样从 def 取回（规格本身不随机）
         [NonSerialized] public EventFramework.Distribution.Contracts.HuntSpec hunt = null;
 
         // 显示名：冻结值优先，其次事件模板名
@@ -205,7 +205,7 @@ namespace EventFramework
                 inst.triggerEffectEndsAt = nowSeconds + inst.remainingDuration;
             }
 
-            // ★ 变体冻结：此刻抽定，之后（含读档）都用这一组文案
+            // 变体冻结：此刻抽定，之后（含读档）都用这一组文案
             EventFramework.Distribution.Contracts.EventVariantDef variant = def.PickVariant();
             if (variant != null)
             {

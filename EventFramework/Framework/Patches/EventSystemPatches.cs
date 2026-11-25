@@ -41,7 +41,7 @@ namespace EventFramework
         // ②a Game.OnPrefabInit 之后 → 兜底尝试挂存档载体
         public static void Postfix_Game_OnPrefabInit(Game __instance)
         {
-            // ★ 进档（新档 / 读档）先清一次音频残留（与 Game.StopBE 的退档清理对称）
+            // 进档（新档 / 读档）先清一次音频残留（与 Game.StopBE 的退档清理对称）
             try { EventBootstrap.SessionReset("Game.OnPrefabInit"); }
             catch (Exception e) { Debug.LogWarning("[MoreFood/Event] Game.OnPrefabInit 会话清理异常: " + e); }
 
@@ -49,14 +49,14 @@ namespace EventFramework
             catch (Exception e) { Debug.LogWarning("[MoreFood/Event] Game.OnPrefabInit Postfix 异常: " + e); }
         }
 
-        // ②c SaveGame.OnPrefabInit 之后 → ★ 挂存档载体（本次修正的关键）
+        // ②c SaveGame.OnPrefabInit 之后 → 挂存档载体（本次修正的关键）
         public static void Postfix_SaveGame_OnPrefabInit(SaveGame __instance)
         {
             try { EventSaveBridge.InstallOnSaveGame(__instance); }
             catch (Exception e) { Debug.LogWarning("[MoreFood/Event] SaveGame.OnPrefabInit Postfix 异常: " + e); }
         }
 
-        // ②d SaveLoadRoot.LoadInternal 之后 → ★ 精确的"读档完成"时刻
+        // ②d SaveLoadRoot.LoadInternal 之后 → 精确的"读档完成"时刻
         public static void Postfix_SaveLoadRoot_LoadInternal(GameObject gameObject)
         {
             try

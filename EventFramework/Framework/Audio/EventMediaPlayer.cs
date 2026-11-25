@@ -32,7 +32,7 @@ namespace EventFramework
             public string stopSignal;   // 停止条件③：GameHashes 名 或 作者自定义信号名
             public bool signalCustom;   // true = 走 EventSignal；false = 走 Game.Instance.Subscribe
             public int signalHash;      // GameHashes 已订阅的哈希（0 = 没订）
-            public Game signalGame;     // ★ 订阅时的 Game 实例（换档后旧实例已销毁，退订必须用它，否则漏订）
+            public Game signalGame;     // 订阅时的 Game 实例（换档后旧实例已销毁，退订必须用它，否则漏订）
             public System.Action<object> signalCb;      // 订阅停止信号时的回调（取消订阅需用同一实例）
             public bool honorStopOnEnd; // stop_on_end=false 的：效果结束不停，留到收尾
 
@@ -375,7 +375,7 @@ namespace EventFramework
             EventAudioScriptRegistry.Invoke(b.script, def, inst, "on_end");
         }
 
-        // ★读档重接：事件还在跑，但它 on_trigger 起的音频不会自己回来（媒体表不存盘）。
+        // 读档重接：事件还在跑，但它 on_trigger 起的音频不会自己回来（媒体表不存盘）。
         public static int ReplayPersistent(EventDef def, EventInstance inst)
         {
             if (def == null || inst == null || def.media == null) return 0;
@@ -390,7 +390,7 @@ namespace EventFramework
             return n;
         }
 
-        // ★读档重接：决策效果还在跑时，重接 on_choice 起的持续类音频
+        // 读档重接：决策效果还在跑时，重接 on_choice 起的持续类音频
         public static int ReplayPersistentChoice(EventDef def, EventInstance inst)
         {
             if (def == null || inst == null || def.media == null) return 0;
@@ -881,7 +881,7 @@ namespace EventFramework
                 game.Subscribe((int)hash, cb);
                 a.signalCustom = false;
                 a.signalHash = (int)hash;
-                a.signalGame = game;        // ★ 记录订阅实例（退订必须用同一个）
+                a.signalGame = game;        // 记录订阅实例（退订必须用同一个）
                 a.signalCb = cb;
             }
             catch (Exception e)
@@ -902,7 +902,7 @@ namespace EventFramework
                 }
                 else
                 {
-                    var game = a.signalGame != null ? a.signalGame : Game.Instance;   // ★ 用订阅时的实例退订
+                    var game = a.signalGame != null ? a.signalGame : Game.Instance;   // 用订阅时的实例退订
                     if (game != null) game.Unsubscribe(a.signalHash, a.signalCb);
                 }
             }

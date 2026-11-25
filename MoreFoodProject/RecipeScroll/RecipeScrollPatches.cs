@@ -24,7 +24,7 @@ namespace MoreFood_KFC
             {
                 if (target == null || RecipeListField == null) return;
 
-                // ★ 关键：先让注册表解析一次（首次调用时 recipes 刚就绪）
+                // 关键：先让注册表解析一次（首次调用时 recipes 刚就绪）
                 RecipeScrollRegistry.ResolveRecipes();
 
                 var original = RecipeListField.GetValue(target) as ComplexRecipe[];
@@ -101,7 +101,7 @@ namespace MoreFood_KFC
                     ? selectable.GetProperName()
                     : ("配方卷轴·" + RecipeScrollItems.FoodName(foodId));
 
-                // ★ 先取「阅读之前」的已读快照，再按快照生成正文。
+                // 先取「阅读之前」的已读快照，再按快照生成正文。
                 //   绝不能先 MarkRead 再问 IsReadFood —— 那样首次阅读也会命中 ALREADY_FMT。
                 bool alreadyRead = RecipeScrollRegistry.IsReadFood(foodId);
                 string body = RecipeScrollText.UnlockText(foodId, alreadyRead);
@@ -144,7 +144,7 @@ namespace MoreFood_KFC
         internal static RecipeScrollSaveData Carrier { get { return carrier; } }
 
         // 把 Registry 的当前已读集覆盖写回存档载体（由 MarkRead 调用）。
-        // ★ 方向恒为「内存 → 存档」，不反向合并；G-40 的旧 bug 就是方向写反。
+        // 方向恒为「内存 → 存档」，不反向合并；G-40 的旧 bug 就是方向写反。
         internal static void WriteThrough()
         {
             if (carrier == null) return;

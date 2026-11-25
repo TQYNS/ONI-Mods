@@ -33,14 +33,14 @@ namespace MoreFood_KFC
         internal float armor;
         internal MonsterState state = MonsterState.Idle;
         internal float idleUntil;
-        internal float leaveAt;     // ★ 离场闹钟（绝对游戏秒；0 = 不排）
-        internal float fleeUntil;   // ★ 本次逃跑窗口截止（绝对游戏秒）
+        internal float leaveAt;     // 离场闹钟（绝对游戏秒；0 = 不排）
+        internal float fleeUntil;   // 本次逃跑窗口截止（绝对游戏秒）
         internal float regenUntil;
         internal float attackUntil;
         internal float deaggroUntil;
-        internal float nextMoveAt;   // ★ 追击节流：下一次可移动的绝对游戏秒（运行期，不入存档）
+        internal float nextMoveAt;   // 追击节流：下一次可移动的绝对游戏秒（运行期，不入存档）
         internal bool fleeUsed;
-        internal int fleeStepsLeft;   // ★ 问题5：本次逃跑剩余可移动格数（3~5，耗尽即不再逃跑、不再远离）
+        internal int fleeStepsLeft;   // 问题5：本次逃跑剩余可移动格数（3~5，耗尽即不再逃跑、不再远离）
         internal Clustercraft aggroCraft;        // 运行期引用
         internal string aggroCraftName = "";    // 存档用（K11）
         internal string region;                 // "main" / "sub"
@@ -62,7 +62,7 @@ namespace MoreFood_KFC
     {
         internal SpawnerCfg cfg;
         internal float nextSpawnAt;
-        internal bool paused;           // ★ 区域名额满 → 闹钟暂停（不空转、不空抽）
+        internal bool paused;           // 区域名额满 → 闹钟暂停（不空转、不空抽）
         internal float pausedRemain;    // 暂停时剩余的秒数（恢复时接着跑；存档一并存）
 
         internal SpawnerState(SpawnerCfg c)

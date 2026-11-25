@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace MoreFood_KFC
 {
-    /// <summary>
+    //
     internal sealed class PanelHoverGuard : MonoBehaviour,
         UnityEngine.EventSystems.IPointerEnterHandler,
         UnityEngine.EventSystems.IPointerExitHandler

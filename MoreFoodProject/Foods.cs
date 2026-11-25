@@ -1271,7 +1271,7 @@ namespace MoreFood_KFC{
     }
 
 
-    // ★ Patch：小人 ConsumableConsumer 初始化时套用默认进食许可
+    // Patch：小人 ConsumableConsumer 初始化时套用默认进食许可
     //   时机 = OnPrefabInit（早于反序列化 → 不冲掉玩家存档里的改动）
 
     [HarmonyPatch(typeof(ConsumableConsumer), "OnPrefabInit")]

@@ -29,7 +29,7 @@ namespace MoreFood_KFC
             new Dictionary<TradeRarity, List<TradeItemValue>>();
     }
 
-    // ★ v5.8 第二/三层：预处理 ID 列表 + 有价无价分流 + ID 清单编译 + 站点池编译
+    // v5.8 第二/三层：预处理 ID 列表 + 有价无价分流 + ID 清单编译 + 站点池编译
     internal static class TradeCatalog
     {
         internal static readonly List<string> Prepared = new List<string>();
@@ -149,7 +149,7 @@ namespace MoreFood_KFC
                 {
                     continue;
                 }
-                // ★ 剔除"元素类"的气态 / 液态（含熔融）物质 —— 用户实测交易列表里混进了
+                // 剔除"元素类"的气态 / 液态（含熔融）物质 —— 用户实测交易列表里混进了
                 if (IsGasOrLiquid(pid) && !pid.HasTag(new Tag("MoreFoodDrinkItem")))
                 {
                     if (GasFiltered.Add(id))

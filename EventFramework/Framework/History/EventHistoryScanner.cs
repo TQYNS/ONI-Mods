@@ -21,7 +21,7 @@ namespace EventFramework
                 }
 
                 CompileConditions(list);
-                CompileItems(list);   // ★v3.4：提交 / 奖励预编译 + 分级汇报
+                CompileItems(list);   // v3.4：提交 / 奖励预编译 + 分级汇报
 
                 var refEvents = new HashSet<string>(StringComparer.Ordinal);
                 var refChoices = new HashSet<string>(StringComparer.Ordinal);

@@ -90,7 +90,7 @@ namespace MoreFood_KFC
             {
                 return null;
             }
-            // ★ yaml 没写的集合字段 YamlIO 会留 null；原版 PlaceInteriorTemplate 会无判空遍历
+            // yaml 没写的集合字段 YamlIO 会留 null；原版 PlaceInteriorTemplate 会无判空遍历
             if (container.cells == null)
             {
                 container.cells = new List<TemplateClasses.Cell>();

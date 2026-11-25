@@ -37,7 +37,7 @@ namespace MoreFood_KFC
             }
             if (sp.paused)
             {
-                // ★ 名额满 → 闹钟暂停：不重排、不空抽；空位由 RemoveMonsterAt 的通知恢复（见 OnMonsterSlotFreed）
+                // 名额满 → 闹钟暂停：不重排、不空抽；空位由 RemoveMonsterAt 的通知恢复（见 OnMonsterSlotFreed）
                 return;
             }
             if (sp.nextSpawnAt <= 0f)
@@ -53,7 +53,7 @@ namespace MoreFood_KFC
             int alive = CountAliveInRegion(sp.cfg.region);
             if (alive >= sp.cfg.maxMonsters)
             {
-                // ★ 到点时名额仍满 → 暂停计时（剩余 0 秒：空位一出现就抽），而不是像以前那样重排后干等到下次
+                // 到点时名额仍满 → 暂停计时（剩余 0 秒：空位一出现就抽），而不是像以前那样重排后干等到下次
                 sp.paused = true;
                 sp.pausedRemain = 0f;
                 MFLog.Verbose(LogCat.Combat,"[Space] 抽取器 " + sp.cfg.id + " 名额已满（" + alive + "/" + sp.cfg.maxMonsters
@@ -190,7 +190,7 @@ namespace MoreFood_KFC
             return null;
         }
 
-        /// <summary>
+        //
         internal static float EffectiveWeight(CombatMonsterDef d, string region)
         {
             if (d == null)
@@ -334,7 +334,7 @@ namespace MoreFood_KFC
                 ? idleUntil
                 : TradeRegistry.Now() + UnityEngine.Random.Range(
                     def.spawnSleepSeconds * 0.5f, def.spawnSleepSeconds);
-            // ★ 离场闹钟（K18）：yaml 配了 leave_after_seconds 才排；任务下发的狩猎目标不排（离开会让任务做不成）
+            // 离场闹钟（K18）：yaml 配了 leave_after_seconds 才排；任务下发的狩猎目标不排（离开会让任务做不成）
             rt.leaveAt = (!string.IsNullOrEmpty(questId) || def.leaveAfterMax <= 0f)
                 ? 0f
                 : TradeRegistry.Now() + UnityEngine.Random.Range(def.leaveAfterMin, def.leaveAfterMax);
@@ -374,7 +374,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>★ 唯一的移除出口（击杀/逃跑离场/捕获/清理都走这里）：
+        // 唯一的移除出口（击杀/逃跑离场/捕获/清理都走这里）：
         private static void RemoveMonsterAt(int index)
         {
             if (index < 0 || index >= Monsters.Count)
@@ -386,7 +386,7 @@ namespace MoreFood_KFC
             {
                 CombatBars.Remove(rt.monster);                 // 迷你条跟着走（否则残留悬空条）
                 byInstance.Remove(rt.monster.GetInstanceID());
-                // ★ 死亡/离场即时摘图标：先标 removed 防原版重建，再调原版 RemoveDeletedEntities
+                // 死亡/离场即时摘图标：先标 removed 防原版重建，再调原版 RemoveDeletedEntities
                 rt.monster.removed = true;
                 StarMapVisuals.DropEntityVisual(rt.monster);
                 Util.KDestroyGameObject(rt.monster.gameObject);
@@ -398,7 +398,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>区域里的怪少了一只 → 若该区抽取器因名额满而暂停，则恢复计时（余量接着跑）。</summary>
+        // 区域里的怪少了一只 → 若该区抽取器因名额满而暂停，则恢复计时（余量接着跑）。
         internal static void OnMonsterSlotFreed(string region)
         {
             SpawnerState sp = SpawnerForRegion(region);

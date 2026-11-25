@@ -28,7 +28,7 @@ namespace MoreFood_KFC
             {
                 remoteTag = tagOrder[0];
             }
-            // ★ 分类标签卡：**全部类别都显示**（用户反馈"看不到对应的分类"——
+            // 分类标签卡：**全部类别都显示**（用户反馈"看不到对应的分类"——
             float tx = 18f;
             float ty = 36f;
             for (int i = 0; i < tagOrder.Count; i++)
@@ -63,7 +63,7 @@ namespace MoreFood_KFC
             TradeUi.Text("ih3", body.transform, 730f, listY, 150f, 24f, "回收价", 13f, TradeUi.TextDim, true);
             listY += 26f;
 
-            // ★ 分页（用户要求"能看见换页按钮"，且"每页多显示 2~3 条"）：每页 12 条，底部固定一排翻页控件。
+            // 分页（用户要求"能看见换页按钮"，且"每页多显示 2~3 条"）：每页 12 条，底部固定一排翻页控件。
             List<TradeItemValue> list = tagGroups[remoteTag];
             const int pageSize = 12;
             int totalPages = Mathf.Max(1, Mathf.CeilToInt(list.Count / (float)pageSize));

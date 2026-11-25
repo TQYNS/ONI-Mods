@@ -51,7 +51,7 @@ namespace MoreFood_KFC
         internal readonly List<RealGermBackup> germs = new List<RealGermBackup>();
         internal readonly List<SpaceStation> stations = new List<SpaceStation>();
         internal readonly List<RealDropperBinding> droppers = new List<RealDropperBinding>();
-        // 已挂载目标（Unity 实例 id）★ 由 BuffTargetHub 维护：去重 + 重复回调兜底
+        // 已挂载目标（Unity 实例 id）由 BuffTargetHub 维护：去重 + 重复回调兜底
         internal readonly HashSet<int> boundIds = new HashSet<int>();
     }
 

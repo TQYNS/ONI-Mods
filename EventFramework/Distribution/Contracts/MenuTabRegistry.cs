@@ -81,14 +81,14 @@ namespace EventFramework.Distribution.Contracts
                 var cancelField  = dataType.GetField("cancelHandler", BF);
                 var hotKeyField  = FindField(infoType, "hotKey");
 
-                // ★★ 关键：hotKey 必须是一个【在 GameInputBindings 里有绑定的】枚举值
+                // 关键：hotKey 必须是一个【在 GameInputBindings 里有绑定的】枚举值
                 var ps = infoCtor.GetParameters();
                 Type actionType = (ps.Length > 3 && ps[3].ParameterType.IsEnum)
                                   ? ps[3].ParameterType : null;
 
                 object borrowedHotKey = BorrowHotKeyFromVanilla(menu, menuType, actionType);
 
-                // ★ 插入位置：原版「饮食」(consumablesInfo) 的【下一个】
+                // 插入位置：原版「饮食」(consumablesInfo) 的【下一个】
                 int insertAt = ti.Count;   // 兜底：末尾
                 try
                 {
@@ -110,7 +110,7 @@ namespace EventFramework.Distribution.Contracts
                     Debug.LogWarning("[EventFramework][Tab] 定位 consumablesInfo 失败: " + e);
                 }
 
-                // ★ 可选：插到指定文字 tab 之后（用于「事件」右侧）
+                // 可选：插到指定文字 tab 之后（用于「事件」右侧）
                 if (!string.IsNullOrEmpty(afterText))
                 {
                     int idx = FindTextIndex(ti, afterText);
@@ -168,7 +168,7 @@ namespace EventFramework.Distribution.Contracts
                     if (toggleField != null) toggleField.SetValue(data, info);
                     if (cancelField != null) cancelField.SetValue(data, null);
 
-                    // ---- ③ 登记（★ 插入到「饮食」之后，不是追加到末尾）----
+                    // ---- ③ 登记（插入到「饮食」之后，不是追加到末尾）----
                     sim[info] = data;
                     ti.Insert(Math.Min(insertAt + insertedSoFar, ti.Count), info);
                     insertedSoFar++;

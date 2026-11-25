@@ -82,7 +82,7 @@ namespace EventFramework
             }
         }
 
-        // ★ 叙事者选择函数（其他作者换叙事者只改这一处）
+        // 叙事者选择函数（其他作者换叙事者只改这一处）
         public static string PickNarratorId()
         {
             var n = ResolveDefault();
@@ -101,7 +101,7 @@ namespace EventFramework
             return Activate(id);
         }
 
-        // ★ 调取入口：让指定叙事者开始跑。
+        // 调取入口：让指定叙事者开始跑。
         public static bool Activate(string id)
         {
             return Activate(id, -1f);
@@ -144,7 +144,7 @@ namespace EventFramework
             }
         }
 
-        // ★ 确保某个叙事者具备一个调度器槽（不存在则登记；已在跑则立刻开跑）
+        // 确保某个叙事者具备一个调度器槽（不存在则登记；已在跑则立刻开跑）
         public static EventSchedulerSlot EnsureSlot(string narratorId, EventSchedulerSlot slot)
         {
             if (string.IsNullOrEmpty(narratorId))

@@ -18,7 +18,7 @@ namespace MoreFood_KFC
         private static FieldInfo drawerField;
         private static bool drawerFieldSearched;
 
-        /// <summary>让指定火箭的星图路径按当前状态重画：不在飞行途中时，原版实现会销毁 mapPath。</summary>
+        // 让指定火箭的星图路径按当前状态重画：不在飞行途中时，原版实现会销毁 mapPath。
         internal static void ClearFor(Clustercraft craft)
         {
             if (craft == null || craft.gameObject == null)
@@ -45,13 +45,13 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>
-        /// 着陆后统一清理。原版只在"目的地变化"时重绘路径，落地这一刻没人触发，
-        /// 于是 mapPath（含箭头）留在原地。这里做三件事，且完全不动 selector 目的地
-        /// （玩家落地后要自己选新目的地）：
-        ///   ① 把路径容器里的残留对象全部销毁；② 仍在下行的火箭重画自己的路线；
-        ///   ③ 本机再单独重绘一次（不存在飞行路径时原版会清空自己持有的引用）。
-        /// </summary>
+        //
+        // 着陆后统一清理。原版只在"目的地变化"时重绘路径，落地这一刻没人触发，
+        // 于是 mapPath（含箭头）留在原地。这里做三件事，且完全不动 selector 目的地
+        // （玩家落地后要自己选新目的地）：
+        // ① 把路径容器里的残留对象全部销毁；② 仍在下行的火箭重画自己的路线；
+        // ③ 本机再单独重绘一次（不存在飞行路径时原版会清空自己持有的引用）。
+        //
         internal static void OnLanded(Clustercraft craft)
         {
             // ① 落地后 selector 若仍停在旧目的地（原版 IsTraveling 就是 !IsAtDestination），
@@ -80,7 +80,7 @@ namespace MoreFood_KFC
             ClearFor(craft);
         }
 
-        /// <summary>销毁路径容器下的全部路线/箭头对象（含原版预览路径），由后续重绘按需重建。</summary>
+        // 销毁路径容器下的全部路线/箭头对象（含原版预览路径），由后续重绘按需重建。
         internal static void ResetAllPaths()
         {
             Transform container = PathContainer();
@@ -105,7 +105,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>让仍在飞行途中的火箭重新画出路线（容器刚被清空）。</summary>
+        // 让仍在飞行途中的火箭重新画出路线（容器刚被清空）。
         private static void RedrawTravelling()
         {
             ClusterGrid grid = ClusterGrid.Instance;
@@ -177,10 +177,10 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>
-        /// 兜底扫描：把所有「已不在飞行途中」的火箭路径重绘一遍。
-        /// 只在着陆/停飞这类低频时机调用一次，不进帧循环。
-        /// </summary>
+        //
+        // 兜底扫描：把所有「已不在飞行途中」的火箭路径重绘一遍。
+        // 只在着陆/停飞这类低频时机调用一次，不进帧循环。
+        //
         internal static void ClearAllStopped()
         {
             ClusterGrid grid = ClusterGrid.Instance;

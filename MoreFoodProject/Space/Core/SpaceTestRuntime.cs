@@ -20,7 +20,7 @@ namespace MoreFood_KFC
             liveStations.Clear();
             fakeRiftPrefab = null;
             stationPrefab = null;
-            contentBuilt = false;   // ★ 问题9：读档后允许重建一次
+            contentBuilt = false;   // 问题9：读档后允许重建一次
         }
 
         internal static void LogConfig()
@@ -88,7 +88,7 @@ namespace MoreFood_KFC
             LogGridStats(ClusterGrid.Instance);
             RegisterPrefabs();
             TradeRegistry.Init();
-            // ★ 读档恢复【不在这里】——OnWorldReady 会在"载入途中"被触发（实测 17:52:33.293，
+            // 读档恢复【不在这里】——OnWorldReady 会在"载入途中"被触发（实测 17:52:33.293，
             EnsureTestContent();
             MFLog.Verbose(LogCat.Space,"[Space] 星球生成完毕 → 已检查并补齐裂缝、贸易站、任务地点");
         }
@@ -107,7 +107,7 @@ namespace MoreFood_KFC
             StarMapVisuals.SetZones(SpaceZones.Build(grid, hasFake, fakeHint));
         }
 
-        private static bool contentBuilt;   // ★ 问题9：一次会话内容已建成标记（去重高频重建）
+        private static bool contentBuilt;   // 问题9：一次会话内容已建成标记（去重高频重建）
 
         internal static void EnsureTestContent()
         {
@@ -116,7 +116,7 @@ namespace MoreFood_KFC
             {
                 return;
             }
-            // ★ 问题9：内容已建成且分区有效 → 直接返回，不再全量重建。
+            // 问题9：内容已建成且分区有效 → 直接返回，不再全量重建。
             if (contentBuilt && StarMapVisuals.Zones != null && StarMapVisuals.Zones.valid)
             {
                 return;

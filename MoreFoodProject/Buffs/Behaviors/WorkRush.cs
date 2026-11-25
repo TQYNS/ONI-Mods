@@ -145,7 +145,7 @@ namespace MoreFood_KFC
                 // 已经完成了就不要再计一次（override 若调了 base 会二次进入）
                 if (workable.WorkTimeRemaining <= 0f) return;
 
-                workable.WorkTimeRemaining = 0f;   // ★ 本 tick 直接完成
+                workable.WorkTimeRemaining = 0f;   // 本 tick 直接完成
                 tracker.Set(kind, left - 1);
 
                 MFLog.Verbose(LogCat.Buff, "[MoreFood/Rush] " + worker.name + " 瞬完 "

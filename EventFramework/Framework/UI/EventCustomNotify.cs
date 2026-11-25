@@ -22,7 +22,7 @@ namespace EventFramework
         public abstract void Tick(float remaining, float total);
         public abstract void Destroy();
 
-        // ★ 公共工具：UI 一致的倒计时文本
+        // 公共工具：UI 一致的倒计时文本
         public static string FormatCountdown(float remaining)
         {
             if (remaining <= 0f) return "已结束";
@@ -96,7 +96,7 @@ namespace EventFramework
             return _map.TryGetValue(key, out f) ? f : null;
         }
 
-        // 该外观键是否已注册（★ 修复：先确保内置外观注册，否则首次 Has 误判 false）
+        // 该外观键是否已注册（修复：先确保内置外观注册，否则首次 Has 误判 false）
         public static bool Has(string key)
         {
             if (string.IsNullOrEmpty(key)) return false;
@@ -259,7 +259,7 @@ namespace EventFramework
             "LargeImpactorUINotificationHitEffects",
             "LargeImpactorNotificationUI_Clock",
             "LargeImpactorNotificationUI_CycleLabelEffects",
-            "NotificationAnimator",   // ★ 修复崩溃：克隆体未调 Begin → layoutElement 为 null → LateUpdate NRE
+            "NotificationAnimator",   // 修复崩溃：克隆体未调 Begin → layoutElement 为 null → LateUpdate NRE
         };
 
         // 本行的根节点（原版 prefab 克隆出来的实例）
@@ -303,7 +303,7 @@ namespace EventFramework
                 clone.name = "MoreFood_DisasterNotify";
                 clone.SetActive(false);
 
-                // ★ 先杀脚本，再 SetActive(true)
+                // 先杀脚本，再 SetActive(true)
                 KillScripts(clone.transform);
 
                 clone.SetActive(true);
@@ -331,7 +331,7 @@ namespace EventFramework
 
                 if (_titleLabel != null)
                 {
-                    // ★ 修复"文本太大"：原版大横幅标题字号大 → 自动缩小 + 换行
+                    // 修复"文本太大"：原版大横幅标题字号大 → 自动缩小 + 换行
                     _titleLabel.enableAutoSizing = true;
                     _titleLabel.fontSizeMin = 10f;
                     _titleLabel.fontSizeMax = 20f;
@@ -467,7 +467,7 @@ namespace EventFramework
         private static void KillScripts(Transform root)
         {
             if (root == null) return;
-            // ★ 修复崩溃：改清整棵子树（原只扫根节点/TimerSection，扫不到子节点 "Animator" 上的脚本）
+            // 修复崩溃：改清整棵子树（原只扫根节点/TimerSection，扫不到子节点 "Animator" 上的脚本）
             var comps = root.GetComponentsInChildren<MonoBehaviour>(true);
             for (int i = 0; i < comps.Length; i++)
             {

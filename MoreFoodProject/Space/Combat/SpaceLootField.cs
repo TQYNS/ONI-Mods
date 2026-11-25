@@ -147,7 +147,7 @@ namespace MoreFood_KFC
         }
     }
 
-    [SerializationConfig(MemberSerialization.OptIn)]   // ★ KSerialization OptOut 只认 public 字段，必须 OptIn
+    [SerializationConfig(MemberSerialization.OptIn)]   // KSerialization OptOut 只认 public 字段，必须 OptIn
     public class SpaceLootField : ClusterGridEntity
     {
         [Serialize]
@@ -187,7 +187,7 @@ namespace MoreFood_KFC
 
         public override ClusterRevealLevel IsVisibleInFOW
         {
-            // ★ 跟随迷雾：Peeked=半揭示问号/全揭示实体（Visible 会无视迷雾永显）
+            // 跟随迷雾：Peeked=半揭示问号/全揭示实体（Visible 会无视迷雾永显）
             get { return ClusterRevealLevel.Peeked; }
         }
 

@@ -184,7 +184,7 @@ namespace MoreFood_KFC
         private void BuildRocketPage(RocketCombatState st, ref float y)
         {
             if (st == null) return;
-            // ★ 交战时不再隐藏弹药区（问题4）：改为锁定态，脱战自动复原。
+            // 交战时不再隐藏弹药区（问题4）：改为锁定态，脱战自动复原。
             BuildAmmoControls(ref y, st.inCombat);
         }
 
@@ -267,7 +267,7 @@ namespace MoreFood_KFC
         {
             float top = 76f;
             TradeUi.RoundPanel("rcard", rightRoot.transform, 0f, top, 840f, 164f, 8, TradeUi.PanelAlt);
-            // ★ 交战时优先显示"交战中"（此前只显示 CraftStatus，交战态在标题不可见 → 问题1）
+            // 交战时优先显示"交战中"（此前只显示 CraftStatus，交战态在标题不可见 → 问题1）
             bool titleInCombat = st != null && st.inCombat;
             string titleStatus = titleInCombat ? "交战中" : CraftStatusText(selected.Status);
             Color titleColor = titleInCombat
@@ -316,7 +316,7 @@ namespace MoreFood_KFC
                 + (st != null ? Mathf.Round(st.defenseCache).ToString() : "—"),
                 13f, TradeUi.TextDim, false);
 
-            // ★ Bug1：攻击距离改为"预计可运动"下方独立一行（旧版画在右上方，压住了装甲条/卡片外沿）
+            // Bug1：攻击距离改为"预计可运动"下方独立一行（旧版画在右上方，压住了装甲条/卡片外沿）
             TradeUi.Text("ratk", rightRoot.transform, 14f, top + 102f, 800f, 20f,
                 "攻击距离 " + Mathf.Round(CombatRuntime.AttackRangeOf(selected)) + " 星图格",
                 13f, TradeUi.TextMain, false);
@@ -339,7 +339,7 @@ namespace MoreFood_KFC
                 {
                     continue;
                 }
-                // ★ 只显示"仍与本火箭交战（交战/追击）"的怪；逃跑/游荡/离场一律撤下卡片，
+                // 只显示"仍与本火箭交战（交战/追击）"的怪；逃跑/游荡/离场一律撤下卡片，
                 if (m.aggroCraft != selected
                     || (m.state != MonsterState.Combat && m.state != MonsterState.Pursue))
                 {
@@ -393,7 +393,7 @@ namespace MoreFood_KFC
             {
                 return "";
             }
-            string s = STRINGS.UI.FormatAsLink(m.def.name, MonsterCodexGenerator.LinkId(m.def.id)) + "  " + m.def.tier + " 级";   // ★ 问题15：名字可点击跳百科
+            string s = STRINGS.UI.FormatAsLink(m.def.name, MonsterCodexGenerator.LinkId(m.def.id)) + "  " + m.def.tier + " 级";   // 问题15：名字可点击跳百科
             if (!string.IsNullOrEmpty(m.def.description))
             {
                 s += "\n" + m.def.description;

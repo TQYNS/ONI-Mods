@@ -65,7 +65,7 @@ namespace EventFramework
         // 常驻状态行的正文（= 持续 buff 的【tooltip】）：
         //   优先级：status_tooltip（常驻专用）> 事件 notification.tooltip > description > ai_summary
         //   统一走「占位符填充 + 富文本 / [id] 贴图渲染」，与事件通知完全同一套口径。
-        //   ★ 目的：让「10%~20%」「1.5~8 周期」这类区间占位被替换成【本次实际抽到的值】。
+        // 目的：让「10%~20%」「1.5~8 周期」这类区间占位被替换成【本次实际抽到的值】。
         internal static string StatusTooltipOf(EventDef def, EventInstance inst, string tooltipOverride)
         {
             if (def == null) return "";
@@ -113,7 +113,7 @@ namespace EventFramework
                 }
             }
 
-            // ★ 兜底：正文没用 {cycles}/{remain} —— 多数情况是 handler 一次性拼好的静态 {result} 串，
+            // 兜底：正文没用 {cycles}/{remain} —— 多数情况是 handler 一次性拼好的静态 {result} 串，
             //   里面的周期数字是死的。此时自动补一行【剩余 X.X 周期】（每次悬浮重新求值），
             //   保证"鼠标挪上去就刷新一次"的默认体验不依赖 yaml 是否配置。
             if (!usedDynamic) rendered = AppendRemainingLine(rendered, inst);
@@ -134,7 +134,7 @@ namespace EventFramework
             catch (Exception e) { Distribution.Contracts.DistributionLog.ExcOnce("notify:AppendRemainingLine", "[Notify] AppendRemainingLine 失败 → 已按兜底处理", e); return s; }
         }
 
-        // ★ 持续 buff 的【剩余】周期：{cycles} / {remain} → 当前还剩多少周期（1 周期 = 600 秒）。
+        // 持续 buff 的【剩余】周期：{cycles} / {remain} → 当前还剩多少周期（1 周期 = 600 秒）。
         //   状态行 tooltip 走延迟解析（BuildStatusTooltip），玩家每次把鼠标挪上去都会重新求值一次
         //   ⇒ 显示的就是「当前剩余」（如总 7.2 周期、已过 1 周期 ⇒ 显示 6.2），
         //   即【被动式刷新，仅在鼠标挪上去时触发一次】，不做轮询。
@@ -317,7 +317,7 @@ namespace EventFramework
                 string tier = EventNotifyStyles.ResolveStatusTier(def.notification);
                 var style = EventNotifyStyles.Get(tier);
                 string text = StatusTextOf(def, style, textOverride, inst);
-                // ★ 持续 buff 的 tooltip：优先 status_tooltip；占位符延迟到显示时解析（见 StatusTooltipPayload 说明）
+                // 持续 buff 的 tooltip：优先 status_tooltip；占位符延迟到显示时解析（见 StatusTooltipPayload 说明）
                 string tooltip = StatusTooltipOf(def, inst, tooltipOverride);
                 var tooltipPayload = new StatusTooltipPayload
                 {
@@ -457,7 +457,7 @@ namespace EventFramework
             notif.expires = false;
             notif.playSound = false;
 
-            // ★ 类型选 Tutorial：和原版那两条参考通知（黄色 + 感叹号）用同一个 NotificationType，
+            // 类型选 Tutorial：和原版那两条参考通知（黄色 + 感叹号）用同一个 NotificationType，
             notif.Type = sortType;
 
             string tier = EventNotifyStyles.ResolveStatusTier(def.notification);
@@ -679,7 +679,7 @@ namespace EventFramework
         }
 
         // 常驻状态 tooltip 的【延迟解析】载荷。
-        // ★ 时序：handler（写 NoticeArgs 的那个，如 real_dry_season）是 Trigger 在 PushStatus **之后**才调的
+        // 时序：handler（写 NoticeArgs 的那个，如 real_dry_season）是 Trigger 在 PushStatus **之后**才调的
         //   （见 EventSystem.BeginEffect §16.9），所以状态行正文不能在推送时就定死，
         //   必须延迟到玩家真正悬浮/显示时再解析，否则 {result} / {pct} 会永远拿不到值。
         private sealed class StatusTooltipPayload
@@ -720,7 +720,7 @@ namespace EventFramework
             return null;
         }
 
-        // ★ 通知正文的唯一解析入口（通知 / 历史页共用）。
+        // 通知正文的唯一解析入口（通知 / 历史页共用）。
         //   优先级：variants[键].tooltip → notification.tooltip → description → ai_summary
         internal static string RenderNoticeTooltipNow(EventDef def, EventInstance inst)
         {
@@ -811,7 +811,7 @@ try
                     return;
                 }
 
-                EventLocator.Jump(id);    // ★ 定位器：点击通知 → 跳转目标（无效则自动出队；notify_only 仍可跳）
+                EventLocator.Jump(id);    // 定位器：点击通知 → 跳转目标（无效则自动出队；notify_only 仍可跳）
                 Debug.Log("[MoreFood/Event][Notify] 玩家点击通知 → 打开事件面板: " + id);
                 EventPanel.ShowFor(inst);
             }

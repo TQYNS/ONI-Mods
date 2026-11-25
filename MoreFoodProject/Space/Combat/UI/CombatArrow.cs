@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace MoreFood_KFC
 {
-    // ★ 问题11：攻击箭头（Mod 自绘）
+    // 问题11：攻击箭头（Mod 自绘）
     internal sealed class CombatArrow : MonoBehaviour
     {
         private static CombatArrow instance;
@@ -14,10 +14,10 @@ namespace MoreFood_KFC
 
         private Image line;
 
-        /// <summary>显示/更新攻击箭头（从火箭指向目标格）。</summary>
+        // 显示/更新攻击箭头（从火箭指向目标格）。
         internal static void Show(Clustercraft c, AxialI cell)
         {
-            // ★ Bug2：不再自绘攻击箭头。攻击时沿用原版"选点模式"的原版箭头/高亮，
+            // Bug2：不再自绘攻击箭头。攻击时沿用原版"选点模式"的原版箭头/高亮，
             craft = c;
             targetCell = cell;
             active = false;
@@ -104,7 +104,7 @@ namespace MoreFood_KFC
             catch (System.Exception e) { MFLog.HotFail("update:CombatArrow", e); }
         }
 
-        /// <summary>读档/关星图时清理（ResetForLoad 调）。</summary>
+        // 读档/关星图时清理（ResetForLoad 调）。
         internal static void ResetForLoad()
         {
             active = false;

@@ -67,7 +67,7 @@ namespace EventFramework
             EventStatusStyle statusStyle = EventStatusStyle.plain,
             NotificationType? sort = null,
             NotificationType? statusSort = null,
-            string customKey = null,           // ★v4.0
+            string customKey = null,           // v4.0
             string note = null)
         {
             var s = new EventNotifyStyle { tier = tier, note = note };
@@ -83,7 +83,7 @@ namespace EventFramework
             s.statusStyle = statusStyle;
             s.sort = CheckSort(tier, "sort", sort);
             s.statusSort = CheckSort(tier, "statusSort", statusSort);
-            if (!string.IsNullOrEmpty(customKey)) s.customKey = customKey;   // ★v4.0
+            if (!string.IsNullOrEmpty(customKey)) s.customKey = customKey;   // v4.0
             return s;
         }
 
@@ -199,7 +199,7 @@ namespace EventFramework
 
         public static void Clear() { _styles.Clear(); _builtinsDone = false; }
 
-        // ★ 内置档位清单（唯一入口：加档位/改外观都在这里，全部走工厂组装）
+        // 内置档位清单（唯一入口：加档位/改外观都在这里，全部走工厂组装）
         public static List<EventNotifyStyle> BuiltinTable()
         {
             return new List<EventNotifyStyle>
@@ -237,7 +237,7 @@ namespace EventFramework
                     statusIcon: "icon_bad",
                     statusText: "{name}（进行中）", statusBold: true,
                     statusStyle: EventStatusStyle.alert,
-                    customKey: EventCustomNotifyRegistry.DISASTER),   // ★ 新增
+                    customKey: EventCustomNotifyRegistry.DISASTER),   // 新增
             };
         }
 
@@ -315,7 +315,7 @@ namespace EventFramework
             return Get(ResolveTier(blk));
         }
 
-        // ★ 排序位置解析 —— **每条通知单独控**，优先级：本条 yaml > 档位 > 默认。
+        // 排序位置解析 —— **每条通知单独控**，优先级：本条 yaml > 档位 > 默认。
         public static NotificationType ResolveSort(EventNotificationBlock blk, EventNotifyStyle style,
                                                    NotificationType fallback)
         {
@@ -328,7 +328,7 @@ namespace EventFramework
             return fallback;
         }
 
-        // ★ 常驻状态的排序位置 —— 优先级：本条 yaml(status_sort) > 档位(statusSort) > 默认
+        // 常驻状态的排序位置 —— 优先级：本条 yaml(status_sort) > 档位(statusSort) > 默认
         public static NotificationType ResolveStatusSort(EventNotificationBlock blk, EventNotifyStyle style)
         {
             string tier = style != null ? style.tier : (blk != null ? blk.status_tier : "?");

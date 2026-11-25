@@ -250,7 +250,7 @@ namespace EventFramework
                 if (kpid == null) continue;
                 if (!kpid.HasTag(GameTags.Pickupable)) continue;
 
-                // ★ 修复：标签也可能挂在元素上（如 GameTags.RefinedMetal），故除 KPrefabID 外再查元素标签
+                // 修复：标签也可能挂在元素上（如 GameTags.RefinedMetal），故除 KPrefabID 外再查元素标签
                 var pe = kpid.GetComponent<PrimaryElement>();
 
                 bool allMatch = true;

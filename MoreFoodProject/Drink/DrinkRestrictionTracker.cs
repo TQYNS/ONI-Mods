@@ -75,7 +75,7 @@ namespace MoreFood_KFC
         }
     }
 
-    // ★ 预挂到小人 prefab —— 与 WorkRush 的补丁同一手法
+    // 预挂到小人 prefab —— 与 WorkRush 的补丁同一手法
     [HarmonyPatch(typeof(MinionConfig), "CreatePrefab", new Type[0])]
     public static class DrinkRestrictionTracker_Prefab_Patch
     {

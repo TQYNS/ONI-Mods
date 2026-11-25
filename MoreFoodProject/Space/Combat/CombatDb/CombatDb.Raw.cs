@@ -44,9 +44,9 @@ namespace MoreFood_KFC
     internal sealed class LootEntryRaw
     {
         public string item { get; set; }
-        // ★ 与 item 二选一：引用 combat/loot/asteroid_belt.yaml 里的 composition 组名
+        // 与 item 二选一：引用 combat/loot/asteroid_belt.yaml 里的 composition 组名
         public string group { get; set; }
-        // ★ 组条目抽几种（[最少, 最多]）；不写则用组自己的 picks
+        // 组条目抽几种（[最少, 最多]）；不写则用组自己的 picks
         public List<int> picks { get; set; }
         public float? chance { get; set; }
         public float? min { get; set; }
@@ -56,7 +56,7 @@ namespace MoreFood_KFC
     internal sealed class LootFieldCfgRaw
     {
         public string name { get; set; }
-        public string belt_style { get; set; }   // ★ 小行星带外观风格（问题6，yaml 可配）
+        public string belt_style { get; set; }   // 小行星带外观风格（问题6，yaml 可配）
     }
 
     internal sealed class LootSharedRaw

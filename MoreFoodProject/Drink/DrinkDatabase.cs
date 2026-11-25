@@ -218,13 +218,13 @@ namespace MoreFood_KFC
             {
                 DrinkDatabase.RegisterAmount();
                 DrinkDatabase.RegisterDrainEffect();
-                // ★ 饮品打标已挪进 Drinks.RegisterDefaults() 末尾（同一时机、不赌 Patch 顺序）
+                // 饮品打标已挪进 Drinks.RegisterDefaults() 末尾（同一时机、不赌 Patch 顺序）
             }
             catch (System.Exception e) { MFLog.HotFail("patch:DrinkDatabase_DbInitialize_Patch", e); }
         }
     }
 
-    // 补丁 2：★ 主路径 —— 在 MinionModifiers.OnPrefabInit 建 AmountInstance
+    // 补丁 2：主路径 —— 在 MinionModifiers.OnPrefabInit 建 AmountInstance
     [HarmonyPatch(typeof(MinionModifiers), "OnPrefabInit")]
     public static class DrinkDatabase_MinionModifiers_Patch
     {

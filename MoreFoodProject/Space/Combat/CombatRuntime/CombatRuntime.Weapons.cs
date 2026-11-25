@@ -25,7 +25,7 @@ namespace MoreFood_KFC
                 return;
             }
             int d = SpaceCfg.Distance(craft.Location, target.Cell);
-            // ★ Bug2：不再改写 selector 目的地（攻击不影响"选择目的地"）。
+            // Bug2：不再改写 selector 目的地（攻击不影响"选择目的地"）。
 
             Dictionary<string, float> dict = RocketAmmoDictionary.Build(craft);
             WarnAmmoWhitelistOnce(craft, dict);
@@ -174,7 +174,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>目的地格是否停着本 mod 的怪物（= 我们下的攻击/追击指令）。</summary>
+        // 目的地格是否停着本 mod 的怪物（= 我们下的攻击/追击指令）。
         private static bool IsMonsterDestination(AxialI cell)
         {
             ClusterGrid grid = ClusterGrid.Instance;
@@ -219,7 +219,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>当前实际发射弹种：主弹（具体/auto）→ 备弹 → 无；不修改用户字段。</summary>
+        // 当前实际发射弹种：主弹（具体/auto）→ 备弹 → 无；不修改用户字段。
         private static AmmoDef ResolveCurrentAmmo(RocketLoadout lo, int weaponIndex,
             ModuleDef weapon, Dictionary<string, float> dict)
         {
@@ -385,7 +385,7 @@ namespace MoreFood_KFC
             st.orderedTargetUid = rt.uid;
             rt.ordered = true;
             // 下令只锁目标，不置交战态；lastAttackAt 仅由实际开火(FireOnce)写入
-            // ★ Bug2：不改写 selector 目的地 —— 攻击只设定目标，不干扰玩家"选择目的地"。
+            // Bug2：不改写 selector 目的地 —— 攻击只设定目标，不干扰玩家"选择目的地"。
             MFLog.Verbose(LogCat.Combat,"[Space] " + craft.Name + " 接到攻击指令：" + rt.def.name + "（" + rt.defId + "）@"
                 + SpaceCfg.Pos(rt.Cell) + "，进入射程即开火");
             RocketPanelScreen.RequestRebuild();   // 下令攻击 → 面板重建（出现交战区）

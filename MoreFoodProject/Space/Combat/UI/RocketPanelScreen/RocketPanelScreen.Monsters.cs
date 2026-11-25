@@ -17,7 +17,7 @@ namespace MoreFood_KFC
             {
                 if (a == null || a.def == null) return 1;
                 if (b == null || b.def == null) return -1;
-                // ★ 问题14：按等级降序（S>A>B>C>D>E>F），同级按 HP 降序
+                // 问题14：按等级降序（S>A>B>C>D>E>F），同级按 HP 降序
                 int ta = TierRank(a.def.tier);
                 int tb = TierRank(b.def.tier);
                 if (ta != tb) return tb.CompareTo(ta);
@@ -59,7 +59,7 @@ namespace MoreFood_KFC
                     title = m.def.name + "（已死亡）";
                 }
                 TradeUi.Text("mname" + i, rightRoot.transform, 14f, y + 6f, 600f, 22f, title,
-                    15f, m.IsAlive ? TierColor(m.def.tier) : TradeUi.TextOff, false);   // ★ 问题14：名字按等级染色
+                    15f, m.IsAlive ? TierColor(m.def.tier) : TradeUi.TextOff, false);   // 问题14：名字按等级染色
 
                 BarLine("mhp" + i, 14f, y + 30f, 480f,
                     delegate { return m.def.hp > 0f ? Mathf.Clamp01(Mathf.Max(0f, m.hp) / m.def.hp) : 0f; },
@@ -133,7 +133,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>★ 第十八轮-2/7：血量/装甲/燃料条改为"局部可刷新"：
+        // 第十八轮-2/7：血量/装甲/燃料条改为"局部可刷新"：
         private void BarLine(string name, float x, float y, float w,
             System.Func<float> ratio, System.Func<Color> fill, System.Func<string> label)
         {
@@ -294,7 +294,7 @@ namespace MoreFood_KFC
             {
                 ToolTip tip = go.AddComponent<ToolTip>();
                 tip.SetSimpleTooltip(text);
-                go.AddOrGet<PanelHoverGuard>();   // ★ 第十七轮-4：记录悬停 → 节拍刷新避让（防 Tooltip 闪烁）
+                go.AddOrGet<PanelHoverGuard>();   // 第十七轮-4：记录悬停 → 节拍刷新避让（防 Tooltip 闪烁）
             }
             catch (Exception)
             {

@@ -129,7 +129,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>清掉新设计里不存在的模块 ID（开发期切换；旧档不迁移）。</summary>
+        // 清掉新设计里不存在的模块 ID（开发期切换；旧档不迁移）。
         private void Sanitize()
         {
             int removed = 0;
@@ -590,7 +590,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>全火箭聚合：穿甲/速度/雷达/再生；武器/防御按槽位分别取。</summary>
+        // 全火箭聚合：穿甲/速度/雷达/再生；武器/防御按槽位分别取。
         internal void SumStats(out float armorPenAdd, out float armorDamageMul, out float speedMul,
             out int radarRangeBonus, out int scoutingBonus,
             out float hpRegenPct, out float shieldRegenPct)

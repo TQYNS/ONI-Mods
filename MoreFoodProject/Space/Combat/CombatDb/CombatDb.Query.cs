@@ -84,7 +84,7 @@ namespace MoreFood_KFC
                 ? list : null;
         }
 
-        /// <summary>自动选弹的排序口径（当前统一按伤害）。</summary>
+        // 自动选弹的排序口径（当前统一按伤害）。
         internal static string PriorityOf(ModuleDef weapon)
         {
             return Shared.ammoDefaultPriority;

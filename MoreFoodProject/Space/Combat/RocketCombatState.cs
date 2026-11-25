@@ -7,7 +7,7 @@ namespace MoreFood_KFC
 {
     // 火箭战斗状态（§8.1 / §11）
 
-    [SerializationConfig(MemberSerialization.OptIn)]   // ★ KSerialization OptOut 只认 public 字段，必须 OptIn
+    [SerializationConfig(MemberSerialization.OptIn)]   // KSerialization OptOut 只认 public 字段，必须 OptIn
     internal sealed class RocketCombatState : KMonoBehaviour
     {
         [Serialize]
@@ -38,7 +38,7 @@ namespace MoreFood_KFC
         // 运行期缓存（不入档）
         internal float defenseCache;
         internal float speedMulCache = 1f;
-        internal float hpSpeedFactorCache = 1f;   // ★ 性能：速度血量系数缓存（HP 变化时更新，速度回调只读，禁每帧枚举模块）
+        internal float hpSpeedFactorCache = 1f;   // 性能：速度血量系数缓存（HP 变化时更新，速度回调只读，禁每帧枚举模块）
         internal float armorPenAddCache;
         internal float armorDamageMulCache = 1f;
         internal int scoutingBonusCache;
@@ -83,7 +83,7 @@ namespace MoreFood_KFC
             catch (System.Exception e) { MFLog.HotFail("spawn:RocketCombatState", e); }
         }
 
-        /// <summary>Db 就绪后的延迟重算（读档时序兜底：craft 的 OnSpawn 可能早于 CombatDb.Build）。</summary>
+        // Db 就绪后的延迟重算（读档时序兜底：craft 的 OnSpawn 可能早于 CombatDb.Build）。
         internal void SyncIfNeeded()
         {
             if (!statSynced && CombatDb.built)
@@ -126,7 +126,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>重算 HP / 装甲 / 防御 / 速度 / 穿甲 / 雷达 / 再生（纯模块数值，不含等级）。</summary>
+        // 重算 HP / 装甲 / 防御 / 速度 / 穿甲 / 雷达 / 再生（纯模块数值，不含等级）。
         internal void Recalc()
         {
             try
@@ -187,7 +187,7 @@ namespace MoreFood_KFC
                 {
                     pendingDamage = totalHpCache;
                 }
-                RefreshSpeedFactor();   // ★ 缓存速度血量系数（模块可能变了）
+                RefreshSpeedFactor();   // 缓存速度血量系数（模块可能变了）
             }
             catch (Exception e)
             {
@@ -195,7 +195,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>★ 性能：重算速度血量系数缓存。仅在 HP 变化时调用（受击/落地结算/回血/模块变更），
+        // 性能：重算速度血量系数缓存。仅在 HP 变化时调用（受击/落地结算/回血/模块变更），
         internal void RefreshSpeedFactor()
         {
             try
@@ -249,7 +249,7 @@ namespace MoreFood_KFC
                     }
                 }
             }
-            // ★ 问题12：前锥提供基础护甲(200/400/800) + 防御(F/E/D)，取已装前锥里最高的一档。
+            // 问题12：前锥提供基础护甲(200/400/800) + 防御(F/E/D)，取已装前锥里最高的一档。
             try
             {
                 List<RocketModuleInfo> mods = RocketInventory.GetModules(craft);
@@ -273,7 +273,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>脱战恢复：每 60 秒一次性结算一大块（装甲/待结算伤害/模块修复）。</summary>
+        // 脱战恢复：每 60 秒一次性结算一大块（装甲/待结算伤害/模块修复）。
         internal void TickRegen()
         {
             try
@@ -323,14 +323,14 @@ namespace MoreFood_KFC
                     }
                 }
             }
-            RefreshSpeedFactor();   // ★ 回血后更新速度血量系数缓存
+            RefreshSpeedFactor();   // 回血后更新速度血量系数缓存
             CombatBars.PushCraft(craft, this);
             CombatUi.RefreshBar();
             }
             catch (System.Exception e) { MFLog.HotFail("tick:RocketCombatState", e); }
         }
 
-        /// <summary>受击入口（怪物打火箭）：公式结算 + 乘员同步（K9）。</summary>
+        // 受击入口（怪物打火箭）：公式结算 + 乘员同步（K9）。
         internal void TakeHit(float damage, float penetration, CombatMonsterDef byMonster, float now)
         {
             DamageSource src = new DamageSource();
@@ -352,10 +352,10 @@ namespace MoreFood_KFC
             {
                 RocketEmergencyExit.TryTrigger(craft, true);
             }
-            RefreshSpeedFactor();   // ★ 受击后更新速度血量系数缓存
+            RefreshSpeedFactor();   // 受击后更新速度血量系数缓存
         }
 
-        /// <summary>每 Tick 的火箭侧状态：脱战判定 + 落地检测（§8.3/§11.2）。</summary>
+        // 每 Tick 的火箭侧状态：脱战判定 + 落地检测（§8.3/§11.2）。
         internal void TickCombat(float now)
         {
             try
@@ -373,7 +373,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>清空火箭侧交战态（脱战/强制脱战共用，C-37：务必连指令目标与箭头一起清）。</summary>
+        // 清空火箭侧交战态（脱战/强制脱战共用，C-37：务必连指令目标与箭头一起清）。
         internal void ClearCombatState(string reason)
         {
             inCombat = false;
@@ -428,7 +428,7 @@ namespace MoreFood_KFC
                 CombatBars.EnsureCraft(craft, this);   // 交战开始 → 迷你条出现（跟随战斗状态）
                 if (!wasCombat)
                 {
-                    RocketPanelScreen.RequestRebuild();   // ★ 第十八轮-2：交战状态变化 → 面板重建一次（结构变化）
+                    RocketPanelScreen.RequestRebuild();   // 第十八轮-2：交战状态变化 → 面板重建一次（结构变化）
                 }
                 return;
             }
@@ -462,20 +462,20 @@ namespace MoreFood_KFC
             if (nowGrounded && !wasGrounded)
             {
                 SettleOnGround();
-                // ★ 着陆后清残留目的地箭头（火箭已到达，selector 目的地若仍指向星球格会留箭头）
+                // 着陆后清残留目的地箭头（火箭已到达，selector 目的地若仍指向星球格会留箭头）
                 ClearStaleDestinationArrow();
             }
             }
             catch (System.Exception e) { MFLog.HotFail("tick:RocketCombatState", e); }
         }
 
-        /// <summary>着陆后清残留路线（与 SetCraftStatus 补丁共用同一实现，幂等）。</summary>
+        // 着陆后清残留路线（与 SetCraftStatus 补丁共用同一实现，幂等）。
         private void ClearStaleDestinationArrow()
         {
             StarMapPathCleanup.OnLanded(craft);
         }
 
-        /// <summary>落地结算：按模块 HP 从高到低分摊，每模块保底 min_module_hp，模块不可摧毁。</summary>
+        // 落地结算：按模块 HP 从高到低分摊，每模块保底 min_module_hp，模块不可摧毁。
         internal void SettleOnGround()
         {
             if (pendingDamage <= 0f)
@@ -539,11 +539,11 @@ namespace MoreFood_KFC
             MFLog.Info(LogCat.Space, "[Space] ★ 火箭落地结算：分摊 " + Mathf.Round(pendingDamage) + " 点伤害到 " + hits
                 + " 个模块（模块保底 " + minModuleHp + " HP，落地不摧毁）");
             pendingDamage = 0f;
-            RefreshSpeedFactor();   // ★ 落地结算后更新速度血量系数缓存
+            RefreshSpeedFactor();   // 落地结算后更新速度血量系数缓存
             CombatBars.PushCraft(craft, this);   // 结算后血量变化 → 推送
         }
 
-        /// <summary>确保组件存在（模板注入失败时的兜底，会打警告）。</summary>
+        // 确保组件存在（模板注入失败时的兜底，会打警告）。
         internal static RocketCombatState Ensure(Clustercraft craft)
         {
             if (craft == null)

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MoreFood_KFC
 {
-    // ★ 问题15：怪物百科「自动化工厂」
+    // 问题15：怪物百科「自动化工厂」
 
     internal interface ICodexGenerator
     {
@@ -35,7 +35,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>运行时自动挂载：把所有生成器跑一遍（幂等，重复调用无副作用）。</summary>
+        // 运行时自动挂载：把所有生成器跑一遍（幂等，重复调用无副作用）。
         internal static void EnsureRegistered()
         {
             if (registered)
@@ -77,12 +77,12 @@ namespace MoreFood_KFC
         }
     }
 
-    /// <summary>怪物百科生成器：遍历 CombatDb.Monsters，按 yaml 字段自动组装条目。</summary>
+    // 怪物百科生成器：遍历 CombatDb.Monsters，按 yaml 字段自动组装条目。
     internal sealed class MonsterCodexGenerator : ICodexGenerator
     {
         internal const string IdPrefix = "MONSTER_";
 
-        /// <summary>怪物 ID → 百科 linkID（供 UI.FormatAsLink 使用）。</summary>
+        // 怪物 ID → 百科 linkID（供 UI.FormatAsLink 使用）。
         internal static string LinkId(string monsterId)
         {
             return IdPrefix + (monsterId == null ? "" : monsterId.ToUpperInvariant());
@@ -151,7 +151,7 @@ namespace MoreFood_KFC
             widgets.Add(new CodexText("阵营：" + (m.hostile ? "敌对（主动开火）" : "中立（需下令）"), CodexTextStyle.Body, null));
             widgets.Add(new CodexText("可逃跑：" + (m.canFlee ? "是（低于 " + Mathf.RoundToInt(m.fleeHpPct * 100f) + "% 血）" : "否"), CodexTextStyle.Body, null));
 
-            AddLootSection(widgets, m);   // ★ 问题3：掉落物
+            AddLootSection(widgets, m);   // 问题3：掉落物
 
             List<ContentContainer> content = new List<ContentContainer>();
             content.Add(new ContentContainer(widgets, ContentContainer.ContentLayout.Vertical));
@@ -160,7 +160,7 @@ namespace MoreFood_KFC
             CodexEntry entry = new CodexEntry("CREATURES", m.name, content);
             entry.name = m.name;
             entry.parentId = "CREATURES";
-            // ★ 图标 = 怪物自己的 UI 贴图（anim/<id> 的 ui 帧）。怪物美术本来就只有一帧 ui，
+            // 图标 = 怪物自己的 UI 贴图（anim/<id> 的 ui 帧）。怪物美术本来就只有一帧 ui，
             //   以前借原版长途导弹当图标 ⇒ 20 只怪全是导弹，还会刷 "Missing prefab: MONSTERxxx"。
             Sprite icon = MonsterIcon(m.anim);
             if (icon != null)
@@ -195,7 +195,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>★ 问题3：把 yaml 的掉落物（tag + kg 区间 + 概率）写进百科。</summary>
+        // 问题3：把 yaml 的掉落物（tag + kg 区间 + 概率）写进百科。
         private static void AddLootSection(List<ICodexWidget> widgets, CombatMonsterDef m)
         {
             if (m.loot == null || m.loot.Count == 0)
@@ -224,7 +224,7 @@ namespace MoreFood_KFC
                 {
                     continue;
                 }
-                // ★ 百科设定：ID 未注册（既非 prefab 也非元素）→ 跳过该条 + 短日志
+                // 百科设定：ID 未注册（既非 prefab 也非元素）→ 跳过该条 + 短日志
                 if (!ItemExists(le.item))
                 {
                     if (InvalidItemLogged.Add(le.item))
@@ -355,7 +355,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>掉落物是否真实存在（prefab 或元素）。</summary>
+        // 掉落物是否真实存在（prefab 或元素）。
         private static bool ItemExists(string item)
         {
             if (string.IsNullOrEmpty(item))
@@ -385,7 +385,7 @@ namespace MoreFood_KFC
             return false;
         }
 
-        /// <summary>把掉落物 tag/prefabId 转成显示名（元素本地化名 → prefab 显示名 → tag 名 → 原串）。</summary>
+        // 把掉落物 tag/prefabId 转成显示名（元素本地化名 → prefab 显示名 → tag 名 → 原串）。
         private static string ItemName(string item)
         {
             // 1) 真元素（硫 / 黑曜石等）→ 本地化元素名
@@ -425,7 +425,7 @@ namespace MoreFood_KFC
         }
     }
 
-    // ★ 问题1：原版信息面板的「图书」小图标
+    // 问题1：原版信息面板的「图书」小图标
     [HarmonyPatch(typeof(DetailsScreen), "CodexEntryButton_GetCodexId")]
     internal static class MonsterCodexButtonPatch
     {

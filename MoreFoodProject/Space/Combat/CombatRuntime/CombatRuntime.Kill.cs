@@ -83,10 +83,10 @@ namespace MoreFood_KFC
             {
                 SpawnLootFieldRaw(cell, items, masses, counts, srcTag, beltLabel, true);
             }
-            // ★ 残骸带是刚生成的新实体，让原版立刻为它建 visualizer（怪物那枚已在 RemoveMonsterAt 摘掉）
+            // 残骸带是刚生成的新实体，让原版立刻为它建 visualizer（怪物那枚已在 RemoveMonsterAt 摘掉）
             StarMapVisuals.RefreshEntityVisuals();
             RocketPanelScreen.RequestRebuild();   // 击杀 → 交战面板重建（怪卡消失）
-            SpaceCombatBus.Publish(ev);   // ★ 击杀仍广播（任务/统计靠它结算）
+            SpaceCombatBus.Publish(ev);   // 击杀仍广播（任务/统计靠它结算）
         }
 
         // 调试按钮用：在场全部怪物按玩家击杀路线逐个结算（掉落定死 + 广播任务结算），无归属火箭
@@ -132,7 +132,7 @@ namespace MoreFood_KFC
             }
             MFLog.Verbose(LogCat.Combat,"[Space] " + (rt.def != null ? rt.def.name : rt.defId) + " 逃跑离场 @"
                 + SpaceCfg.Pos(cell) + "（不掉落）");
-            // ★ 问题4+3：逃跑/离场必须通知所有瞄准它的火箭立即脱战 + 清攻击箭头，
+            // 问题4+3：逃跑/离场必须通知所有瞄准它的火箭立即脱战 + 清攻击箭头，
             for (int i = 0; i < Crafts.Count; i++)
             {
                 Clustercraft craft = Crafts[i];
@@ -148,7 +148,7 @@ namespace MoreFood_KFC
                     st.disengageTimer = 0f;
                     StopCraft(craft);
                     CombatBars.RemoveCraft(craft);
-                    CombatArrow.Hide();   // ★ 问题11：目标逃跑离场 → 收起自绘攻击箭头
+                    CombatArrow.Hide();   // 问题11：目标逃跑离场 → 收起自绘攻击箭头
                 }
             }
             int index = Monsters.IndexOf(rt);
@@ -329,7 +329,7 @@ namespace MoreFood_KFC
                 MFLog.Warn(LogCat.Combat,"[Space] 打捞点找不到空格，不生成（" + (label ?? "小行星带") + "）");
                 return null;
             }
-            // ★ 统一走工厂（问题6）：yaml 来源与代码来源都生成带外观的 SpaceAsteroidBelt。
+            // 统一走工厂（问题6）：yaml 来源与代码来源都生成带外观的 SpaceAsteroidBelt。
             BeltStyle style = ResolveBeltStyle(sourceTag);
             BeltBuilder builder = AsteroidBeltFactory.Create(
                 string.IsNullOrEmpty(label) ? "小行星带" : label, style);
@@ -374,7 +374,7 @@ namespace MoreFood_KFC
             return lf;
         }
 
-        /// <summary>★ 统一解析来源标记为小行星带外观风格（问题6）：未知来源返回默认金属风格，
+        // 统一解析来源标记为小行星带外观风格（问题6）：未知来源返回默认金属风格，
         private static BeltStyle ResolveBeltStyle(string sourceTag)
         {
             BeltStyle style;
@@ -395,7 +395,7 @@ namespace MoreFood_KFC
             return AsteroidBeltFactory.RollAnyStyle();   // 解析不出风格时随机
         }
 
-        /// <summary>到站自动采集（K7：原版入舱流程，无手动按钮）。</summary>
+        // 到站自动采集（K7：原版入舱流程，无手动按钮）。
         private static void TickLootFields()
         {
             try
@@ -428,7 +428,7 @@ namespace MoreFood_KFC
                         belt.StopMining();
                         TradeUi.Notify("已回收完毕", craft.Name + " 采完了" + belt.label + "，小行星带消失");
                         MFLog.Verbose(LogCat.Combat,"[Space] 小行星带 @" + SpaceCfg.Pos(belt.Location) + " 采空 → 销毁");
-                        SpaceReveal.Forget(belt.Location);   // ★ 撤销主动揭示，避免留下常亮的空格
+                        SpaceReveal.Forget(belt.Location);   // 撤销主动揭示，避免留下常亮的空格
                         Util.KDestroyGameObject(belt.gameObject);
                         LootFields.RemoveAt(i);
                         StarMapVisuals.RefreshNow();

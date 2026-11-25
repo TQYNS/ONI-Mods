@@ -478,7 +478,7 @@ namespace MoreFood_KFC
             var w = new List<ICodexWidget>();
             w.Add(new CodexText(STRINGS.CODEX.HEADERS.FOODEFFECTS + ":", CodexTextStyle.Body, null));
 
-            // ★ 统一口径：优先走 buff tooltip 工厂（其首行=名字），否则用同款布局兜底（名字优先）
+            // 统一口径：优先走 buff tooltip 工厂（其首行=名字），否则用同款布局兜底（名字优先）
             string tipText;
             if (!CountedBuffDisplay.TryBuildTooltip(effectId, null, out tipText) || string.IsNullOrEmpty(tipText))
             {
@@ -688,7 +688,7 @@ namespace MoreFood_KFC
         }
     }
 
-    // ★ 原版信息面板「图书」按钮兜底：
+    // 原版信息面板「图书」按钮兜底：
     [HarmonyPatch(typeof(DetailsScreen), "CodexEntryButton_GetCodexId")]
     public static class CodexScanner_CodexButton_Patch
     {
@@ -746,7 +746,7 @@ namespace MoreFood_KFC
         }
     }
 
-    // ★ 配方 / 用途面板的图片点击修复：
+    // 配方 / 用途面板的图片点击修复：
     [HarmonyPatch(typeof(CodexScreen), "ChangeArticle")]
     public static class CodexScanner_ChangeArticle_Patch
     {

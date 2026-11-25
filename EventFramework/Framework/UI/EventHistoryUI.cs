@@ -208,8 +208,8 @@ namespace EventFramework
             catch (Exception e) { Distribution.Contracts.DistributionLog.ExcOnce("history:OnShow", "[History] OnShow 失败 → 已跳过本步，流程继续", e); }
             if (!show)
             {
-                // ★ 隐藏必须撤遮挡：KScreen.Show(false) 只改 active、不走 OnDeactivate，
-                //   留下的遮罩会把星图六角格的射线门永久关死（2026-11-12 实测：全图 tooltip 失效）。
+                // 隐藏必须撤遮挡：KScreen.Show(false) 只改 active、不走 OnDeactivate，
+                //   留下的遮罩会把星图六角格的射线门永久关死（实测：全图 tooltip 失效）。
                 UiModalBlocker.Close();
                 return;
             }
@@ -346,7 +346,7 @@ namespace EventFramework
             _btnPrev = BuildFooterButton("BtnPrev", ct, WinW - 298f, "上一页", delegate { TurnPage(-1); }, out prevLt);
             _btnNext = BuildFooterButton("BtnNext", ct, WinW - 204f, "下一页", delegate { TurnPage(1); }, out nextLt);
             BuildFooterButton("BtnRefresh", ct, WinW - 110f, "刷新", delegate { RefreshView(); }, out refreshLt);
-            // ★ 第二十四轮-1：移除「清空」后，其余按钮整体右移一格（94px）补位，右侧不再留空。
+            // 第二十四轮-1：移除「清空」后，其余按钮整体右移一格（94px）补位，右侧不再留空。
 
             LocText page;
             GameObject pageGo = EventUiKit.MakeFixedLabel("Page", ct, "", ColDim, 14f,
@@ -443,7 +443,7 @@ namespace EventFramework
             EventUiKit.Place(bar.gameObject, 14f, 10f, 5f, 24f);
             r.bar = bar;
 
-            // ★ 行尾「跳转」按钮：样式同底部按钮；无目标时灰禁用
+            // 行尾「跳转」按钮：样式同底部按钮；无目标时灰禁用
             KButton jump = EventUiKit.MakeButton("RowJump", row.transform, "", null, 0f);
             if (jump != null)
             {
@@ -554,7 +554,7 @@ namespace EventFramework
                     }
                     if (r.meta != null)
                     {
-                        // ★ 状态判定与上方"进行中 N 个事件"严格同源（按实例是否仍活跃，见 IsOngoing），
+                        // 状态判定与上方"进行中 N 个事件"严格同源（按实例是否仍活跃，见 IsOngoing），
                         string status = EventSystem.IsOngoing(h.instanceId) ? "进行中" : "已结束";
                         r.meta.SetText("第 " + (h.cycle + 1) + " 周期 · " + status);
                     }
@@ -564,7 +564,7 @@ namespace EventFramework
                     }
                     if (r.jump != null)
                     {
-                        SetInteractable(r.jump, EventLocator.CanJump(h.instanceId));   // ★ 有目标才亮
+                        SetInteractable(r.jump, EventLocator.CanJump(h.instanceId));   // 有目标才亮
                     }
                     if (r.tip != null)
                     {
@@ -728,7 +728,7 @@ namespace EventFramework
             }
         }
 
-        // ★ 行尾「跳转」按钮：先查可用性；失败（队列已空）则按钮熄灭 + 一次性提示
+        // 行尾「跳转」按钮：先查可用性；失败（队列已空）则按钮熄灭 + 一次性提示
         private void OnJumpClicked(int idx)
         {
             if (idx < 0 || idx >= _slotEntries.Length) return;
@@ -759,7 +759,7 @@ namespace EventFramework
             {
                 if (h == null) return "";
                 string head = (!string.IsNullOrEmpty(h.name) ? h.name : h.id) + "（第 " + (h.cycle + 1) + " 周期）";
-                // ★ 正文直接用通知那套渲染结果（变体 + 占位符 + 富文本）；老档为空 ⇒ 只显示标题行
+                // 正文直接用通知那套渲染结果（变体 + 占位符 + 富文本）；老档为空 ⇒ 只显示标题行
                 if (!string.IsNullOrEmpty(h.tip)) return head + "\n" + h.tip;
                 return head;
             }
@@ -912,7 +912,7 @@ namespace EventFramework
                 return;
             }
             EventHistoryUI.CloseIfOpen();
-            // ★ 兜底：星图已经开了，任何残留的框架遮罩都必须撤掉，否则六角格射线被永久关死
+            // 兜底：星图已经开了，任何残留的框架遮罩都必须撤掉，否则六角格射线被永久关死
             UiModalBlocker.Close();
         }
     }

@@ -47,7 +47,7 @@ namespace EventFramework
         private const float INFO_ROW_H = 26f;   // 每行（提交 / 获得）高度
         private const float INFO_PAD_V = 6f;    // 上下内边距
         private const float INFO_LABEL_W = 48f;   // 「提交 / 获得」标签列宽
-        private const float INFO_ICON = 16f;      // ★v3.6 物品图标尺寸
+        private const float INFO_ICON = 16f;      // v3.6 物品图标尺寸
         private const float INFO_ICON_GAP = 4f;   // 图标与名称间距
         private const float INFO_TOKEN_GAP = 14f; // 相邻物品（图标+名称）之间的间距
 
@@ -65,7 +65,7 @@ namespace EventFramework
         private const float FS_SECT = 17f;
         // 选项文案字号
         private const float FS_OPT = 22f;
-        private const float FS_INFO = 15f;   // ★v3.5 信息栏字号
+        private const float FS_INFO = 15f;   // v3.5 信息栏字号
         // 关闭按钮字号
         private const float FS_X = 26f;
 
@@ -141,7 +141,7 @@ namespace EventFramework
 
             try
             {
-                // ★ 只通知不弹窗：通知点击 / 历史点击 两条路径统一走 EventDef.AllowsPanel() 口径
+                // 只通知不弹窗：通知点击 / 历史点击 两条路径统一走 EventDef.AllowsPanel() 口径
                 var def0 = inst.def ?? EventRegistry.Get(inst.templateId);
                 if (!forced && def0 != null && !def0.AllowsPanel())
                 {
@@ -189,7 +189,7 @@ namespace EventFramework
                 panel._def = inst.def ?? EventRegistry.Get(inst.templateId);
                 if (panel._def != null) inst.def = panel._def;
 
-                // ★ 必须调 Activate() 而不是 PushScreen()：
+                // 必须调 Activate() 而不是 PushScreen()：
                 panel.Activate();
 
                 _current = panel;
@@ -212,7 +212,7 @@ namespace EventFramework
                 var p = _current;
                 _current = null;
 
-                // ★ 强制弹窗被"关掉"而不是"选掉" ⇒ 走保底默认选项。
+                // 强制弹窗被"关掉"而不是"选掉" ⇒ 走保底默认选项。
                 if (p != null && p._forced && p._inst != null && !p._inst.ChoiceChosen)
                 {
                     Debug.Log("[MoreFood/Event][UI/Panel] 强制弹窗被关闭且未选择 → 走保底默认选项");
@@ -439,7 +439,7 @@ namespace EventFramework
             float y = HEADER_H + 1f + 26f;
             float bodyW = WIN_W - 2f * PAD;
 
-            // ★ 强制弹窗提示条（驻留超时被强拉出来的那一次）
+            // 强制弹窗提示条（驻留超时被强拉出来的那一次）
             if (_forced && !_review)
             {
                 LocText warnTx;
@@ -487,7 +487,7 @@ namespace EventFramework
                 EventUiKit.Place(secRule.gameObject, PAD + 200f, y + 12f, bodyW - 200f, 1f);
                 y += 24f + 16f;
 
-                // ★ 选项行的可见外观【全部自绘】，原版按钮只当点击区。
+                // 选项行的可见外观【全部自绘】，原版按钮只当点击区。
                 float[] optTotalH = new float[_optTexts.Count];
                 for (int i = 0; i < _optTexts.Count; i++)
                 {
@@ -560,7 +560,7 @@ namespace EventFramework
                         hv.stripe = stripe;
                         hv.label = optLt;
                         hv.infoLabels = infoLts;
-                        hv.CaptureBase();   // ★ 记录信息栏文字基础色，供悬停提亮
+                        hv.CaptureBase();   // 记录信息栏文字基础色，供悬停提亮
 
  // 提交不足时的"拒绝反馈"：整行抖动 + 材料文字染红
                         shake = btn.gameObject.AddComponent<EventRowShake>();
@@ -571,7 +571,7 @@ namespace EventFramework
                 }
                 y = cy - OPT_GAP;   // 减掉最后一行的 GAP
             }
-            // ★ 回顾模式不再画"（事件已结束 · 回顾模式，不可再选）"备注条
+            // 回顾模式不再画"（事件已结束 · 回顾模式，不可再选）"备注条
 
             // ══ 关闭：右上角圆角 ✕ 按钮 ══════════════════════════════
             float xCx = WIN_W - 44f;
@@ -1178,7 +1178,7 @@ namespace EventFramework
         {
             if (_review)
             {
-                // ★ 固定文案，【不拼 outcome】。
+                // 固定文案，【不拼 outcome】。
                 return "第 " + (_rCycle + 1) + " 周期 · 已结束";
             }
 
@@ -1257,7 +1257,7 @@ namespace EventFramework
 
                 list.Add(new Block(descR, C_Dim, FS_BODY, 0f));
 
-                // ★ 回顾不再输出"选择了哪项"文案（无选项区、无页脚）——该设计已整体废除。
+                // 回顾不再输出"选择了哪项"文案（无选项区、无页脚）——该设计已整体废除。
                 return list;
             }
 
@@ -1289,7 +1289,7 @@ namespace EventFramework
             _optIds.Clear();
             _optTexts.Clear();
             if (_review) return;
-            if (_inst != null && _inst.ChoiceChosen) return;   // ★已表态 ⇒ 不再渲染选项区（只看"已选："那行）
+            if (_inst != null && _inst.ChoiceChosen) return;   // 已表态 ⇒ 不再渲染选项区（只看"已选："那行）
             if (_def == null || _def.options == null) return;
 
             _optDisabled.Clear();
@@ -1335,7 +1335,7 @@ namespace EventFramework
             {
                 if (_inst == null || _def == null) return;
 
-                // ★ 已表态 ⇒ 当场锁定：重复点击会把 idx 反复追加进 playerChoices，
+                // 已表态 ⇒ 当场锁定：重复点击会把 idx 反复追加进 playerChoices，
                 if (_inst.ChoiceChosen)
                 {
                     Debug.LogWarning("[MoreFood/Event][UI/Panel] 该事件已表态（选项 " + _inst.chosenIndex
@@ -1438,7 +1438,7 @@ namespace EventFramework
         // 每帧：驱动字幕节流 + 一次布局自检
         public override void ScreenUpdate(bool topLevel)
         {
-            TickSubtitleThrottled();   // ★ 不能被自检的早退分支挡住
+            TickSubtitleThrottled();   // 不能被自检的早退分支挡住
             OneShotLayoutCheck();
         }
 
@@ -1487,8 +1487,8 @@ namespace EventFramework
     {
         public Image fill;        // 行玻璃底（悬停时变亮）
         public Image stripe;      // 行首金条（悬停时加宽）
-        public LocText label;     // ★ 选项文字：悬停时变色
-        public LocText[] infoLabels; // ★v3.5：信息栏文字（提交 / 获得 各一行）
+        public LocText label;     // 选项文字：悬停时变色
+        public LocText[] infoLabels; // v3.5：信息栏文字（提交 / 获得 各一行）
 
         // 信息栏每行的基础色（悬停时按比例提亮）
         private Color[] _infoBase;

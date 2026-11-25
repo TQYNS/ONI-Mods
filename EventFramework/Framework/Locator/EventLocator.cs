@@ -207,7 +207,7 @@ namespace EventFramework
                             if (act[j] != null && act[j].instanceId == instId && act[j].def != null)
                             { curVer = act[j].def.version; break; }
                     }
-                    if (curVer != saveVer) continue;   // ★ 版本脏 → 丢弃
+                    if (curVer != saveVer) continue;   // 版本脏 → 丢弃
 
                     var q = new List<int>();
                     string[] parts = raw.Split('|');

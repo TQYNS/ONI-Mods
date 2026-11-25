@@ -38,7 +38,7 @@ namespace MoreFood_KFC
             }
         }
 
-        // ★ 20:4x 方向订正后的主防线：按钮已由 RefreshButtons 建好，
+        // 20:4x 方向订正后的主防线：按钮已由 RefreshButtons 建好，
         //   此刻（以及之后的 LocText.Awake / SwapFont）才是 MISSING 真正落到显示层的位置。
         [HarmonyPriority(Priority.Last)]
         private static void Postfix()

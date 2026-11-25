@@ -112,7 +112,7 @@ namespace MoreFood_KFC
             return true;
         }
 
-        /// <summary>弹药图标解析链（K5）：Def.GetUISprite → Assets.GetSprite(icon_sprite) → null（光团）。</summary>
+        // 弹药图标解析链（K5）：Def.GetUISprite → Assets.GetSprite(icon_sprite) → null（光团）。
         private static Sprite ResolveAmmoSprite(AmmoDef ammo)
         {
             try
@@ -227,7 +227,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>单点爆发（紧急脱离的脱离点闪光等；K5：warp_anim 完整播放待美术资源）。</summary>
+        // 单点爆发（紧急脱离的脱离点闪光等；K5：warp_anim 完整播放待美术资源）。
         internal static void PlayBurst(AxialI at, Color color, float sizeContent)
         {
             try

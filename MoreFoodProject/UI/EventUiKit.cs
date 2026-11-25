@@ -360,7 +360,7 @@ namespace MoreFood_KFC
             return root;
         }
 
-        // 统一设置文本外观。★ 必须关掉 enableAutoSizing：
+        // 统一设置文本外观。必须关掉 enableAutoSizing：
         public static void ApplyTextStyle(LocText lt, Color color, float fontSize,
                                           TextAlignmentOptions align)
         {
@@ -506,7 +506,7 @@ namespace MoreFood_KFC
             try
             {
                 lt.SetText(text ?? "");
-                CleanExtraLocTexts(lt.gameObject, lt);   // ★ 清掉模板自带的 "Sub Label" 等
+                CleanExtraLocTexts(lt.gameObject, lt);   // 清掉模板自带的 "Sub Label" 等
                 if (color.HasValue) lt.color = color.Value;
                 // ⚠ 不设 fontSize：LocText 的字号 API 各版本不同，写死会编译不过
                 if (fontSize > 0) { /* 预留 */ }
@@ -595,7 +595,7 @@ namespace MoreFood_KFC
             catch { /* expected: 清理多余文本失败不影响本行显示 */ }
         }
 
-        // ★ 报告式行 —— 复用 ReportScreen 的行模板（外观 100% 与原版「每日报告」一致）
+        // 报告式行 —— 复用 ReportScreen 的行模板（外观 100% 与原版「每日报告」一致）
 
         // 建一行报告式行。取不到模板返回 null（调用方自行降级）。
         public enum ReportRowKind { Line, Header, Spacer }

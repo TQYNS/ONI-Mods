@@ -189,9 +189,9 @@ namespace MoreFood_KFC
                     }
                 }
                 b.attrs.Clear();
-                // ★ 摘掉补挂登记（buff 已结束，后续新目标不再挂它）
+                // 摘掉补挂登记（buff 已结束，后续新目标不再挂它）
                 SpaceRealEventBuffHub.Unwatch(b);
-                // ★ 孢子云：还原被放大的 DiseaseDropper 配置（含共享 Def 场景，只还原一次）
+                // 孢子云：还原被放大的 DiseaseDropper 配置（含共享 Def 场景，只还原一次）
                 if (b.droppers.Count > 0)
                 {
                     for (int i = 0; i < b.droppers.Count; i++)

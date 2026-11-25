@@ -56,7 +56,7 @@ namespace MoreFood_KFC
             return JumpToCell(cell);
         }
 
-        /// <summary>该格里是否还有我们的小行星带。</summary>
+        // 该格里是否还有我们的小行星带。
         private static bool HasBeltAt(AxialI cell)
         {
             ClusterGrid grid = ClusterGrid.Instance;
@@ -79,7 +79,7 @@ namespace MoreFood_KFC
             return false;
         }
 
-        /// <summary>打开星图 → 选中该格实体（星图整体自适应缩放下等同视野聚焦）。</summary>
+        // 打开星图 → 选中该格实体（星图整体自适应缩放下等同视野聚焦）。
         internal static bool JumpToCell(AxialI cell)
         {
             try
@@ -128,7 +128,7 @@ ClusterMapScreen screen = ClusterMapScreen.Instance;
             }
         }
 
-        /// <summary>SetSelectedEntity 在原版是私有方法 → 反射调用；参数按运行时签名适配（默认值不会由反射自动补齐）。</summary>
+        // SetSelectedEntity 在原版是私有方法 → 反射调用；参数按运行时签名适配（默认值不会由反射自动补齐）。
         private static void SelectEntity(ClusterMapScreen screen, ClusterGridEntity e)
         {
             try

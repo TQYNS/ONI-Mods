@@ -28,7 +28,7 @@ namespace MoreFood_KFC
             save.monsterRegenUntil.Clear();
             save.monsterAttackUntil.Clear();
             save.monsterDeaggroUntil.Clear();
-            save.monsterLeaveAt.Clear();      // ★ 忘了清这两个 ⇒ 列表只增不减（读档读到陈年数据）
+            save.monsterLeaveAt.Clear();      // 忘了清这两个 ⇒ 列表只增不减（读档读到陈年数据）
             save.monsterFleeUntil.Clear();
             for (int i = 0; i < Monsters.Count; i++)
             {
@@ -137,7 +137,7 @@ namespace MoreFood_KFC
             }
             if (MainSpawner != null)
             {
-                // ★ 闹钟不断裂：暂停态原样恢复（等空位通知才继续），计时态保留原到点时间（过期则重排）
+                // 闹钟不断裂：暂停态原样恢复（等空位通知才继续），计时态保留原到点时间（过期则重排）
                 MainSpawner.paused = save.spawnerMainPaused;
                 MainSpawner.pausedRemain = Mathf.Max(0f, save.spawnerMainRemain);
                 // 到点时间过期时按本局已应用配置重排（不能回读 yaml 原值，否则高级设置被绕过）
@@ -204,7 +204,7 @@ namespace MoreFood_KFC
                 rt.attackUntil = attack > now ? attack : now;
                 float deaggro = GetAt(save.monsterDeaggroUntil, i, 0f);
                 rt.deaggroUntil = deaggro > now ? deaggro : 0f;
-                // ★ 离场闹钟/逃跑窗口不断裂：原样恢复；老档没有这条（=0）就按 yaml 重排一个
+                // 离场闹钟/逃跑窗口不断裂：原样恢复；老档没有这条（=0）就按 yaml 重排一个
                 float leaveAt = GetAt(save.monsterLeaveAt, i, 0f);
                 rt.leaveAt = leaveAt > 0f
                     ? leaveAt

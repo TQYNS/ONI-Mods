@@ -553,7 +553,7 @@ namespace MoreFood_KFC
             return pool[UnityEngine.Random.Range(0, pool.Length)];
         }
 
-        /// <summary>全外观随机。</summary>
+        // 全外观随机。
         internal static BeltStyle RollAnyStyle()
         {
             BeltStyle[] pool = new BeltStyle[]
@@ -652,7 +652,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>必须是空格；占用则就近找空格，找不到返回 InvalidCell。</summary>
+        // 必须是空格；占用则就近找空格，找不到返回 InvalidCell。
         internal static AxialI ResolveFreeCell(AxialI cell)
         {
             if (SpaceRealEventRuntime.CellFree(cell))

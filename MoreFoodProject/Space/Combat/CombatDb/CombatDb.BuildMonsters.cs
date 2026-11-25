@@ -180,7 +180,7 @@ namespace MoreFood_KFC
             d.attack = r.attack ?? 10f;
             d.armorPenetration = r.armor_penetration ?? 5f;
             d.attackInterval = r.attack_interval.HasValue && r.attack_interval.Value > 0f ? r.attack_interval.Value : 10f;
-            // ★ 攻击间隔钳制到 [min_attack_interval, attackIntervalMax]（当前配置 6~25 秒，再由 5 秒节拍对齐成 10/15/20/25）
+            // 攻击间隔钳制到 [min_attack_interval, attackIntervalMax]（当前配置 6~25 秒，再由 5 秒节拍对齐成 10/15/20/25）
             //   伤害按 DPS 不变缩放（每场总输出不变，问题5）
             {
                 float oldInt = d.attackInterval;
@@ -195,7 +195,7 @@ namespace MoreFood_KFC
                 }
             }
             d.attackRange = Mathf.Max(1, r.attack_range ?? 1);
-            // ★ alert_range 默认跟随 attack_range（不配置 = 与攻击距离相同）
+            // alert_range 默认跟随 attack_range（不配置 = 与攻击距离相同）
             d.alertRange = Mathf.Max(1, r.alert_range ?? d.attackRange);
             d.deaggroSeconds = Mathf.Max(0f, r.deaggro_seconds ?? 20f);
             d.moveInterval = r.move_interval.HasValue && r.move_interval.Value > 0f
@@ -203,7 +203,7 @@ namespace MoreFood_KFC
             d.speed = r.speed.HasValue && r.speed.Value > 0f ? r.speed.Value : Shared.defaultSpeed;
             d.hostile = r.hostile ?? false;
             d.chase = r.chase ?? true;
-            d.canFlee = r.can_flee ?? false;   // ★ 默认不逃跑（用户口径：不配置 = False）
+            d.canFlee = r.can_flee ?? false;   // 默认不逃跑（用户口径：不配置 = False）
             d.fleeHpPct = Mathf.Clamp01(r.flee_hp_pct ?? 0.25f);
             d.fleeInstantStepOnce = r.flee_instant_step_once ?? true;
             // 漫游切换间隔默认 [600,3600] 秒（与 CombatMonsterDef.idleMin/idleMax 保持一致）
@@ -226,7 +226,7 @@ namespace MoreFood_KFC
             d.idleMax = iMax;
             d.idleChance = Mathf.Clamp01(r.idle_chance ?? 0.4f);
             d.spawnSleepSeconds = Mathf.Max(0f, r.spawn_sleep_seconds ?? 300f);
-            // ★ 离场时机：leave_after_seconds = [下限,上限]（秒），超出 [600, 60000] 直接钳制
+            // 离场时机：leave_after_seconds = [下限,上限]（秒），超出 [600, 60000] 直接钳制
             if (r.leave_after_seconds != null && r.leave_after_seconds.Length >= 2 && r.leave_after_seconds[1] > 0f)
             {
                 float lMinRaw = r.leave_after_seconds[0];
@@ -252,7 +252,7 @@ namespace MoreFood_KFC
             }
             else
             {
-                // ★ 不配置 = 默认窗口 [3600, 60000]（6~100 周期随机离场），不再"永不离场"占名额
+                // 不配置 = 默认窗口 [3600, 60000]（6~100 周期随机离场），不再"永不离场"占名额
                 d.leaveAfterMin = CombatMonsterDef.LeaveAfterFloorSeconds;
                 d.leaveAfterMax = CombatMonsterDef.LeaveAfterCeilSeconds;
             }
@@ -278,7 +278,7 @@ namespace MoreFood_KFC
             {
                 LootFieldCfg lf = new LootFieldCfg();
                 lf.name = string.IsNullOrEmpty(r.loot_field.name) ? (d.name + "残骸带") : r.loot_field.name;
-                lf.beltStyle = r.loot_field.belt_style;   // ★ 外观风格（问题6）
+                lf.beltStyle = r.loot_field.belt_style;   // 外观风格（问题6）
                 d.lootField = lf;
             }
             if (r.loot != null)

@@ -130,7 +130,7 @@ namespace MoreFood_KFC
             return list;
         }
 
-        // ★ 修复：直接订阅 OnAdd/OnRemove（Cmps.Register 会重放全体订阅者 → 重复键刷屏）
+        // 修复：直接订阅 OnAdd/OnRemove（Cmps.Register 会重放全体订阅者 → 重复键刷屏）
         private static bool passiveHooksInstalled;
 
         internal static void SetUpPassiveHooks()

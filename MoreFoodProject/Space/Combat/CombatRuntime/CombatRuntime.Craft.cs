@@ -89,7 +89,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>火箭战斗速度系数（Π utility.speed_mul）。</summary>
+        // 火箭战斗速度系数（Π utility.speed_mul）。
         internal static float CraftSpeedMul(Clustercraft craft)
         {
             try
@@ -103,7 +103,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>由 SpaceTick 的 craft 遍历每秒喂进来（不额外全图扫描，K6）。</summary>
+        // 由 SpaceTick 的 craft 遍历每秒喂进来（不额外全图扫描，K6）。
         internal static void OnCraftSeen(Clustercraft craft)
         {
             if (craft == null)
@@ -116,7 +116,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>每 Tick 对比 lastCell，变化 → 警戒扫描（§7.3）。</summary>
+        // 每 Tick 对比 lastCell，变化 → 警戒扫描（§7.3）。
         internal static void OnCraftMoved(Clustercraft craft)
         {
             if (craft == null)
@@ -133,7 +133,7 @@ namespace MoreFood_KFC
             lastCellByCraft[id] = craft.Location;
             AlertOnCraftMoved(craft);
             CombatBars.OnCraftMoved(craft);   // 迷你条：随移动重挂（事件驱动，复用本钩子）
-            // ★ 设计变更：不再在这里刷新按钮排。交易/加油的可用态一律在「显示前」现算、
+            // 设计变更：不再在这里刷新按钮排。交易/加油的可用态一律在「显示前」现算、
             //   「点击时」再校验，不依赖位置事件（事件漏一次就会永久显示错误）。
         }
 
@@ -244,7 +244,7 @@ namespace MoreFood_KFC
                 return false;
             }
 
-            // ★ 区域边界闸门（修复：怪物把可见外沿之外的虚空当可走区）
+            // 区域边界闸门（修复：怪物把可见外沿之外的虚空当可走区）
             SpaceZones z = StarMapVisuals.Zones;
             if (z == null || !z.valid)
             {
@@ -354,7 +354,7 @@ namespace MoreFood_KFC
             return null;
         }
 
-        /// <summary>火箭追击用最大有效射程：基础 + 最佳武器 + 雷达 + 最佳弹药。</summary>
+        // 火箭追击用最大有效射程：基础 + 最佳武器 + 雷达 + 最佳弹药。
         internal static float AttackRangeOf(Clustercraft craft)
         {
             float baseRange = BaseAttackRange(craft);

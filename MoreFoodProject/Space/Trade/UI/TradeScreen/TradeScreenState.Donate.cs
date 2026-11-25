@@ -25,7 +25,7 @@ namespace MoreFood_KFC
             internal bool isFood;
         }
 
-        // ★ 捐款内容全部由 trade/donation.yaml 的"渠道"驱动
+        // 捐款内容全部由 trade/donation.yaml 的"渠道"驱动
         private List<DonateRowDef> BuildDonateRows()
         {
             List<DonateRowDef> rows = new List<DonateRowDef>();
@@ -382,7 +382,7 @@ namespace MoreFood_KFC
             TradeUi.Text("ih2", body.transform, 770f, 40f, 160f, 24f, "渠道", 13f, TradeUi.TextDim, true);
             TradeUi.Text("ih3", body.transform, 940f, 40f, 176f, 24f, "每份荣誉点", 13f, TradeUi.TextDim, true);
 
-            // ★ 分页（不再用滚动视图 —— 用户实测滚轮在游戏里吃不到）：
+            // 分页（不再用滚动视图 —— 用户实测滚轮在游戏里吃不到）：
             List<DonateRemoteRow> all = BuildDonateRemoteRows();
             if (all.Count == 0)
             {

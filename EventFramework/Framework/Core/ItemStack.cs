@@ -134,7 +134,7 @@ namespace EventFramework
                 res.valid.Add(new ItemStack { id = id, mass = m });
             }
 
-            // ★ 规则 3：只要有一条格式错误，整组拒绝
+            // 规则 3：只要有一条格式错误，整组拒绝
             if (res.formatError)
             {
                 res.formatMsgs.Insert(0, "整组被拒绝（共 " + res.totalCount + " 条，问题见下）");

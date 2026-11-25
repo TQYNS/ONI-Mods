@@ -31,7 +31,7 @@ namespace MoreFood_KFC
             return GetCore(key, false, tags);
         }
 
-        /// <summary>允许液体的池（饮品）：与固体池分键缓存，互不污染。</summary>
+        // 允许液体的池（饮品）：与固体池分键缓存，互不污染。
         internal static List<string> GetAny(string key, params string[] tags)
         {
             return GetCore(key + "#any", true, tags);
@@ -40,7 +40,7 @@ namespace MoreFood_KFC
         // 掉落组构建器（AsteroidBeltPool.Load 注入一次：静态字段，命中路径零分配且不反向依赖）
         internal static Func<string, List<string>> groupBuilder;
 
-        /// <summary>按 key 取缓存（内存 → 存档 → 构建），与 Get 共用同一 cache 与同一批存档字段。</summary>
+        // 按 key 取缓存（内存 → 存档 → 构建），与 Get 共用同一 cache 与同一批存档字段。
         internal static List<string> GetOrBuild(string key, string arg)
         {
             CachedValue<List<string>> slot = Slot(key);
@@ -74,7 +74,7 @@ namespace MoreFood_KFC
             return built;
         }
 
-        /// <summary>只查内存缓存，不触发构建（给百科这类早期调用方用）。</summary>
+        // 只查内存缓存，不触发构建（给百科这类早期调用方用）。
         internal static List<string> TryGetCached(string key)
         {
             CachedValue<List<string>> slot;

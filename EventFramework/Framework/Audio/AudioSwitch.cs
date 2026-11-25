@@ -2,9 +2,9 @@
 //
 // 用途：音频模板的 flag 触发（EventAudioTemplate.flag → EventAudioTrigger）。
 //   开 → 播绑定的音频；关 → 停。
-// ★ 与事件系统的叙事状态彻底解耦：本表不存盘，读档后一律从"全关"开始。
+// 与事件系统的叙事状态彻底解耦：本表不存盘，读档后一律从"全关"开始。
 //   declared 表只记录"模板声明过哪些开关名"（启动时由 BuildBindings 重建），用于命名自检。
-// ★ 用 List 而非 HashSet：本项目未引用 System 程序集，HashSet→IEnumerable 会触发 ISet<> 编译错误。
+// 用 List 而非 HashSet：本项目未引用 System 程序集，HashSet→IEnumerable 会触发 ISet<> 编译错误。
 
 using System;
 using System.Collections.Generic;

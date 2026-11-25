@@ -252,7 +252,7 @@ namespace MoreFood_KFC
                 + "%（massModificationMethod=" + Geyser.massModificationMethod + "）");
             if (inst != null)
             {
-                // ★ 走分支变体：yaml notification.variants.boost
+                // 走分支变体：yaml notification.variants.boost
                 inst.SetNoticeVariant("boost");
                 inst.SetNoticeArg("target", g.GetProperName());
                 inst.SetNoticeArg("pct", "+" + Mathf.Round(pct * 100f) + "%");

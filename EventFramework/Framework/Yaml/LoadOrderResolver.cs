@@ -96,7 +96,7 @@ namespace EventFramework
                 return infos;
             }
 
-            // 2) ★ 只保留【真正启用】的 mod —— 与原版加载机制对齐
+            // 2) 只保留【真正启用】的 mod —— 与原版加载机制对齐
             var enabledMods = new List<KMod.Mod>(mods.Count);
             var skipped = new List<string>();
 
@@ -203,7 +203,7 @@ namespace EventFramework
             ModPrefixResolver.ClearCache();
         }
 
-        // ★ 核心判据：该 mod 是否应当被框架处理
+        // 核心判据：该 mod 是否应当被框架处理
         private static bool IsModEnabled(KMod.Mod m, out string reason)
         {
             reason = null;
@@ -254,7 +254,7 @@ namespace EventFramework
             return true;
         }
 
-        // ★ 探针：把每个 mod 的关键字段打进日志
+        // 探针：把每个 mod 的关键字段打进日志
         private static void ProbeMod(KMod.Mod m)
         {
             if (m == null) return;

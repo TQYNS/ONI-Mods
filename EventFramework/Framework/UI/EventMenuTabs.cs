@@ -20,7 +20,7 @@ namespace EventFramework
 
             try
             {
-                // ★ 顺序 = 数组顺序（AddTabs 按序 Insert 到「饮食」之后）
+                // 顺序 = 数组顺序（AddTabs 按序 Insert 到「饮食」之后）
                 var specs = new[]
                 {
                     // 「饮品」tab 已归宿主自挂（C09：能力内建 / 宿主自管，框架不再代劳）

@@ -123,12 +123,12 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>
-        /// ★ 计量口径（本轮核心修复）：每「份」的质量。
-        /// 批量物资（食物、材料）按 kg 计 ⇒ 1kg = 1 份；单件物品（工艺品/模块/弹药）按 prefab 自身的
-        /// 单位质量计 ⇒ 工艺品 25kg = 1 份。旧实现全链路把 PrimaryElement.Mass 当份数用，
-        /// 于是 2 件工艺品（2×25kg）被显示成「持有 50」，卖出 20 时还会把一件工艺品的质量切掉 20kg。
-        /// </summary>
+        //
+        // 计量口径（本轮核心修复）：每「份」的质量。
+        // 批量物资（食物、材料）按 kg 计 ⇒ 1kg = 1 份；单件物品（工艺品/模块/弹药）按 prefab 自身的
+        // 单位质量计 ⇒ 工艺品 25kg = 1 份。旧实现全链路把 PrimaryElement.Mass 当份数用，
+        // 于是 2 件工艺品（2×25kg）被显示成「持有 50」，卖出 20 时还会把一件工艺品的质量切掉 20kg。
+        //
         internal static float UnitMass(Tag tag)
         {
             GameObject prefab = Assets.TryGetPrefab(tag);
@@ -137,22 +137,22 @@ namespace MoreFood_KFC
             return m > MinMass ? m : 1f;
         }
 
-        /// <summary>该 Tag 是否以「份」而非 kg 计量（工艺品 / 模块 / 弹药）。</summary>
+        // 该 Tag 是否以「份」而非 kg 计量（工艺品 / 模块 / 弹药）。
         internal static bool CountsByPiece(Tag tag)
         {
             return IsArtifact(tag) || IsDiscretePrefab(tag);
         }
 
-        /// <summary>
-        /// 是否必须「整件」扣取/发放：单件物品且单位质量 ≠ 1kg（如工艺品 25kg/件）。
-        /// 1kg/件 的模块与弹药数值上与 kg 等价，保持原有按 kg 逻辑，避免波及战斗侧扣弹口径。
-        /// </summary>
+        //
+        // 是否必须「整件」扣取/发放：单件物品且单位质量 ≠ 1kg（如工艺品 25kg/件）。
+        // 1kg/件 的模块与弹药数值上与 kg 等价，保持原有按 kg 逻辑，避免波及战斗侧扣弹口径。
+        //
         internal static bool TakesWholePieces(Tag tag)
         {
             return CountsByPiece(tag) && UnitMass(tag) > 1.001f;
         }
 
-        /// <summary>质量 → 份数（整份，向下取整，避免半件被凑成一件）；批量物资原样返回 kg。</summary>
+        // 质量 → 份数（整份，向下取整，避免半件被凑成一件）；批量物资原样返回 kg。
         internal static float PieceCount(Tag tag, float mass)
         {
             if (!CountsByPiece(tag))
@@ -163,7 +163,7 @@ namespace MoreFood_KFC
             return um > MinMass ? Mathf.Floor(mass / um + 0.01f) : mass;
         }
 
-        /// <summary>份数 → 质量（结算/退款时换算回 kg）。</summary>
+        // 份数 → 质量（结算/退款时换算回 kg）。
         internal static float PieceMass(Tag tag, float pieces)
         {
             if (!CountsByPiece(tag))
@@ -177,7 +177,7 @@ namespace MoreFood_KFC
         {
             float sum = 0f;
             List<RocketHold> holds = GetHolds(craft);
-            // ★ 计量口径：单件物品按「件」数，不用 GetAmountAvailable 的 Units（其定义随 MassPerUnit 浮动）
+            // 计量口径：单件物品按「件」数，不用 GetAmountAvailable 的 Units（其定义随 MassPerUnit 浮动）
             bool byPiece = CountsByPiece(tag);
             for (int i = 0; i < holds.Count; i++)
             {
@@ -216,7 +216,7 @@ namespace MoreFood_KFC
             return sum;
         }
 
-        /// <summary>
+        //
         internal static int InteriorDropCell(Clustercraft craft)
         {
             WorldContainer w = GetInterior(craft);
@@ -326,7 +326,7 @@ namespace MoreFood_KFC
             return null;
         }
 
-        /// <summary>把一份/一堆物品直接落到火箭内部（落点见 InteriorDropCell）。</summary>
+        // 把一份/一堆物品直接落到火箭内部（落点见 InteriorDropCell）。
         internal static bool SpawnInInterior(Clustercraft craft, string label, GameObject prefab,
             float mass, float temperature)
         {
@@ -352,7 +352,7 @@ namespace MoreFood_KFC
             return true;
         }
 
-        /// <summary>
+        //
         internal static bool DepositForTrade(Clustercraft craft, Tag tag, float amount,
             float temperature, out string reason)
         {
@@ -363,7 +363,7 @@ namespace MoreFood_KFC
                 reason = "找不到物品 " + tag.Name;
                 return false;
             }
-            // ★ 计量口径：工艺品按「件」入舱，每件都是完整单位质量（25kg），不按 kg 切
+            // 计量口径：工艺品按「件」入舱，每件都是完整单位质量（25kg），不按 kg 切
             if (IsArtifact(tag))
             {
                 float um = UnitMass(tag);
@@ -439,7 +439,7 @@ namespace MoreFood_KFC
                 {
                     continue;
                 }
-                // ★ 修订（持有量虚高 25/50）：只要物品在任意 Storage 里（陈列架、储物箱、冰箱、
+                // 修订（持有量虚高 25/50）：只要物品在任意 Storage 里（陈列架、储物箱、冰箱、
                 //   模块自带仓库……）就不是"可搬运的散落物"，不能计入可交易持有量。
                 //   旧实现遍历内舱全部 Pickupable，把陈列架上的陈列品也算成货，清空内舱后数字才回落。
                 if (p.storage != null)
@@ -463,17 +463,17 @@ namespace MoreFood_KFC
                 PrimaryElement pe = p.GetComponent<PrimaryElement>();
                 if (pe != null && pe.Mass > 0f)
                 {
-                    // ★ 计量口径：单件物品按整件计（25kg 工艺品 = 1 份），批量物资仍按 kg（= 份）
+                    // 计量口径：单件物品按整件计（25kg 工艺品 = 1 份），批量物资仍按 kg（= 份）
                     sum += PieceCount(tag, pe.Mass);
                 }
             }
             return sum;
         }
 
-        /// <summary>
-        /// ★ 模块自带 Storage（工艺品运输仓等）里的件数。货舱已由 GetHolds 覆盖，这里跳过货舱模块，
-        /// 避免同一份物品被算两次。仅单件物品需要（工艺品买回来是进运输仓的，旧实现看不见 ⇒ 持有 0 卖不掉）。
-        /// </summary>
+        //
+        // 模块自带 Storage（工艺品运输仓等）里的件数。货舱已由 GetHolds 覆盖，这里跳过货舱模块，
+        // 避免同一份物品被算两次。仅单件物品需要（工艺品买回来是进运输仓的，旧实现看不见 ⇒ 持有 0 卖不掉）。
+        //
         internal static float AvailableInExtraStorage(Clustercraft craft, Tag tag)
         {
             if (craft == null || craft.ModuleInterface == null)
@@ -528,7 +528,7 @@ namespace MoreFood_KFC
         internal static float Available(Clustercraft craft, Tag tag)
         {
             float sum = AvailableInHolds(craft, tag) + AvailableOnFloor(craft, tag);
-            // ★ 单件物品：运输仓里的也算可交易（买入即入仓，必须能再卖出）
+            // 单件物品：运输仓里的也算可交易（买入即入仓，必须能再卖出）
             //   仅限整件扣取的物品（单位质量 > 1kg），与 ConsumePieces 的扫描范围严格一致
             if (TakesWholePieces(tag))
             {
@@ -537,7 +537,7 @@ namespace MoreFood_KFC
             return sum;
         }
 
-        /// <summary>★ 第十八轮-5：模块实物的"全仓"可用量 —— 货舱 + 内舱地面 + 各模块自带 Storage。
+        // 第十八轮-5：模块实物的"全仓"可用量 —— 货舱 + 内舱地面 + 各模块自带 Storage。
         internal static float AvailableAnywhere(Clustercraft craft, Tag tag)
         {
             float sum = Available(craft, tag);
@@ -588,7 +588,7 @@ namespace MoreFood_KFC
                                 continue;
                             }
                             PrimaryElement pe = it.GetComponent<PrimaryElement>();
-                            // ★ 计量口径：与 AvailableInHolds 一致 —— 单件物品按件数，其余按份(=kg)
+                            // 计量口径：与 AvailableInHolds 一致 —— 单件物品按件数，其余按份(=kg)
                             sum += PieceCount(tag, pe != null ? pe.Mass : 1f);
                         }
                     }
@@ -649,7 +649,7 @@ namespace MoreFood_KFC
                         continue;
                     }
                     string id = pid.PrefabTag.Name;
-                    // ★ 计量口径：快照同样以「份」为单位（工艺品按件、其余按 kg），调用方无需再换算
+                    // 计量口径：快照同样以「份」为单位（工艺品按件、其余按 kg），调用方无需再换算
                     float qty = PieceCount(pid.PrefabTag, mass);
                     if (qty <= MinMass)
                     {
@@ -659,7 +659,7 @@ namespace MoreFood_KFC
                     map[id] = map.TryGetValue(id, out old) ? old + qty : qty;
                 }
             }
-            // ★ 单件物品：模块自带 Storage（工艺品运输仓等）里的也要进快照，
+            // 单件物品：模块自带 Storage（工艺品运输仓等）里的也要进快照，
             //   否则买回来的工艺品在交易列表里看不到、卖不回去。只收单件物品，批量物资不受影响。
             if (craft.ModuleInterface != null)
             {
@@ -725,7 +725,7 @@ namespace MoreFood_KFC
                         {
                             continue;
                         }
-                        // ★ 修订：与 AvailableOnFloor / Consume 同口径 —— 只统计"散落可搬运"的物品，
+                        // 修订：与 AvailableOnFloor / Consume 同口径 —— 只统计"散落可搬运"的物品，
                         //   陈列架/储物箱里的不算，否则会凭空多出可卖条目。
                         if (p.storage != null || p.gameObject == null || !p.gameObject.activeInHierarchy)
                         {
@@ -757,7 +757,7 @@ namespace MoreFood_KFC
 
         internal static float Consume(Clustercraft craft, Tag tag, float amount)
         {
-            // ★ 计量口径：单件物品按「件」整件扣，绝不切分单件质量（1kg/件 的弹药/模块仍按 kg，数值等价）
+            // 计量口径：单件物品按「件」整件扣，绝不切分单件质量（1kg/件 的弹药/模块仍按 kg，数值等价）
             if (TakesWholePieces(tag))
             {
                 return ConsumePieces(craft, tag, amount);
@@ -796,7 +796,7 @@ namespace MoreFood_KFC
                 {
                     continue;
                 }
-                // ★ 修订：与 AvailableOnFloor 同口径 —— 只扣"散落在地上"的搬运物，
+                // 修订：与 AvailableOnFloor 同口径 —— 只扣"散落在地上"的搬运物，
                 //   陈列架/储物箱里的东西一律不碰（否则卖出会拆掉玩家的陈列）。
                 if (p.storage != null || p.gameObject == null || !p.gameObject.activeInHierarchy)
                 {
@@ -816,7 +816,7 @@ namespace MoreFood_KFC
                 {
                     continue;
                 }
-                // ★ 修订：质量为 0/负数的残体不参与扣减，避免 take=0 造成的空转与"扣了 0 却算成交"
+                // 修订：质量为 0/负数的残体不参与扣减，避免 take=0 造成的空转与"扣了 0 却算成交"
                 if (pe.Mass <= MinMass)
                 {
                     continue;
@@ -839,10 +839,10 @@ namespace MoreFood_KFC
             return amount - left;
         }
 
-        /// <summary>
-        /// ★ 计量口径：按「件」扣减 —— 货舱与内舱地面逐件销毁，绝不修改单件物品的质量。
-        /// 返回实际扣到的件数（整数）。
-        /// </summary>
+        //
+        // 计量口径：按「件」扣减 —— 货舱与内舱地面逐件销毁，绝不修改单件物品的质量。
+        // 返回实际扣到的件数（整数）。
+        //
         private static float ConsumePieces(Clustercraft craft, Tag tag, float pieces)
         {
             float left = pieces;
@@ -964,7 +964,7 @@ namespace MoreFood_KFC
                 MFLog.Warn(LogCat.Trade, "[Space] 找不到物品 prefab：" + tag.Name + "（发放失败）");
                 return false;
             }
-            // ★ 计量口径：单件物品按整件发放（每件都是 prefab 的单位质量），不产生半件/1kg 残件
+            // 计量口径：单件物品按整件发放（每件都是 prefab 的单位质量），不产生半件/1kg 残件
             if (TakesWholePieces(tag))
             {
                 float um = UnitMass(tag);
@@ -988,7 +988,7 @@ namespace MoreFood_KFC
             }
             // 弹药/模块是 1kg/个的独立物品：按 kg 拆成多个物品，不能合成一个大块
             bool split = IsDiscretePrefab(tag);
-            // ★ 边界：不足一份（<1kg）不再入库 —— 用 Floor 而非 Round，避免把 0.5kg 凑成 1 个整份
+            // 边界：不足一份（<1kg）不再入库 —— 用 Floor 而非 Round，避免把 0.5kg 凑成 1 个整份
             int count = split ? Mathf.FloorToInt(mass + 0.001f) : 1;
             if (split && count <= 0)
             {
@@ -1018,14 +1018,14 @@ namespace MoreFood_KFC
             {
                 return true;
             }
-            // ★ 边界：不足一份（<1）不再入库（Floor，不四舍五入凑整），防止整数物品被错误分割
+            // 边界：不足一份（<1）不再入库（Floor，不四舍五入凑整），防止整数物品被错误分割
             int count = Mathf.FloorToInt(units + 0.001f);
             if (count <= 0)
             {
                 MFLog.Warn(LogCat.Trade, "[Space] 不足一份（" + units.ToString("0.###") + "），不入库：" + tag.Name);
                 return false;
             }
-            // ★ 计量口径：单件物品每件都是 prefab 的单位质量（工艺品 25kg/件），其余 1 份 = 1kg
+            // 计量口径：单件物品每件都是 prefab 的单位质量（工艺品 25kg/件），其余 1 份 = 1kg
             float unitMass = CountsByPiece(tag) ? UnitMass(tag) : 1f;
             for (int n = 0; n < count; n++)
             {
@@ -1056,7 +1056,7 @@ namespace MoreFood_KFC
                 PrimaryElement pe = go.GetComponent<PrimaryElement>();
                 if (pe != null)
                 {
-                    // ★ 计量口径：一件 = 一个完整单位质量（Mass 会同时重算 Units）
+                    // 计量口径：一件 = 一个完整单位质量（Mass 会同时重算 Units）
                     pe.Mass = unitMass;
                     pe.Temperature = temperature;
                 }
@@ -1070,7 +1070,7 @@ namespace MoreFood_KFC
                 s.Store(go, true, false, true, false);
                 return true;
             }
-            // ★ 货舱放不下 → 卸到火箭内部（控制台位 → 人员站位）
+            // 货舱放不下 → 卸到火箭内部（控制台位 → 人员站位）
             int cell = InteriorDropCell(craft);
             if (Grid.IsValidCell(cell))
             {
@@ -1118,7 +1118,7 @@ namespace MoreFood_KFC
             {
                 return false;
             }
-            // ★ 1) 优先：工艺品运输仓（ArtifactModule）
+            // 1) 优先：工艺品运输仓（ArtifactModule）
             try
             {
                 if (craft != null && craft.ModuleInterface != null)
@@ -1146,7 +1146,7 @@ namespace MoreFood_KFC
                             PrimaryElement pe = go.GetComponent<PrimaryElement>();
                             if (pe != null)
                             {
-                                // ★ 计量口径：一件工艺品 = 一个完整单位质量（25kg），不能留 1kg 残件
+                                // 计量口径：一件工艺品 = 一个完整单位质量（25kg），不能留 1kg 残件
                                 pe.Mass = UnitMass(tag);
                                 pe.Temperature = temperature;
                             }
@@ -1161,7 +1161,7 @@ namespace MoreFood_KFC
             {
                 MFLog.Exc(LogCat.Trade, e, "[Space] 工艺品运输仓入库异常");
             }
-            // ★ 2) 没有运输仓（或已满）→ 落到火箭内部，确保交易/采集不被卡住
+            // 2) 没有运输仓（或已满）→ 落到火箭内部，确保交易/采集不被卡住
             return SpawnInInterior(craft, tag.Name, prefab, UnitMass(tag), temperature);
         }
 
@@ -1235,7 +1235,7 @@ namespace MoreFood_KFC
             {
                 return true;
             }
-            // ★ 货舱放不下 → 卸到火箭内部（控制台位 → 人员站位，避免落点被占导致堵塞）
+            // 货舱放不下 → 卸到火箭内部（控制台位 → 人员站位，避免落点被占导致堵塞）
             int cell = InteriorDropCell(craft);
             if (Grid.IsValidCell(cell))
             {
@@ -1308,11 +1308,11 @@ namespace MoreFood_KFC
             float taken = TradeNumber.Units(RocketInventory.Consume(craft, tag, amount));
             if (taken < amount)
             {
-                // ★ 修订：扣物不足时必须把已扣部分退回。旧实现扣了就返回 false，物品直接消失，
+                // 修订：扣物不足时必须把已扣部分退回。旧实现扣了就返回 false，物品直接消失，
                 //   且下一轮判定与显示不一致（表现为"持有量对不上/越卖越多"）。
                 if (taken > 0f)
                 {
-                    // ★ 计量口径：taken 是「份」，退回时换算回质量（单件物品 = 份 × 单位质量）
+                    // 计量口径：taken 是「份」，退回时换算回质量（单件物品 = 份 × 单位质量）
                     RocketInventory.Grant(craft, tag, RocketInventory.PieceMass(tag, taken), 293.15f);
                 }
                 reason = TradeUtil.DisplayName(itemId) + " 实际只扣到 " + taken + "（物品可能被占用），交易取消";
@@ -1403,7 +1403,7 @@ namespace MoreFood_KFC
                     + (credit > 0.0001f ? "（含卖出 " + TradeNumber.Money(credit).ToString("0.00") + "）" : "");
                 return false;
             }
-            // ★ 交易默认入库位置 = 火箭内部（控制台位 → 人员站位）；工艺品优先运输仓、其次内舱
+            // 交易默认入库位置 = 火箭内部（控制台位 → 人员站位）；工艺品优先运输仓、其次内舱
             string depositReason;
             if (!RocketInventory.DepositForTrade(craft, new Tag(itemId), amount, 300f, out depositReason))
             {
@@ -1861,7 +1861,7 @@ namespace MoreFood_KFC
 
         internal static float HpSpeedFactor(Clustercraft craft)
         {
-            // ★ 性能：直接读 RocketCombatState 的缓存（受击/落地/回血/模块变更时更新），
+            // 性能：直接读 RocketCombatState 的缓存（受击/落地/回血/模块变更时更新），
             try
             {
                 RocketCombatState st = craft != null ? craft.GetComponent<RocketCombatState>() : null;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MoreFood_KFC
 {
-    // ★ v5.8：稀有度 6 档（极差/很差/一般/精良/大师/传奇），由价格走 rarity_bounds 分段，ID 清单可覆盖
+    // v5.8：稀有度 6 档（极差/很差/一般/精良/大师/传奇），由价格走 rarity_bounds 分段，ID 清单可覆盖
     internal enum TradeRarity
     {
         Poor = 0,       // 极差
@@ -108,17 +108,17 @@ namespace MoreFood_KFC
         public float close_chance { get; set; }
         public float close_seconds { get; set; }
 
-        // ★ 动画：单个 state（字符串）或一组 state（数组，随机抽一个）；不写 → 按 kind 从全局组抽
+        // 动画：单个 state（字符串）或一组 state（数组，随机抽一个）；不写 → 按 kind 从全局组抽
         public object anim { get; set; }
 
-        // ★ 卫星贴图组覆盖：不写 = 海盗站走 pirate、其余走 normal（见 trade/anim/*.yaml）
+        // 卫星贴图组覆盖：不写 = 海盗站走 pirate、其余走 normal（见 trade/anim/*.yaml）
         public string anim_group { get; set; }
 
-        // ★ 模块抽取上限（不写按站点类型默认：普通 传奇1/大师3；黑市/走私/海盗 传奇2/大师4）
+        // 模块抽取上限（不写按站点类型默认：普通 传奇1/大师3；黑市/走私/海盗 传奇2/大师4）
         public int? module_legendary_max { get; set; }
         public int? module_master_max { get; set; }
 
-        // ★ v5.8 站点字段
+        // v5.8 站点字段
         public float[] currency_stock { get; set; }   // [下限, 上限]，每次刷新重掷
         public float refresh_days { get; set; }
         public object entries { get; set; }           // 单值 或 [下限, 上限]
@@ -226,7 +226,7 @@ namespace MoreFood_KFC
 
     // 任务不再有本地表：委托数据全部来自事件 yaml（hunt: 规格 + variants 文案）
 
-    // ★ YAML 单值/数组两写法归一化（Klei.YamlIO 底层是 YamlDotNet：标量喂给数组会抛异常，
+    // YAML 单值/数组两写法归一化（Klei.YamlIO 底层是 YamlDotNet：标量喂给数组会抛异常，
     internal static class YamlValue
     {
         internal static string[] ToStrings(object v)
@@ -304,14 +304,14 @@ namespace MoreFood_KFC
         internal static readonly List<FuelEntryDef> Fuels = new List<FuelEntryDef>();
         internal static readonly List<OxidizerEntryDef> Oxidizers = new List<OxidizerEntryDef>();
 
-        // ★ v5.8：valuation.yaml / items.yaml / ban.yaml
+        // v5.8：valuation.yaml / items.yaml / ban.yaml
         internal static ValuationFileDef Valuation = new ValuationFileDef();
         internal static readonly Dictionary<string, ItemListEntryDef> GlobalItems =
             new Dictionary<string, ItemListEntryDef>(StringComparer.Ordinal);
         internal static readonly HashSet<string> BanIds = new HashSet<string>(StringComparer.Ordinal);
         internal static DonationFileDef Donation = new DonationFileDef();
 
-        // ★ 卫星贴图组：group → 候选 kanim 文件清单（trade/anim/*.yaml）
+        // 卫星贴图组：group → 候选 kanim 文件清单（trade/anim/*.yaml）
         internal static readonly Dictionary<string, SatelliteAnimGroupDef> SatelliteAnims =
             new Dictionary<string, SatelliteAnimGroupDef>(StringComparer.Ordinal);
 
@@ -346,7 +346,7 @@ namespace MoreFood_KFC
             }
             catch (Exception e)
             {
-                // ★ 以前这里没有兜底 —— 解析中途抛一次就整块配置半死（ban/items 全废），
+                // 以前这里没有兜底 —— 解析中途抛一次就整块配置半死（ban/items 全废），
                 loaded = false;
                 MFLog.Exc(LogCat.Trade, e, "[Space] 贸易配置加载中断（下次会重试）");
             }
@@ -366,7 +366,7 @@ namespace MoreFood_KFC
             }
             Config.FillDefaults();
 
-            // ★ 先换成一个全新的空表再合并：以前把已装载的 Valuation 同时当 dst 和 src，
+            // 先换成一个全新的空表再合并：以前把已装载的 Valuation 同时当 dst 和 src，
             Valuation = new ValuationFileDef();
             string valPath = Path.Combine(root, "valuation.yaml");
             ValuationFileDef val = LoadOne<ValuationFileDef>(valPath);
@@ -382,7 +382,7 @@ namespace MoreFood_KFC
                 ApplyBan(ban, "本地", banPath);
             }
 
-            // ★ 捐款/荣誉点独立成文件（渠道的每份荣誉点、每渠道上限、单 ID 份数限制）
+            // 捐款/荣誉点独立成文件（渠道的每份荣誉点、每渠道上限、单 ID 份数限制）
             Donation = new DonationFileDef();
             string donPath = Path.Combine(root, "donation.yaml");
             DonationFileDef don = LoadOne<DonationFileDef>(donPath);
@@ -548,7 +548,7 @@ namespace MoreFood_KFC
             return ParseOne<T>(text, path);
         }
 
-        // ★ 铁规：配置错误一律走 ContentDiag（Warn），绝不 LogError（LogCatcher 会把 LogError 变崩溃）。
+        // 铁规：配置错误一律走 ContentDiag（Warn），绝不 LogError（LogCatcher 会把 LogError 变崩溃）。
         private static T ParseOne<T>(string text, string path) where T : class
         {
             return YamlLoad.Parse<T>(text, path, "trade");
@@ -604,7 +604,7 @@ namespace MoreFood_KFC
             }
             if (dst == null || ReferenceEquals(dst, src))
             {
-                // ★ 防御：dst 与 src 是同一个对象时不能边枚举边写（Mono 会抛 Collection was modified）
+                // 防御：dst 与 src 是同一个对象时不能边枚举边写（Mono 会抛 Collection was modified）
                 dst = new Dictionary<string, T>(StringComparer.Ordinal);
             }
             foreach (KeyValuePair<string, T> kv in src)
@@ -881,7 +881,7 @@ namespace MoreFood_KFC
                 {
                     continue;
                 }
-                // ★ 以前两侧都只做 TrimEnd，一旦一边用 '/' 一边用 '\'，
+                // 以前两侧都只做 TrimEnd，一旦一边用 '/' 一边用 '\'，
                 string fileMod = NormDir(file.modRoot);
                 if (ownRoot.Length > 0 && string.Equals(fileMod, ownRoot, StringComparison.OrdinalIgnoreCase))
                 {
@@ -1007,7 +1007,7 @@ namespace MoreFood_KFC
             return n;
         }
 
-        /// <summary>该站点的捐款渠道（没有 = 该站不支持捐款）。</summary>
+        // 该站点的捐款渠道（没有 = 该站不支持捐款）。
         internal static List<DonationChannelDef> DonationChannels(string stationId)
         {
             if (string.IsNullOrEmpty(stationId) || Donation == null || Donation.stations == null)
@@ -1022,7 +1022,7 @@ namespace MoreFood_KFC
             return def.channels.Count > 0 ? def.channels : null;
         }
 
-        /// <summary>单个 ID 一次最多捐几份（0 = 不限）。站点覆盖 > 渠道默认。</summary>
+        // 单个 ID 一次最多捐几份（0 = 不限）。站点覆盖 > 渠道默认。
         internal static int DonationItemLimit(string stationId, DonationChannelDef ch, string itemId)
         {
             if (Donation != null && Donation.item_limits != null && !string.IsNullOrEmpty(stationId))

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace MoreFood_KFC
 {
-    // 战斗迷你条（★ 恒定屏幕像素 + 图标底部中心锚点 + 被动重排 + 1s节流）
+    // 战斗迷你条（恒定屏幕像素 + 图标底部中心锚点 + 被动重排 + 1s节流）
 
     internal static class CombatBars
     {
@@ -29,10 +29,10 @@ namespace MoreFood_KFC
         private const float RootBarWidth = BarWidth + BarPad * 2f;    // 36
         private const float RootBarHeight = BarHeight * 2f + BarGap + BarPad * 2f;  // 14
 
-        // ★ 条顶边到图标底部中心的屏幕像素偏移（8 = 贴近图标下方；调大往下更多）
+        // 条顶边到图标底部中心的屏幕像素偏移（8 = 贴近图标下方；调大往下更多）
         private const float BarDropPx = 8f;
 
-        // ★ 被动重排 1 秒节流：地图缩放拖动时最多 1 次/秒，避免高频重排
+        // 被动重排 1 秒节流：地图缩放拖动时最多 1 次/秒，避免高频重排
         private const float RepositionMinIntervalSeconds = 1f;
 
         private static readonly Dictionary<int, Widget> monsterBars = new Dictionary<int, Widget>();
@@ -95,7 +95,7 @@ namespace MoreFood_KFC
             nextAllowedRepositionTime = 0f;
         }
 
-        /// <summary>
+        //
         internal static void OnMapScaleChanged()
         {
             float now = Time.unscaledTime;
@@ -121,7 +121,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>
+        //
         internal static void UpdateHover()
         {
             DriveIconHover(monsterBars);
@@ -246,7 +246,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>攻击者结算伤害后调用（事件推送，非轮询）。</summary>
+        // 攻击者结算伤害后调用（事件推送，非轮询）。
         internal static void PushMonster(MonsterRuntime rt)
         {
             if (rt == null || rt.monster == null)
@@ -370,7 +370,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>火箭受击/开火后调用（事件推送）。</summary>
+        // 火箭受击/开火后调用（事件推送）。
         internal static void PushCraft(Clustercraft craft, RocketCombatState st)
         {
             if (craft == null || st == null)
@@ -499,7 +499,7 @@ namespace MoreFood_KFC
             return w;
         }
 
-        /// <summary>内部图像：锚在父节点左下角（父 pivot = 0.5,0.5 不影响子节点 anchor 语义）。</summary>
+        // 内部图像：锚在父节点左下角（父 pivot = 0.5,0.5 不影响子节点 anchor 语义）。
         private static Image NewImage(Transform parent, string name, float width, float height, Color color,
             float x, float y)
         {
@@ -517,7 +517,7 @@ namespace MoreFood_KFC
             return img;
         }
 
-        /// <summary>按百分比改宽度（不用 Filled——无贴图时 Filled 渲染不可靠）。</summary>
+        // 按百分比改宽度（不用 Filled——无贴图时 Filled 渲染不可靠）。
         private static void SetFill(Image img, float pct, float fullWidth)
         {
             if (img == null)
@@ -532,7 +532,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>
+        //
         private static Vector3 ComputeAnchor(Widget w, out float iconSizeWorld)
         {
             iconSizeWorld = 0f;
@@ -576,7 +576,7 @@ namespace MoreFood_KFC
             return new Vector3(cellPoint.x, cellPoint.y - iconSizeWorld * 0.5f, cellPoint.z);
         }
 
-        /// <summary>
+        //
         private static void Reposition(Widget w)
         {
             ClusterMapScreen screen = ClusterMapScreen.Instance;
@@ -610,7 +610,7 @@ namespace MoreFood_KFC
             // 反向缩放：条在屏幕上恒定 34×14 像素
             rt.localScale = new Vector3(inv, inv, 1f);
 
-            // ★ 锚点 = 图标底部中心（不是格子中心！）
+            // 锚点 = 图标底部中心（不是格子中心！）
             float iconSizeWorld;
             Vector3 anchor = ComputeAnchor(w, out iconSizeWorld);
 
@@ -672,7 +672,7 @@ namespace MoreFood_KFC
         }
     }
 
-    /// <summary>悬停详情：条带上指针进入/离开。</summary>
+    // 悬停详情：条带上指针进入/离开。
     internal sealed class CombatBarHover : KMonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         internal GameObject bar;

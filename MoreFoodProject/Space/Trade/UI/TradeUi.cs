@@ -10,7 +10,7 @@ namespace MoreFood_KFC
 {
     internal static class TradeUi
     {
-        // ★ 重新设计：配色/圆角对齐 MoreFood 的「时间历史」面板（深海军蓝 + 金 + 青）
+        // 重新设计：配色/圆角对齐 MoreFood 的「时间历史」面板（深海军蓝 + 金 + 青）
         internal static readonly Color BgRoot = new Color32(14, 22, 38, 247);
         internal static readonly Color Panel = new Color32(27, 42, 71, 255);
         internal static readonly Color PanelAlt = new Color32(22, 33, 54, 235);
@@ -56,7 +56,7 @@ namespace MoreFood_KFC
             return RoundPanel(name, parent, x, y, w, 1f, 1, c);
         }
 
-        // ★ v5.8 稀有度六色（§6）：极差/很差同白，靠物品名 + 排序区分
+        // v5.8 稀有度六色（§6）：极差/很差同白，靠物品名 + 排序区分
         internal static readonly Color[] RarityColor = new Color[]
         {
             new Color(0.875f, 0.965f, 0.976f, 1f),   // 极差 #DFF6F9
@@ -68,10 +68,10 @@ namespace MoreFood_KFC
         };
 
         private static GameObject bar;
-        // ★ 修订（站点按钮排不刷新）：记住按钮排当前对应的站点与"火箭是否到站"，
+        // 修订（站点按钮排不刷新）：记住按钮排当前对应的站点与"火箭是否到站"，
         //   由星图位置变更事件驱动重算；只在结论翻转时重建，避免飞行途中逐格重绘。
         private static SpaceStation barStation;
-        // ★ 按钮引用：位置变化时就地改"点亮/灰掉"，不重建按钮排（无分配、无 GC）
+        // 按钮引用：位置变化时就地改"点亮/灰掉"，不重建按钮排（无分配、无 GC）
         private static TMP_FontAsset cachedFont;
         private static GameObject window;
         private static GameObject remote;
@@ -339,7 +339,7 @@ namespace MoreFood_KFC
             cb.normalColor = Color.white;
             cb.highlightedColor = new Color(1.28f, 1.28f, 1.28f, 1f);
             cb.pressedColor = new Color(0.8f, 0.8f, 0.8f, 1f);
-            // ★ 禁用态不改色：灰色外观由调用方显式给的 fill/edge/text 决定，
+            // 禁用态不改色：灰色外观由调用方显式给的 fill/edge/text 决定，
             //   否则 Unity 会用默认 disabledColor(0.78 半透明白) 覆盖掉我们设的灰
             cb.disabledColor = Color.white;
             b.colors = cb;
@@ -387,7 +387,7 @@ namespace MoreFood_KFC
             return RoundPanel(name, parent, 0f, y, w, h, 4, alt ? RowInB : RowIn);
         }
 
-        // ★ 关闭按钮：与 MoreFood「事件历史」屏右上角的 × 同款（36×36 圆角9，常态白6%，
+        // 关闭按钮：与 MoreFood「事件历史」屏右上角的 × 同款（36×36 圆角9，常态白6%，
         internal static Button MakeCloseButton(Transform parent, float x, float y, System.Action onClick)
         {
             GameObject go = Node("close", parent, x, y, 36f, 36f);
@@ -463,7 +463,7 @@ namespace MoreFood_KFC
             }
         }
 
-        // ★ 滚动视图：矩形裁剪 + ScrollRect（滚轮）。返回 viewport，content 通过 out 给出。
+        // 滚动视图：矩形裁剪 + ScrollRect（滚轮）。返回 viewport，content 通过 out 给出。
         internal static GameObject MakeScrollView(string name, Transform parent, float x, float y,
             float w, float h, out RectTransform content)
         {
@@ -611,7 +611,7 @@ namespace MoreFood_KFC
 
         // 交易/加油的可用态只在显示按钮排前现算、点击时再校验，不做事件驱动刷新（见 交易.md P-49）
 
-        /// <summary>★ 统一隐藏底部所有条（问题7/8）：TradeUi 自己的 + 战斗按钮排，
+        // 统一隐藏底部所有条（问题7/8）：TradeUi 自己的 + 战斗按钮排，
         internal static void HideAllBars()
         {
             HideBar();
@@ -627,7 +627,7 @@ namespace MoreFood_KFC
 
         internal static void ShowBar(SpaceStation station)
         {
-            HideAllBars();   // ★ 统一隐藏（问题7/8）
+            HideAllBars();   // 统一隐藏（问题7/8）
             if (station == null)
             {
                 return;
@@ -640,7 +640,7 @@ namespace MoreFood_KFC
             }
             // 按钮排对齐火箭底部按钮排 —— 取火箭"中间三个按钮"为基准：
             SpaceStation st = station;
-            // ★ 显示前现算一次（不依赖任何位置事件）：此刻的按钮状态必然是最新的
+            // 显示前现算一次（不依赖任何位置事件）：此刻的按钮状态必然是最新的
             bool atStation = TradeUtil.RocketAtStation(st);
             if (atStation)
             {
@@ -669,7 +669,7 @@ namespace MoreFood_KFC
             rt.pivot = new Vector2(0.5f, 0f);
             rt.anchoredPosition = new Vector2(0f, CombatDb.Shared.uiBarY);
             rt.sizeDelta = new Vector2(totalW, barH);
-            bar.transform.SetAsLastSibling();   // ★ 层级置顶（问题7/8）
+            bar.transform.SetAsLastSibling();   // 层级置顶（问题7/8）
 
             float x = 0f;
             Color tradeFill = atStation ? Panel : PanelAlt;
@@ -678,7 +678,7 @@ namespace MoreFood_KFC
             Button tradeButton = MakeButton("交 易", bar.transform, x, 0f, bw, barH, tradeFill, tradeEdge, tradeText,
                 delegate
                 {
-                    // ★ 点击时快速校对（不信按钮颜色）：确认火箭确实停靠本站，再开窗
+                    // 点击时快速校对（不信按钮颜色）：确认火箭确实停靠本站，再开窗
                     if (TradeUtil.DockedCraftAt(st) == null)
                     {
                         ShowBar(st);   // 期间状态变了 → 重建并置灰，不做就地改色
@@ -714,7 +714,7 @@ namespace MoreFood_KFC
             MakeButton("查看收购项", bar.transform, x, 0f, bw, barH, Panel, Border, TextMain,
                 delegate { ToggleRemote(st); });
             x += step;
-            // ★ 捐款相关只给美食猎人协会：按钮排 = 交易 / 查看收购项 / 捐款 / 查看捐款项 / 宣战
+            // 捐款相关只给美食猎人协会：按钮排 = 交易 / 查看收购项 / 捐款 / 查看捐款项 / 宣战
             if (hunter)
             {
                 Button donateButton = MakeButton("捐 款", bar.transform, x, 0f, bw, barH, tradeFill, tradeEdge, tradeText,
@@ -807,7 +807,7 @@ namespace MoreFood_KFC
 
         internal static void ShowQuestBar(SpaceQuestSite site)
         {
-            HideAllBars();   // ★ 统一隐藏（问题7/8）
+            HideAllBars();   // 统一隐藏（问题7/8）
             if (site == null)
             {
                 return;
@@ -824,7 +824,7 @@ namespace MoreFood_KFC
             rt.pivot = new Vector2(0.5f, 0f);
             rt.anchoredPosition = new Vector2(0f, 48f);
             rt.sizeDelta = new Vector2(600f, 48f);
-            bar.transform.SetAsLastSibling();   // ★ 层级置顶（问题7/8）
+            bar.transform.SetAsLastSibling();   // 层级置顶（问题7/8）
             // 任务点实体随建图链停用而不再生成；此条只保留给旧档里残存的任务点用
             Text("info", bar.transform, 0f, 0f, 300f, 48f,
                 site.Name + "  " + SpaceCfg.Pos(site.Location), 14f, Accent, false);
@@ -845,7 +845,7 @@ namespace MoreFood_KFC
             }
             if (remoteOnly)
             {
-                ToggleRemote(station);   // ★ 再点一次就关掉（用户实测：以前点第二次关不掉）
+                ToggleRemote(station);   // 再点一次就关掉（用户实测：以前点第二次关不掉）
                 return;
             }
             if (window != null && windowStation == station.stationId && windowMode == 0)
@@ -861,7 +861,7 @@ namespace MoreFood_KFC
             windowMode = 0;
         }
 
-        // ★ 捐款窗：只有美食猎人协会才有入口（调用点已判，这里再兜一层）
+        // 捐款窗：只有美食猎人协会才有入口（调用点已判，这里再兜一层）
         internal static void OpenDonate(SpaceStation station)
         {
             if (station == null)
@@ -900,7 +900,7 @@ namespace MoreFood_KFC
             OpenRemote(station);
         }
 
-        // ★ 远程"查看捐款项"：只读列出可捐内容（不消耗、不给荣誉点）
+        // 远程"查看捐款项"：只读列出可捐内容（不消耗、不给荣誉点）
         internal static void ToggleDonateRemote(SpaceStation station)
         {
             if (station == null)
@@ -1165,7 +1165,7 @@ namespace MoreFood_KFC
                 }
             }
 
-            // ★ 丢弃当前输入态（不写回数值）：结算收尾时调用，避免下一次确认读到上一次的旧文本
+            // 丢弃当前输入态（不写回数值）：结算收尾时调用，避免下一次确认读到上一次的旧文本
             internal static void DropActive()
             {
                 if (activeBox != null)
@@ -1240,7 +1240,7 @@ namespace MoreFood_KFC
             private int Lo() { return TradeNumber.LowerBound(min); }
             private int Hi() { return TradeNumber.UpperBound(max); }
 
-            // ★ 修订：区间必须有效（lo ≤ hi ≤ …）。库存/收购量/持有量异常（NaN、负值、
+            // 修订：区间必须有效（lo ≤ hi ≤ …）。库存/收购量/持有量异常（NaN、负值、
             //   上下界交叉）时，旧实现会让 Clamp 结果落在非法一侧 —— 这正是"持有 0 却能卖出"的入口。
             private void Range(out int lo, out int hi)
             {
@@ -1451,7 +1451,7 @@ namespace MoreFood_KFC
             for (int i = 0; i < list.Count; i++)
             {
                 Clustercraft c = list[i] as Clustercraft;
-                // ★ 修订（交易误亮）：cellContents 可能残留已飞走/已降落的火箭条目（按位置变更事件
+                // 修订（交易误亮）：cellContents 可能残留已飞走/已降落的火箭条目（按位置变更事件
                 //   增减，事件漏一次就会留一条永不清理的陈旧记录），旧实现只看类型不看位置，
                 //   于是"幽灵火箭"让远处站点也判定为可交易/可加油。
                 //   这里必须回验实体当前真实位置（与 CombatRuntime.FindCraftAt 口径一致），
@@ -1502,17 +1502,17 @@ namespace MoreFood_KFC
             return best;
         }
 
-        /// <summary>
-        /// ★ 设计变更：所有「能不能交易/加油」的判定只在两处发生 ——
-        /// ① 显示按钮排之前（ShowBar / ShowCraftBar）现算一次；② 点击按钮时再校验一次。
-        /// 不再依赖任何位置变更事件，因此不会出现"某个事件漏了就永久显示错"的情况。
-        /// </summary>
+        //
+        // 设计变更：所有「能不能交易/加油」的判定只在两处发生 ——
+        // ① 显示按钮排之前（ShowBar / ShowCraftBar）现算一次；② 点击按钮时再校验一次。
+        // 不再依赖任何位置变更事件，因此不会出现"某个事件漏了就永久显示错"的情况。
+        //
         internal static bool RocketAtStation(SpaceStation station)
         {
             return DockedCraftAt(station) != null;
         }
 
-        /// <summary>火箭是否在星图中：必须是 Clustercraft 且状态为 InFlight（Grounded/Launching/Landing 都不算）。</summary>
+        // 火箭是否在星图中：必须是 Clustercraft 且状态为 InFlight（Grounded/Launching/Landing 都不算）。
         internal static bool InStarmap(Clustercraft c)
         {
             if (c == null || c.gameObject == null || !c.gameObject.activeInHierarchy)
@@ -1523,8 +1523,8 @@ namespace MoreFood_KFC
             return c.Status == Clustercraft.CraftStatus.InFlight;
         }
 
-        /// <summary>点击/显示时的权威判定：返回真正停靠在本站的火箭，没有则 null。
-        /// 判据只有两条：① 火箭在星图中且已停止飞行；② 与本站在六角格上距离 ≤ 1。</summary>
+        // 点击/显示时的权威判定：返回真正停靠在本站的火箭，没有则 null。
+        // 判据只有两条：① 火箭在星图中且已停止飞行；② 与本站在六角格上距离 ≤ 1。
         internal static Clustercraft DockedCraftAt(SpaceStation station)
         {
             if (station == null)
@@ -1547,8 +1547,8 @@ namespace MoreFood_KFC
             return c;
         }
 
-        /// <summary>同格或相邻一格上的、处于停靠状态的火箭 —— 所有"能否交易"判定的唯一几何入口。
-        /// 用原版 AxialUtil.GetRing 取邻格，逐个回验：状态必须在星图中、未在飞行、且距离 ≤ 1。</summary>
+        // 同格或相邻一格上的、处于停靠状态的火箭 —— 所有"能否交易"判定的唯一几何入口。
+        // 用原版 AxialUtil.GetRing 取邻格，逐个回验：状态必须在星图中、未在飞行、且距离 ≤ 1。
         internal static Clustercraft CraftNear(AxialI cell)
         {
             Clustercraft c = FindCraftAt(cell);

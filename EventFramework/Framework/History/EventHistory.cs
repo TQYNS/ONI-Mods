@@ -3,7 +3,7 @@
 // 两张表：
 //   _triggered：事件 id → 触发次数（Dictionary；用于 require_event_counts）
 //   _chosen   ："事件\u0001选项" → 是否选过（HashSet；只判有无，不记次数）
-// ★ 惰性写入：只有被条件引用过的事件/选项才记录（_refEvents / _refChoices 由启动扫描给出）。
+// 惰性写入：只有被条件引用过的事件/选项才记录（_refEvents / _refChoices 由启动扫描给出）。
 
 using System;
 using System.Collections.Generic;

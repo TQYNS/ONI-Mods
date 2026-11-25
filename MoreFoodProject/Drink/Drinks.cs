@@ -144,7 +144,7 @@ namespace MoreFood_KFC
                     return;
                 }
 
-                // ★ 防重：已经有了就不再加
+                // 防重：已经有了就不再加
                 if (kpid.HasTag(drinkTag))
                 {
                     MFLog.Info(LogCat.Drink,"[MoreFood/Drink][Tag] '" + prefabId + "' 已有 tag "
@@ -235,7 +235,7 @@ namespace MoreFood_KFC
         public static readonly List<Func<List<DrinkEntry>>> ExtraSources =
             new List<Func<List<DrinkEntry>>>();
 
-        // ★ 收集饮品清单。
+        // 收集饮品清单。
         public static List<DrinkEntry> CollectAll(bool includeBuildings = false,
                                                   bool includeExtra = true)
         {
@@ -268,7 +268,7 @@ namespace MoreFood_KFC
                     }
                 }
 
-                // 排序：★ sort 升序（0 在前、1 在后，比大小）
+                // 排序：sort 升序（0 在前、1 在后，比大小）
                 list.Sort(delegate (DrinkEntry a, DrinkEntry b)
                 {
                     int sa = (a != null && a.data != null) ? a.data.sort : 0;
@@ -286,7 +286,7 @@ namespace MoreFood_KFC
             return list;
         }
 
-        // ★ 饮品物品清单（含食物类物品）—— 管制屏 / 图鉴用这个
+        // 饮品物品清单（含食物类物品）—— 管制屏 / 图鉴用这个
         public static List<DrinkEntry> CollectItems()
         {
             return CollectAll(false, false);
@@ -323,7 +323,7 @@ namespace MoreFood_KFC
             }
             catch { /* expected: 取 prefab/别名失败时退回用 tag 名作显示名，条目照常建表 */ }
 
-            // ★★ 补打识别 tag（幂等）—— 解决时序问题：prefab 注册可能晚于建表，这里再确认补一次
+            // 补打识别 tag（幂等）—— 解决时序问题：prefab 注册可能晚于建表，这里再确认补一次
             if (prefabFound && !isBuilding)
                 EnsureDrinkTag(id, DrinkItemTag);
 

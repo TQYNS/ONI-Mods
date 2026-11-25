@@ -124,7 +124,7 @@ namespace MoreFood_KFC
             };
             // 散落物一律走 IngredientConfigs.CreateStandard 的标准口径（Front +
             // RECTANGLE 0.8×0.4 + EntitySplitter），与 37 个原料 / 模块 / 弹药完全一致。
-            // ★ 禁止回退到 CIRCLE 0.35：《战斗.md》§3.7 已实证 CIRCLE 分支把半径
+            // 禁止回退到 CIRCLE 0.35：《战斗.md》§3.7 已实证 CIRCLE 分支把半径
             //   当成支撑高度，落地求解会把 transform 抬高 0.36 格，贴图随之悬空。
             GameObject go = IngredientConfigs.CreateStandard(
                 PrefabId(tier), DisplayName(tier), Description(tier), file, tags);

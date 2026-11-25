@@ -39,7 +39,7 @@ namespace EventFramework
         // 前缀最大长度
         public const int MAX_PREFIX_LENGTH = 48;
 
-        // ★ 前缀的唯一入口：把一批 mod 一次性解析成 "mod → 合法且唯一的前缀"。
+        // 前缀的唯一入口：把一批 mod 一次性解析成 "mod → 合法且唯一的前缀"。
         public static Dictionary<KMod.Mod, string> ResolvePrefixes(List<KMod.Mod> mods)
         {
             var result = new Dictionary<KMod.Mod, string>();

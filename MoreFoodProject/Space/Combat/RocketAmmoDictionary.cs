@@ -34,7 +34,7 @@ namespace MoreFood_KFC
                 }
                 AddItems(dict, items);
             }
-            // ★ 除标准货舱外，火箭各模块自带的 Storage（引擎/罐/接收器等）也扫一遍。
+            // 除标准货舱外，火箭各模块自带的 Storage（引擎/罐/接收器等）也扫一遍。
             try
             {
                 IList<Ref<RocketModuleCluster>> mods = craft.ModuleInterface != null

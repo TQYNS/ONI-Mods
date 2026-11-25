@@ -7,7 +7,7 @@ namespace MoreFood_KFC
 {
     // 星图生物实体
 
-    [SerializationConfig(MemberSerialization.OptIn)]   // ★ KSerialization OptOut 只认 public 字段，必须 OptIn
+    [SerializationConfig(MemberSerialization.OptIn)]   // KSerialization OptOut 只认 public 字段，必须 OptIn
     public class SpaceMonster : ClusterGridEntity
     {
         [Serialize]
@@ -79,7 +79,7 @@ namespace MoreFood_KFC
                     MFLog.Warn(LogCat.Combat, "[Space] 怪物动画缺失：" + anim + "（" + defId + "），回退 " + SpaceCfg.MonsterAnim);
                     file = Assets.GetAnim(SpaceCfg.MonsterAnim);
                 }
-                // ★ 怪物美术目前是"只有一帧 ui"的 UI 贴图（打标/怪物组/ui），没有 idle 动画；
+                // 怪物美术目前是"只有一帧 ui"的 UI 贴图（打标/怪物组/ui），没有 idle 动画；
                 //   写死 idle_loop 会播不出来 → 取不到该状态时退回 kanim 的第一个动画（通常就是 ui）。
                 string state = SpaceCfg.MonsterAnimState;
                 if (file != null && !HasAnim(file, state) && HasAnim(file, "ui"))
@@ -123,11 +123,11 @@ namespace MoreFood_KFC
 
         public override ClusterRevealLevel IsVisibleInFOW
         {
-            // ★ 跟随迷雾：Visible=原版语义为"无视迷雾永显"；Peeked=半揭示问号/全揭示实体
+            // 跟随迷雾：Visible=原版语义为"无视迷雾永显"；Peeked=半揭示问号/全揭示实体
             get { return ClusterRevealLevel.Peeked; }
         }
 
-        // ★ 任务C：让怪物成为"可被原版选中的星图实体"，从而走原版信息面板（DetailsScreen）。
+        // 任务C：让怪物成为"可被原版选中的星图实体"，从而走原版信息面板（DetailsScreen）。
         protected override void OnSpawn()
         {
             try

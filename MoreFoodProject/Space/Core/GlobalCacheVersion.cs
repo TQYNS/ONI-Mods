@@ -1,7 +1,7 @@
 ﻿
 namespace MoreFood_KFC
 {
-    // ★ 通用缓存机制第一层：全局版本号（§M0）
+    // 通用缓存机制第一层：全局版本号（§M0）
     internal static class GlobalCacheVersion
     {
         internal const int VERSION = 1;

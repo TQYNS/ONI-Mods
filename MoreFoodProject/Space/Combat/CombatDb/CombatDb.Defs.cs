@@ -22,13 +22,13 @@ namespace MoreFood_KFC
     internal sealed class LootFieldCfg
     {
         public string name;
-        public string beltStyle;   // ★ 小行星带外观风格（问题6，来自 yaml loot_field.belt_style）
+        public string beltStyle;   // 小行星带外观风格（问题6，来自 yaml loot_field.belt_style）
     }
 
     internal sealed class CombatLootEntry
     {
         public string item;
-        // ★ 非空 = 池条目（从该组随机抽 picks 种）；item 非空时为固定条目
+        // 非空 = 池条目（从该组随机抽 picks 种）；item 非空时为固定条目
         public string group;
         public int picksLo;        // 0 = 用组自己的 picks
         public int picksHi;
@@ -58,14 +58,14 @@ namespace MoreFood_KFC
         public float speed = 1f;
         public bool hostile;
         public bool chase = true;
-        public bool canFlee = false;   // ★ 默认不逃跑（用户口径：不配置 = False）
+        public bool canFlee = false;   // 默认不逃跑（用户口径：不配置 = False）
         public float fleeHpPct = 0.25f;
         public bool fleeInstantStepOnce = true;
-        // ★ 离场时机（K18）：yaml leave_after_seconds = [下限,上限]（秒）
-        // ★ 不配置 = 取默认窗口 [3600, 60000]（6~100 周期随机），不再是"永不离场"
+        // 离场时机（K18）：yaml leave_after_seconds = [下限,上限]（秒）
+        // 不配置 = 取默认窗口 [3600, 60000]（6~100 周期随机），不再是"永不离场"
         public float leaveAfterMin;
         public float leaveAfterMax;
-        // ★ 离场时间硬钳制（秒）：yaml 超出直接钳到区间内（下限 3600s = 6 周期，上限 600*100s）
+        // 离场时间硬钳制（秒）：yaml 超出直接钳到区间内（下限 3600s = 6 周期，上限 600*100s）
         //   这一对同时就是"不配置时的默认值"
         public const float LeaveAfterFloorSeconds = 3600f;
         public const float LeaveAfterCeilSeconds = 60000f;
@@ -160,7 +160,7 @@ namespace MoreFood_KFC
 
     internal sealed class SpawnerCfg
     {
-        // ★ 抽取器间隔硬下限（游戏秒）：yaml 写多小都不许突破（防"测试用 1 秒"把抽取器变成高频轮询）
+        // 抽取器间隔硬下限（游戏秒）：yaml 写多小都不许突破（防"测试用 1 秒"把抽取器变成高频轮询）
         public const float MinSpawnIntervalSeconds = 60f;
 
         public string id;
@@ -176,12 +176,12 @@ namespace MoreFood_KFC
         public bool allowCrossRegion;
     }
 
-    /// <summary>shared/* + config 合并后的运行期通用配置。</summary>
+    // shared/* + config 合并后的运行期通用配置。
     internal sealed class CombatSharedCfg
     {
         // combat.yaml
-        public float minAttackInterval = 10f;   // ★ 攻击间隔下限（秒，10~25 区间下界，原 6f）
-        public float attackIntervalMax = 25f;   // ★ 攻击间隔上限（秒，10~25 区间上界，问题5）
+        public float minAttackInterval = 10f;   // 攻击间隔下限（秒，10~25 区间下界，原 6f）
+        public float attackIntervalMax = 25f;   // 攻击间隔上限（秒，10~25 区间上界，问题5）
         public int maxAttacksPerSecond = 10;
         public float combatMemorySeconds = 20f;
         public float disengageRangeMult = 1.5f;

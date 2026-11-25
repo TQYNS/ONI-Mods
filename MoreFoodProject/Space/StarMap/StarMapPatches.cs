@@ -24,7 +24,7 @@ namespace MoreFood_KFC
                 }
                 if (numRings != want)
                 {
-                    // ★ 记下扩径前的原版环数：分区只认原版主图范围，
+                    // 记下扩径前的原版环数：分区只认原版主图范围，
                     if (numRings > 0)
                     {
                         SpaceCfg.VanillaRings = numRings;
@@ -110,7 +110,7 @@ namespace MoreFood_KFC
             }
             try
             {
-                CloseOurPanels();          // ★ 修复2：打开星图先清理我们自己的所有面板
+                CloseOurPanels();          // 修复2：打开星图先清理我们自己的所有面板
                 SpaceTestRuntime.EnsureTestContent();
                 StarMapVisuals.OnScreenShown(__instance);
                 CombatBars.OnMapShown();   // 迷你条：给现存怪物/交战火箭补建（之后全靠事件推送）
@@ -121,7 +121,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>
+        //
         private static void CloseOurPanels()
         {
             try { EventFrameworkApi.ClosePanels("打开星图"); } catch (Exception) { /* expected: 框架面板可能已关闭，失败不阻断后续清理 */ }

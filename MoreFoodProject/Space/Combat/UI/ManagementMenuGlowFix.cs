@@ -135,7 +135,7 @@ namespace MoreFood_KFC
                 {
                     return;
                 }
-                // ★ 修复：在实例真实类型链上解析（否则 Invoke 抛 "Object does not match target type"）
+                // 修复：在实例真实类型链上解析（否则 Invoke 抛 "Object does not match target type"）
                 if (notifyMethod == null
                     || notifyMethod.DeclaringType == null
                     || !notifyMethod.DeclaringType.IsInstanceOfType(menu))

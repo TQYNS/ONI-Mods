@@ -263,10 +263,10 @@ namespace MoreFood_KFC
             Reg(GeologicalKey, GeologicalAnomaly, null);
             Reg(ExtinctionKey, GreatExtinction, null);
             Reg(SneakEatingKey, SneakEating, null);
-            // ★ 喜悦反应带前置条件：没有可用候选 ⇒ 走失败路线，跳过本轮抽取
+            // 喜悦反应带前置条件：没有可用候选 ⇒ 走失败路线，跳过本轮抽取
             Reg(HappyMoodKey, HappyMood, null);
             Reg(OvercomeFearKey, OvercomeFear, null);
-            // ★ 持续型：该 buff 正在持续 ⇒ 本轮不抽取（替代原"已在持续中"分支）
+            // 持续型：该 buff 正在持续 ⇒ 本轮不抽取（替代原"已在持续中"分支）
             Reg(GravityKey, GravityAnomalyOn, GravityAnomalyOff);
             Reg(FertileKey, FertileSeasonOn, FertileSeasonOff);
             Reg(SporeKey, SporeCloudOn, SporeCloudOff);
@@ -274,7 +274,7 @@ namespace MoreFood_KFC
             Reg(DrySeasonKey, DrySeasonOn, DrySeasonOff);
             Reg(CosmicKey, CosmicRayOn, CosmicRayOff);
 
-            // ★ 预检条件统一注册（对应各事件 yaml 的 condition.function）
+            // 预检条件统一注册（对应各事件 yaml 的 condition.function）
             RegisterConditions();
 
             try

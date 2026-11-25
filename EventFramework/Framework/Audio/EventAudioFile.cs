@@ -368,7 +368,7 @@ namespace EventFramework
 
                 object channel = args[3];
 
-                // ★ 音量跟随用户设置：自建 channel 不随 bus 走 → 登记后由 EventAudioVolume 实时修正
+                // 音量跟随用户设置：自建 channel 不随 bus 走 → 登记后由 EventAudioVolume 实时修正
                 float vol = Jitter(t.volume, t.volume_jitter);
                 vol = EventAudioVolume.Register(channel, t.play_as, vol);
                 if (_miChannelSetVolume != null && vol != 1f)
@@ -409,7 +409,7 @@ namespace EventFramework
                 Debug.LogWarning("[MoreFood/Event][AudioFile] 停止异常: " + e);
                 return "stop 异常: " + e.GetType().Name;
             }
-            finally { EventAudioVolume.Forget(channel); }   // ★ 停止即注销音量跟随
+            finally { EventAudioVolume.Forget(channel); }   // 停止即注销音量跟随
         }
 
         // 会话切换清理：只停声 + 清缓存（release 交给 ReleaseAll）
@@ -442,7 +442,7 @@ namespace EventFramework
 
             _sounds.Clear();
             _soundSeconds.Clear();
-            EventAudioVolume.Clear();      // ★ 同步注销音量跟随登记（Sound 已释放）
+            EventAudioVolume.Clear();      // 同步注销音量跟随登记（Sound 已释放）
             Debug.Log("[MoreFood/Event][AudioFile] 已释放缓存的 Sound：" + ok + " 个");
         }
 

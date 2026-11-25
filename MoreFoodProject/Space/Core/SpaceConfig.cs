@@ -19,7 +19,7 @@ namespace MoreFood_KFC
 
         internal const int MaxStations = 6;
 
-        // 贸易站占位动画。★ 星图上的实体动画必须用"星图专用"的 kanim：
+        // 贸易站占位动画。星图上的实体动画必须用"星图专用"的 kanim：
         internal const string StationAnim = "gravitas_space_poi_kanim";
         internal const string StationAnimState = "station_1";
 
@@ -41,7 +41,7 @@ namespace MoreFood_KFC
             return MoreFood_KFC.ScrollItems.DisplayName(tier);
         }
 
-        // ★ 怪物动画兜底（2026-11-12 起：20 只怪各用自己的 `<id>_kanim`，这里只在 yaml 没写 / 资源缺失时兜底）
+        // 怪物动画兜底（20 只怪各用自己的 `<id>_kanim`，这里只在 yaml 没写 / 资源缺失时兜底）
         internal const string MonsterAnim = "longrange_missile_clustermap_kanim";
         internal const string MonsterAnimState = "idle_loop";   // 兜底 kanim 的状态；专属贴图没有它时自动退回 "ui"
         //   任务地点：复用原版星图 POI 动画（与贸易站同族，避免尺寸错位）
@@ -70,7 +70,7 @@ namespace MoreFood_KFC
             return 0;
         }
 
-        /// <summary>★ 问题12：前锥提供的【基础护甲】——钻头 800 / 基础 400 / 太空员 200（依次递减）。</summary>
+        // 问题12：前锥提供的【基础护甲】——钻头 800 / 基础 400 / 太空员 200（依次递减）。
         internal static float NoseconeArmor(string prefabId)
         {
             if (prefabId == NoseconeHarvest) return 800f;   // 钻头前锥（最高）
@@ -79,7 +79,7 @@ namespace MoreFood_KFC
             return 0f;
         }
 
-        /// <summary>★ 问题12：前锥提供的【基础防御】——依次相当于 F/E/D 档怪物防御（0/2/5）。</summary>
+        // 问题12：前锥提供的【基础防御】——依次相当于 F/E/D 档怪物防御（0/2/5）。
         internal static float NoseconeDefense(string prefabId)
         {
             if (prefabId == NoseconeHarvest) return 5f;     // D 档
@@ -99,7 +99,7 @@ namespace MoreFood_KFC
             new Color(0.23f, 0.20f, 0.35f, 1f)
         };
 
-        // ★ AxialI 的构造函数签名是 AxialI(int a, int b) → r = a, q = b（反的！）
+        // AxialI 的构造函数签名是 AxialI(int a, int b) → r = a, q = b（反的！）
         internal static AxialI Mk(int q, int r)
         {
             AxialI a = default(AxialI);
@@ -225,7 +225,7 @@ namespace MoreFood_KFC
             List<string> planetTypes = new List<string>();
             foreach (WorldContainer wc in cm.WorldContainers)
             {
-                // ★ 排除火箭舱室；任务地图世界（SpaceQuestSite 宿主）同样不当星球 ——
+                // 排除火箭舱室；任务地图世界（SpaceQuestSite 宿主）同样不当星球 ——
                 if (wc == null || wc.IsModuleInterior || wc.GetComponent<SpaceQuestSite>() != null)
                 {
                     continue;
@@ -267,7 +267,7 @@ namespace MoreFood_KFC
                 }
             }
 
-            // ★ 主图恒按原版环数裁：扩展环里的原版内容（读档后才注册的 POI 等）
+            // 主图恒按原版环数裁：扩展环里的原版内容（读档后才注册的 POI 等）
             int vanillaMax = SpaceCfg.VanillaRings - 1;
             if (vanillaMax > 0 && max != vanillaMax)
             {
@@ -280,7 +280,7 @@ namespace MoreFood_KFC
             }
 
             z.mainMaxRing = max;
-            // ★ 危险区放在"内容之外"：(M+1)~(M+1+span) 环，这些环按定义没有星球 → 不与星球重叠
+            // 危险区放在"内容之外"：(M+1)~(M+1+span) 环，这些环按定义没有星球 → 不与星球重叠
             z.dangerRingLo = max + 1;
             z.dangerRingHi = max + 1 + SpaceCfg.DangerRingSpan;
             z.visibleEdgeRing = z.dangerRingHi;
@@ -334,7 +334,7 @@ namespace MoreFood_KFC
                 {
                     continue;
                 }
-                // ★ 子图只允许落在"可见外沿之外"：分区若在星球注册前就算出来（P-10），
+                // 子图只允许落在"可见外沿之外"：分区若在星球注册前就算出来（P-10），
                 //   子图中心会挤回主星系，遮罩会把主图（含已揭示格）一起盖成半揭示。
                 //   这里直接剔除主图范围内的格，保证遮罩永远碰不到主图。
                 if (SpaceCfg.Ring(all[i]) <= z.visibleEdgeRing)
@@ -592,7 +592,7 @@ namespace MoreFood_KFC
             return false;
         }
 
-        // ★ 实锤：这里只认原版实体 —— 我们自己的星图实体一个都不能漏。
+        // 实锤：这里只认原版实体 —— 我们自己的星图实体一个都不能漏。
         private static bool IsOurs(ClusterGridEntity e)
         {
             return e is SpaceRift || e is SpaceStation || e is SpaceQuestSite

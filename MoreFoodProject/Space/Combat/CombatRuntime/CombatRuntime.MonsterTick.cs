@@ -18,7 +18,7 @@ namespace MoreFood_KFC
             {
                 return;
             }
-            // ★ 主图怪不许停在"星图外"（可见外沿之外的隐藏带）—— 旧分区/旧档遗留的怪
+            // 主图怪不许停在"星图外"（可见外沿之外的隐藏带）—— 旧分区/旧档遗留的怪
             SpaceZones zz = StarMapVisuals.Zones;
             if (zz != null && zz.valid && rt.region != "sub" && zz.IsVoid(rt.Cell))
             {
@@ -33,7 +33,7 @@ namespace MoreFood_KFC
                     }
                 }
             }
-            // ★ 离场闹钟（K18）：到点且【处于漫游】→ 随机选一个边缘空格走过去，走到边缘直接消失。
+            // 离场闹钟（K18）：到点且【处于漫游】→ 随机选一个边缘空格走过去，走到边缘直接消失。
             if (rt.leaveAt > 0f && now >= rt.leaveAt
                 && (rt.state == MonsterState.Idle || rt.state == MonsterState.Roam))
             {
@@ -68,13 +68,13 @@ namespace MoreFood_KFC
             catch (System.Exception e) { MFLog.HotFail("tick:CombatRuntime", e); }
         }
 
-        // ★ 漫游节流硬闸（游戏秒）：睡眠/移动之间切换状态至少隔这么久 —— 改时长只改这一行（测试期 10s）
+        // 漫游节流硬闸（游戏秒）：睡眠/移动之间切换状态至少隔这么久 —— 改时长只改这一行（测试期 10s）
         private const float RoamSwitchMinSeconds = 10f;
 
-        // ★ 逃跑窗口（游戏秒）：一次逃跑最长持续这么久，到点回漫游 —— 改时长只改这一行（测试期 300s）
+        // 逃跑窗口（游戏秒）：一次逃跑最长持续这么久，到点回漫游 —— 改时长只改这一行（测试期 300s）
         private const float FleeMaxSeconds = 300f;
 
-        // ★ 追击节流倍率：怪物每格耗时 = 目标火箭每格耗时 × 该值（>1 保证玩家开跑必甩得掉）
+        // 追击节流倍率：怪物每格耗时 = 目标火箭每格耗时 × 该值（>1 保证玩家开跑必甩得掉）
         private const float ChaseIntervalScale = 2.25f;
 
         private static void TickMonsterIdle(MonsterRuntime rt, float now)
@@ -86,7 +86,7 @@ namespace MoreFood_KFC
                 return;
             }
             float interval = UnityEngine.Random.Range(rt.def.idleMin, rt.def.idleMax) / Mathf.Max(0.05f, rt.def.speed);
-            interval = Mathf.Max(RoamSwitchMinSeconds, interval);   // ★ 硬闸：fast/speed 高也不许缩短切换间隔
+            interval = Mathf.Max(RoamSwitchMinSeconds, interval);   // 硬闸：fast/speed 高也不许缩短切换间隔
             rt.idleUntil = now + interval;
             if (UnityEngine.Random.value < rt.def.idleChance)
             {
@@ -180,16 +180,16 @@ namespace MoreFood_KFC
             }
             rt.deaggroUntil = 0f;
             rt.state = d <= rt.def.attackRange ? MonsterState.Combat : MonsterState.Pursue;
-            // 逃跑判定（§9.2）：★ 问题5 —— 一次逃跑（fleeUsed 耗尽后不再触发），仅逃 3~5 格
+            // 逃跑判定（§9.2）：问题5 —— 一次逃跑（fleeUsed 耗尽后不再触发），仅逃 3~5 格
             if (rt.def.canFlee && !rt.fleeUsed && rt.def.fleeHpPct > 0f && rt.hp <= rt.def.hp * rt.def.fleeHpPct)
             {
                 if (rt.state != MonsterState.Flee)
                 {
-                    rt.fleeUntil = now + FleeMaxSeconds;   // ★ 逃跑触发即开窗口（最长 300s）
-                    rt.fleeStepsLeft = UnityEngine.Random.Range(3, 6);   // ★ 问题5：仅逃 3~5 格
+                    rt.fleeUntil = now + FleeMaxSeconds;   // 逃跑触发即开窗口（最长 300s）
+                    rt.fleeStepsLeft = UnityEngine.Random.Range(3, 6);   // 问题5：仅逃 3~5 格
                 }
                 rt.state = MonsterState.Flee;
-                rt.fleeUsed = true;   // ★ 问题5：耗尽逃跑次数（此后不再触发逃跑远离玩家）
+                rt.fleeUsed = true;   // 问题5：耗尽逃跑次数（此后不再触发逃跑远离玩家）
                 if (rt.def.fleeInstantStepOnce)
                 {
                     AxialI step;
@@ -239,7 +239,7 @@ namespace MoreFood_KFC
             catch (System.Exception e) { MFLog.HotFail("tick:CombatRuntime", e); }
         }
 
-        // ★ 追击间隔兜底（秒）：取不到目标速度（目标丢失 / 数值非法）时按 900 秒/格，保证绝不抛异常也不会追太快
+        // 追击间隔兜底（秒）：取不到目标速度（目标丢失 / 数值非法）时按 900 秒/格，保证绝不抛异常也不会追太快
         private const float ChaseIntervalFallback = 900f;
 
         // 追击每格间隔（秒）= 目标火箭每格耗时 × 2.25；火箭每格攒满 600 点潜力、Speed = 功率 ÷ 总载重
@@ -307,7 +307,7 @@ namespace MoreFood_KFC
             {
                 return;
             }
-            // ★ Bug3：受击【被动还击】——被攻击时，若本火箭没有仍然存活的指定目标，
+            // Bug3：受击【被动还击】——被攻击时，若本火箭没有仍然存活的指定目标，
             MonsterRuntime cur = FindByUid(st.orderedTargetUid);
             if (cur == null || !cur.IsAlive)
             {
@@ -324,7 +324,7 @@ namespace MoreFood_KFC
             {
             if (rt.fleeUntil > 0f && now >= rt.fleeUntil)
             {
-                // ★ 逃跑窗口用完 → 回漫游（脱战本来也会回；这里是保底）
+                // 逃跑窗口用完 → 回漫游（脱战本来也会回；这里是保底）
                 rt.fleeUntil = 0f;
                 rt.state = MonsterState.Idle;
                 return;
@@ -338,12 +338,12 @@ namespace MoreFood_KFC
             }
             if (IsEdgeCell(rt.Cell, rt.region) && rt.fleeStepsLeft <= 0)
             {
-                // ★ 问题5：逃跑不再"到边缘即离场"；只有步数耗尽（下面分支）才结束逃跑，
+                // 问题5：逃跑不再"到边缘即离场"；只有步数耗尽（下面分支）才结束逃跑，
                 rt.fleeUntil = 0f;
                 rt.state = MonsterState.Idle;
                 return;
             }
-            // ★ 问题5：逃跑步数耗尽 → 结束逃跑，回到漫游（此后 fleeUsed 已置位，不再逃跑）
+            // 问题5：逃跑步数耗尽 → 结束逃跑，回到漫游（此后 fleeUsed 已置位，不再逃跑）
             if (rt.fleeStepsLeft <= 0)
             {
                 rt.fleeUntil = 0f;
@@ -358,7 +358,7 @@ namespace MoreFood_KFC
             if (PickToward(rt, away, out step))
             {
                 MoveMonster(rt, step);
-                rt.fleeStepsLeft--;   // ★ 问题5：消耗一跑步数
+                rt.fleeStepsLeft--;   // 问题5：消耗一跑步数
             }
             if (rt.aggroCraft == null && now >= rt.attackUntil)
             {
@@ -378,7 +378,7 @@ namespace MoreFood_KFC
                 AxialI tgt = PickLeaveTarget(rt);
                 if (tgt == rt.Cell)
                 {
-                    // ★ 边缘格全被占：自己已在边缘格就就地消失，否则原地等下一拍再选（不许在地图内部凭空消失）
+                    // 边缘格全被占：自己已在边缘格就就地消失，否则原地等下一拍再选（不许在地图内部凭空消失）
                     if (IsEdgeCell(rt.Cell, rt.region))
                     {
                         EscapeMonster(rt);
@@ -432,7 +432,7 @@ namespace MoreFood_KFC
             return rt.Cell;
         }
 
-        /// <summary>★ 任务失败/过期通知：把本任务下发的怪（ticket 认领）离场闹钟压到 leaveAt → 到点自己走。
+        // 任务失败/过期通知：把本任务下发的怪（ticket 认领）离场闹钟压到 leaveAt → 到点自己走。
         internal static void OrderIssuedLeaving(List<string> tickets, float leaveAt)
         {
             if (tickets == null || tickets.Count == 0)
@@ -457,7 +457,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>主动离场（§6.4 的口子 + K18 离场闹钟）：随机选一个边缘空格 → 走到即消失。</summary>
+        // 主动离场（§6.4 的口子 + K18 离场闹钟）：随机选一个边缘空格 → 走到即消失。
         internal static void OrderLeave(MonsterRuntime rt)
         {
             if (rt == null)

@@ -407,7 +407,7 @@ namespace EventFramework
                 var f2 = Builtin("eventfw.file.ogg", EventMediaKind.file, "sounds/test.ogg");
                 if (f2 != null) f2.play_seconds = 10f;
 
-                _builtinsDone = true;   // ★ 全部成功才置位：中途异常下次还能重试
+                _builtinsDone = true;   // 全部成功才置位：中途异常下次还能重试
                 Debug.Log("[MoreFood/Event][Audio] 内置音频模板已就绪：" + Describe());
             }
             catch (Exception e)

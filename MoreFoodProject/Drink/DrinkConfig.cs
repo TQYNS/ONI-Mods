@@ -18,10 +18,10 @@ namespace MoreFood_KFC
             isDrink = true;
         }
 
-        // ★ 饮水优先级（数值越大越优先）—— 影响【选哪个喝】。
+        // 饮水优先级（数值越大越优先）—— 影响【选哪个喝】。
         public int priority = 0;
 
-        // ★ 显示排序（升序比较大小）—— 影响【在「饮品」管制表里排前面还是后面】。
+        // 显示排序（升序比较大小）—— 影响【在「饮品」管制表里排前面还是后面】。
         public int sort = 0;
 
         public string category = "other";        // wine / coffee / soda / other
@@ -36,7 +36,7 @@ namespace MoreFood_KFC
         public float hangoverChance = 0f;        // 0~1，饮用时判定
     }
 
-    // ★ 饮品选择算法 —— 独立函数，方便随时改
+    // 饮品选择算法 —— 独立函数，方便随时改
     public static class DrinkPriorityPicker
     {
         // 按优先级挑一个候选，返回下标；没有可用候选返回 -1。
@@ -292,7 +292,7 @@ namespace MoreFood_KFC
             return true;
         }
 
-        // ★ 性能修复：Cleanup 被"每复制人每秒"调用 → 全局节流为最多每秒一次
+        // 性能修复：Cleanup 被"每复制人每秒"调用 → 全局节流为最多每秒一次
         private static float _lastCleanupAt = -1f;
 
         public static void Cleanup()
@@ -545,7 +545,7 @@ namespace MoreFood_KFC
                     if (e.reserver != null && e.reserver != duplicant) continue;
                     // 被其它 fetch（例如餐桌配送）预订完的，不要再选
                     if (e.pickupable.UnreservedFetchAmount <= 0f) continue;
-                    // ★ 新增：跳过已被短时排除的目标
+                    // 新增：跳过已被短时排除的目标
                     if (DrinkExclusionRegistry.IsExcluded(e.go)) continue;
                     if (e.pickupable.KPrefabID != null)
                     {
@@ -566,7 +566,7 @@ namespace MoreFood_KFC
                     if (e.pickupable.storage != null) continue;
                     if (e.reserver != null && e.reserver != duplicant) continue;
                     if (e.pickupable.UnreservedFetchAmount <= 0f) continue;
-                    // ★ 新增：跳过已被短时排除的目标
+                    // 新增：跳过已被短时排除的目标
                     if (DrinkExclusionRegistry.IsExcluded(e.go)) continue;
                     var pe = e.pickupable.PrimaryElement;
                     if (pe == null || pe.ElementID.CreateTag() != elementTag.Value) continue;
@@ -630,7 +630,7 @@ namespace MoreFood_KFC
                 var e = _buildings[i];
                 if (e == null || e.go == null) continue;
                 if (filter != null && !filter(e.data)) continue;
-                // ★ 新增：跳过已被短时排除的目标
+                // 新增：跳过已被短时排除的目标
                 if (DrinkExclusionRegistry.IsExcluded(e.go)) continue;
                 _scratch.Add(e);
             }
@@ -696,7 +696,7 @@ namespace MoreFood_KFC
         }
     }
 
-    // ★ 饮品专属「默认禁饮清单」——「默认」行（新复制人的默认值）用
+    // 饮品专属「默认禁饮清单」——「默认」行（新复制人的默认值）用
     [SerializationConfig(MemberSerialization.OptIn)]
     public class DrinkDefaultsSaveData : KMonoBehaviour
     {

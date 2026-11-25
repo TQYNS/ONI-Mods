@@ -69,7 +69,7 @@ namespace MoreFood_KFC
         }
     }
 
-    [SerializationConfig(MemberSerialization.OptIn)]   // ★ KSerialization OptOut 只认 public 字段，必须 OptIn
+    [SerializationConfig(MemberSerialization.OptIn)]   // KSerialization OptOut 只认 public 字段，必须 OptIn
     public class SpaceQuestSite : ClusterGridEntity
     {
         [Serialize]
@@ -90,7 +90,7 @@ namespace MoreFood_KFC
         {
             get
             {
-                // ★ 动态层（崩溃实锤：[0x20f] ldfld WorldContainer::id）：
+                // 动态层（崩溃实锤：[0x20f] ldfld WorldContainer::id）：
                 WorldContainer w = GetComponent<WorldContainer>();
                 return w != null ? EntityLayer.Asteroid : EntityLayer.POI;
             }
@@ -122,7 +122,7 @@ namespace MoreFood_KFC
 
         public override ClusterRevealLevel IsVisibleInFOW
         {
-            // ★ 跟随迷雾：Visible=原版语义"无视迷雾永显"；Peeked=半揭示问号/全揭示实体
+            // 跟随迷雾：Visible=原版语义"无视迷雾永显"；Peeked=半揭示问号/全揭示实体
             get { return ClusterRevealLevel.Peeked; }
         }
 
@@ -140,12 +140,12 @@ namespace MoreFood_KFC
         }
     }
 
-    /// <summary>
+    //
     internal static class SpaceQuestWorldFlags
     {
         private static FieldInfo flagField;
 
-        /// <summary>任务世界 ⇒ 把 isModuleInterior 改回 false，返回是否真的改了。</summary>
+        // 任务世界 ⇒ 把 isModuleInterior 改回 false，返回是否真的改了。
         internal static bool Demote(WorldContainer w)
         {
             try
@@ -182,7 +182,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>读档兜底：旧档里任务世界旗标是 true，进场后必须全部扫回 false。</summary>
+        // 读档兜底：旧档里任务世界旗标是 true，进场后必须全部扫回 false。
         internal static void NormalizeAll()
         {
             try
@@ -212,7 +212,7 @@ namespace MoreFood_KFC
         }
     }
 
-    /// <summary>★ 2026-10-06：原版 PlaceInteriorTemplate 把模板根位置写死成"世界中心"，
+    // 原版 PlaceInteriorTemplate 把模板根位置写死成"世界中心"，
     [HarmonyPatch(typeof(TemplateLoader), "Stamp", new Type[] { typeof(TemplateContainer), typeof(Vector2), typeof(System.Action) })]
     internal static class QuestStampRootPatch
     {
@@ -236,7 +236,7 @@ namespace MoreFood_KFC
 
     internal sealed class QuestState
     {
-        // ★ 任务 = 事件实例：instanceId 是存档主键，eventId 只用于日志
+        // 任务 = 事件实例：instanceId 是存档主键，eventId 只用于日志
         internal string instanceId;
         internal string eventId;
         // 委托名（事件实例创建时冻结的变体名；读档靠存档里的副本，不重抽）
@@ -267,7 +267,7 @@ namespace MoreFood_KFC
         internal static readonly List<QuestState> Active = new List<QuestState>();
         private const string RewardCurrencyArg = "reward_currency";
 
-        /// <summary>事件刷新时冻结最终星币；同一实例重复触发只读取原值。</summary>
+        // 事件刷新时冻结最终星币；同一实例重复触发只读取原值。
         internal static int FreezeRewardAtRefresh(EventFramework.Distribution.Contracts.IEventContext ctx)
         {
             if (ctx == null) return 0;
@@ -291,15 +291,15 @@ namespace MoreFood_KFC
             return frozen;
         }
 
-        // ★ 印模板根位置握手：BuildMap 设，TemplateLoader.Stamp 前缀消费（见 QuestStampRootPatch）
+        // 印模板根位置握手：BuildMap 设，TemplateLoader.Stamp 前缀消费（见 QuestStampRootPatch）
         internal static Vector2 PendingStampRoot;
         internal static bool HasPendingStampRoot;
         private static int published;
 
-        /// <summary>
-        /// 卷轴阅读 = 接取：直接触发同名事件并代选 accept，走与面板点击完全相同的路径
-        /// （事件实例由框架建，文案变体与 hunt 规格都从这里来）。
-        /// </summary>
+        //
+        // 卷轴阅读 = 接取：直接触发同名事件并代选 accept，走与面板点击完全相同的路径
+        // （事件实例由框架建，文案变体与 hunt 规格都从这里来）。
+        //
         internal static bool StartFromScroll(MoreFood_KFC.ScrollReadView screen, string tier)
         {
             string evt = SpaceStarmapEvents.EventPrefix + tier;
@@ -327,7 +327,7 @@ namespace MoreFood_KFC
             return true;
         }
 
-        /// <summary>按 hunt.creature_tiers 在战斗怪物表里等概率抽一只。</summary>
+        // 按 hunt.creature_tiers 在战斗怪物表里等概率抽一只。
         private static CombatMonsterDef PickMonsterByTiers(List<string> tiers)
         {
             if (tiers == null || tiers.Count == 0 || CombatDb.Monsters.Count == 0)
@@ -359,9 +359,9 @@ namespace MoreFood_KFC
 
         // 协会开窗抽任务已移除：任务只由事件框架 / 任务卷轴两条入口产生，UI 不再参与判定
 
-        /// <summary>
-        /// 发布一条狩猎任务：数据全部来自事件实例（hunt 规格 + 冻结文案），本方法不再读任何任务表。
-        /// </summary>
+        //
+        // 发布一条狩猎任务：数据全部来自事件实例（hunt 规格 + 冻结文案），本方法不再读任何任务表。
+        //
         internal static QuestState Publish(EventFramework.Distribution.Contracts.IEventContext ctx, string tier)
         {
             SpaceZones zones = StarMapVisuals.Zones;
@@ -383,7 +383,7 @@ namespace MoreFood_KFC
                 MFLog.Warn(LogCat.Space, "[Space] 事件实例 id 为空，无法登记任务");
                 return null;
             }
-            // ★ 同实例去重兜底（同一事件重复 accept / 读档重复恢复）
+            // 同实例去重兜底（同一事件重复 accept / 读档重复恢复）
             for (int i = 0; i < Active.Count; i++)
             {
                 QuestState live = Active[i];
@@ -449,23 +449,23 @@ namespace MoreFood_KFC
                 AxialI mcell = NextFreeCell(grid, cell, i + 1);
                 if (mcell.Q == int.MinValue)
                 {
-                    // ★ 2 环内已无空格：少投几只，而不是叠到别的实体身上
+                    // 2 环内已无空格：少投几只，而不是叠到别的实体身上
                     MFLog.Warn(LogCat.Space, "[Space] 目标格周边没有空位，本次只投放 " + spawned + "/" + spawnCount
                         + " 只（中心格 " + SpaceCfg.Pos(cell) + "）");
                     break;
                 }
-                StarMapVisuals.RevealCell(mcell, 0);   // ★ 目标格随委托一并揭雾（格子没到 Visible 时迷你条不显示）
+                StarMapVisuals.RevealCell(mcell, 0);   // 目标格随委托一并揭雾（格子没到 Visible 时迷你条不显示）
                 MonsterRuntime mt = CombatRuntime.SpawnMonster(st.creatureId, mcell, instanceId,
                     CombatRuntime.RegionOf(mcell));
                 if (mt != null)
                 {
-                    // ★ 狩猎目标的离场闹钟 = 本任务失败时间 + 1s（= 接收/刷新目标时的持续时间）
+                    // 狩猎目标的离场闹钟 = 本任务失败时间 + 1s（= 接收/刷新目标时的持续时间）
                     mt.leaveAt = st.deadline + 1f;
                     st.issuedTickets.Add(mt.ticket);   // 身份证：记录本任务下发的怪
                     spawned++;
                 }
             }
-            // ★ 一只都没投出来（格子失效 / prefab 缺失）⇒ 撤回任务记录，避免 Tick 把"没有目标"判成"全部击杀"
+            // 一只都没投出来（格子失效 / prefab 缺失）⇒ 撤回任务记录，避免 Tick 把"没有目标"判成"全部击杀"
             if (st.issuedTickets.Count == 0)
             {
                 Active.Remove(st);
@@ -481,10 +481,10 @@ namespace MoreFood_KFC
             return st;
         }
 
-        /// <summary>
-        /// 取投放格：传奇 → 危险区空格；普通/精良 → 主星图可见范围内任意空格
-        /// （排除子图、危险区、已有实体）。都找不到 → 退回主图边缘格。
-        /// </summary>
+        //
+        // 取投放格：传奇 → 危险区空格；普通/精良 → 主星图可见范围内任意空格
+        // （排除子图、危险区、已有实体）。都找不到 → 退回主图边缘格。
+        //
         private static AxialI PickQuestCell(SpaceZones zones, ClusterGrid grid, string tier)
         {
             if (tier == "legendary")
@@ -539,7 +539,7 @@ namespace MoreFood_KFC
             List<AxialI> edgeCells = zones.mainEdgeCells;
             if (edgeCells != null && edgeCells.Count > 0)
             {
-                // ★ 边缘格也要判占用：这里以前直接随机取，会落到星球/站点/打捞场的格子上
+                // 边缘格也要判占用：这里以前直接随机取，会落到星球/站点/打捞场的格子上
                 List<AxialI> edgeFree = new List<AxialI>();
                 for (int i = 0; i < edgeCells.Count; i++)
                 {
@@ -559,11 +559,11 @@ namespace MoreFood_KFC
             return SpaceCfg.Mk(int.MinValue, int.MinValue);
         }
 
-        /// <summary>
-        /// 取任务目标的落点：优先紧邻中心格的空位，紧邻全占再退到 2 环。
-        /// ★ 找不到就返回无效格（调用方跳过这一只），**绝不回落到已占用的中心格**
-        /// —— 以前 `return center` 会把整窝怪叠在同一个格子上。
-        /// </summary>
+        //
+        // 取任务目标的落点：优先紧邻中心格的空位，紧邻全占再退到 2 环。
+        // 找不到就返回无效格（调用方跳过这一只），**绝不回落到已占用的中心格**
+        // —— 以前 `return center` 会把整窝怪叠在同一个格子上。
+        //
         private static AxialI NextFreeCell(ClusterGrid grid, AxialI center, int prefer)
         {
             SpaceZones z = StarMapVisuals.Zones;
@@ -601,13 +601,13 @@ namespace MoreFood_KFC
             return SpaceCfg.Mk(int.MinValue, int.MinValue);
         }
 
-        /// <summary>
-        /// 格子上是否已有任何星图实体（严格口径）。
-        /// ★ 曾经只认 `SpaceMonster` / `SpaceQuestSite`，于是目标会被丢到
-        ///   星球、空间站、时空裂隙、打捞场、小行星带的格子上——视觉上直接叠在一起，
-        ///   而且这些格子的迷你条被实体挡住点不中。原版 `ClusterGridEntity.OnSpawn`
-        ///   是同步 `RegisterEntity` 的，所以 `cellContents` 一定是最新的，直接用。
-        /// </summary>
+        //
+        // 格子上是否已有任何星图实体（严格口径）。
+        // 曾经只认 `SpaceMonster` / `SpaceQuestSite`，于是目标会被丢到
+        // 星球、空间站、时空裂隙、打捞场、小行星带的格子上——视觉上直接叠在一起，
+        // 而且这些格子的迷你条被实体挡住点不中。原版 `ClusterGridEntity.OnSpawn`
+        // 是同步 `RegisterEntity` 的，所以 `cellContents` 一定是最新的，直接用。
+        //
         private static bool Occupied(ClusterGrid grid, AxialI cell)
         {
             List<ClusterGridEntity> list;
@@ -695,10 +695,10 @@ namespace MoreFood_KFC
             return n;
         }
 
-        /// <summary>
-        /// 战斗层广播订阅入口（SpaceCombatBus.OnResolved）。
-        /// 全部目标在期限内击杀/捕获才成功；任一任务目标离场立即失败。
-        /// </summary>
+        //
+        // 战斗层广播订阅入口（SpaceCombatBus.OnResolved）。
+        // 全部目标在期限内击杀/捕获才成功；任一任务目标离场立即失败。
+        //
         internal static void OnMonsterResolved(MonsterResolvedEvent e)
         {
             if (e == null)
@@ -841,7 +841,7 @@ namespace MoreFood_KFC
             {
                 return;
             }
-            // ★ 先清任务地图世界：旧实现直接销毁 site（site 即世界宿主）会把被销毁的
+            // 先清任务地图世界：旧实现直接销毁 site（site 即世界宿主）会把被销毁的
             if (st.mapBuilt && st.worldId >= 0)
             {
                 if (!DestroyQuestWorld(st.worldId))
@@ -864,7 +864,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>任务地图世界的正规清理（裁剪自 ClusterManager.DestoryRocketInteriorWorld，去掉火箭专属部分）。</summary>
+        // 任务地图世界的正规清理（裁剪自 ClusterManager.DestoryRocketInteriorWorld，去掉火箭专属部分）。
         internal static bool DestroyQuestWorld(int worldId)
         {
             try
@@ -882,7 +882,7 @@ namespace MoreFood_KFC
                 var crew = Components.LiveMinionIdentities.GetWorldItems(w.id, false);
                 if (crew != null && crew.Count > 0)
                 {
-                    // ★ 原版这里靠 EjectAllDupes 把人挪走，取消后仍挂在已销毁世界里 ⇒ 下次读档被销毁并连崩
+                    // 原版这里靠 EjectAllDupes 把人挪走，取消后仍挂在已销毁世界里 ⇒ 下次读档被销毁并连崩
                     MFLog.Warn(LogCat.Space, "[Space] 任务地图 World#" + worldId + " 里还有 " + crew.Count
                         + " 名复制人 ⇒ 本轮不销毁（等人员撤出后再清）");
                     return false;
@@ -912,7 +912,7 @@ namespace MoreFood_KFC
                 {
                     MFLog.Exc("quest:clearbuild", LogCat.Space, e, "[Space] 清理任务地图建筑失败（继续，可能残留建筑）");
                 }
-                cm.UnregisterWorldContainer(w);   // ★ 崩溃根因：这一步以前缺了
+                cm.UnregisterWorldContainer(w);   // 崩溃根因：这一步以前缺了
                 try
                 {
                     Grid.FreeGridSpace(w.WorldSize, w.WorldOffset);
@@ -952,7 +952,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>★★ 2026-10-06：清理"孤儿任务点"。任务点实体是随档保存的（未 SetRegistered(false)），
+        // 清理"孤儿任务点"。任务点实体是随档保存的（未 SetRegistered(false)），
         internal static void CleanupOrphanSites()
         {
             try
@@ -966,7 +966,7 @@ namespace MoreFood_KFC
                     {
                         continue;
                     }
-                    // ★★ 两条硬性护栏（血泪）：
+                    // 两条硬性护栏（血泪）：
                     if (!site.gameObject.activeInHierarchy)
                     {
                         continue;
@@ -1018,7 +1018,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>★ 2026-10-06 深夜新增：按 questId 找【随档回来的现有任务点】，
+        // 按 questId 找【随档回来的现有任务点】，
         private static SpaceQuestSite FindExistingQuestSite(string questId)
         {
             if (string.IsNullOrEmpty(questId))
@@ -1045,7 +1045,7 @@ namespace MoreFood_KFC
             return null;
         }
 
-        /// <summary>★ 2026-10-06 深夜新增：星图狩猎没有任务地图 ⇒ 不应有任务点实体。
+        // 星图狩猎没有任务地图 ⇒ 不应有任务点实体。
         private static void CleanupStarMapHuntSites(string questId)
         {
             if (string.IsNullOrEmpty(questId))
@@ -1104,7 +1104,7 @@ namespace MoreFood_KFC
             host.AddOrGet<WorldInventory>();
             WorldContainer w = host.AddOrGet<WorldContainer>();
             w.SetRocketInteriorWorldDetails(id, size, offset);
-            SpaceQuestWorldFlags.Demote(w);   // ★ 不冒充火箭内舱（原版每日结算会因此 NRE 崩游戏，见该类注释）
+            SpaceQuestWorldFlags.Demote(w);   // 不冒充火箭内舱（原版每日结算会因此 NRE 崩游戏，见该类注释）
             Vector2I end = offset + size;
             for (int y = offset.Y; y < end.Y; y++)
             {
@@ -1129,7 +1129,7 @@ namespace MoreFood_KFC
             }
             try
             {
-                // ★ 原版 PlaceInteriorTemplate 把模板根位置硬编码成"世界中心"，
+                // 原版 PlaceInteriorTemplate 把模板根位置硬编码成"世界中心"，
                 int tplW = 0;
                 TemplateContainer tplInfo = TemplateCache.GetTemplate(template);
                 if (tplInfo != null)
@@ -1320,9 +1320,9 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>
-        /// 读档恢复进行中的任务：全部字段取自存档（不依赖事件实例是否还在 —— 事件 30 秒就结束了）。
-        /// </summary>
+        //
+        // 读档恢复进行中的任务：全部字段取自存档（不依赖事件实例是否还在 —— 事件 30 秒就结束了）。
+        //
         internal static int Restore(TradeSaveData save)
         {
             SpaceStarmapEvents.FreezePendingRewardsAfterRestore();
@@ -1379,7 +1379,7 @@ namespace MoreFood_KFC
                 st.deadline = i < save.questDeadline.Count ? save.questDeadline[i] : TradeRegistry.Now() + 600f;
                 st.worldId = -1;
                 st.mapBuilt = false;
-                // ★ 星图狩猎没有任务地图 ⇒ 不建 site，顺手清掉同实例 id 的孤儿任务点
+                // 星图狩猎没有任务地图 ⇒ 不建 site，顺手清掉同实例 id 的孤儿任务点
                 CleanupStarMapHuntSites(instanceId);
                 st.site = null;
                 Active.Add(st);

@@ -351,7 +351,7 @@ namespace MoreFood_KFC{
             
             string s = Strings.Get(key);
 
-            //Debug.Log($"[vs_preset] ★ 尝试 key='{key}', 实际查到了 s='{s}'");  
+            // Debug.Log($"[vs_preset] 尝试 key='{key}', 实际查到了 s='{s}'");
 
             if (s == null || s.StartsWith("MISSING")) return null;
             return s;

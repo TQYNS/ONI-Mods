@@ -113,7 +113,7 @@ namespace MoreFood_KFC
                 if (st == null)
                 {
                     MFLog.Warn(LogCat.Event,"[Space] 框架下发星图任务（品质 " + tier + "）但发布失败（星图未就绪 / 无可用怪物 / 无空格）");
-                    // ★ 面板已随"接收"关闭，这里必须给玩家一句反馈，否则点完像什么都没发生
+                    // 面板已随"接收"关闭，这里必须给玩家一句反馈，否则点完像什么都没发生
                     TradeUi.Notify("星图任务", "接取未生效：协会眼下派不出这一档的目标，稍后再来问。");
                     return;
                 }
@@ -132,7 +132,7 @@ namespace MoreFood_KFC
                 + "，星币=" + rewardCurrency + "）");
         }
 
-        /// <summary>旧版未接取事件没有冻结参数，恢复时补写一次；新版实例因已有值不会重抽。</summary>
+        // 旧版未接取事件没有冻结参数，恢复时补写一次；新版实例因已有值不会重抽。
         internal static void FreezePendingRewardsAfterRestore()
         {
             IEventContext[] contexts = EventFrameworkApi.ActiveContexts();

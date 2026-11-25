@@ -119,7 +119,7 @@ namespace MoreFood_KFC
                 {
                     return;
                 }
-                // ★ 问题2：用 Open()（overlay 显示）代替 Activate()（PushScreen 会顶替星图活动屏 → 背景跳转）
+                // 问题2：用 Open()（overlay 显示）代替 Activate()（PushScreen 会顶替星图活动屏 → 背景跳转）
                 screen.Open(craft);
             }
             catch (Exception e)
@@ -229,7 +229,7 @@ namespace MoreFood_KFC
                 {
                     st.pendingDamage = 0f;
                     st.totalHpCache = RocketStats.MaxHp(craft);
-                    st.armor = st.maxArmor;   // ★ 第十七轮-2：重置时同时补满装甲值
+                    st.armor = st.maxArmor;   // 第十七轮-2：重置时同时补满装甲值
                     st.warpCooldownUntil = 0f;
                 }
                 int tanks = FillFuel(craft);

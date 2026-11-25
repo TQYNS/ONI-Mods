@@ -41,7 +41,7 @@ namespace MoreFood_KFC
                 d.armorPenetration = r.armor_penetration ?? 10f;
                 d.attackInterval = r.attack_interval.HasValue && r.attack_interval.Value > 0f
                     ? r.attack_interval.Value : Shared.ammoDefaultInterval;
-                // ★ 攻击间隔钳制到 [10,25] 秒；伤害按 DPS 不变缩放（每场总输出不变，问题5）
+                // 攻击间隔钳制到 [10,25] 秒；伤害按 DPS 不变缩放（每场总输出不变，问题5）
                 {
                     float oldInt = d.attackInterval;
                     float newInt = Mathf.Clamp(oldInt, Shared.minAttackInterval, Shared.attackIntervalMax);
@@ -305,7 +305,7 @@ namespace MoreFood_KFC
             return null;
         }
 
-        /// <summary>把子级未配置的字段用父级补齐（写回子 raw，供后续物化）。</summary>
+        // 把子级未配置的字段用父级补齐（写回子 raw，供后续物化）。
         private static void MergeModuleInto(ModuleRaw parent, ModuleRaw child)
         {
             if (string.IsNullOrEmpty(child.name)) child.name = parent.name;

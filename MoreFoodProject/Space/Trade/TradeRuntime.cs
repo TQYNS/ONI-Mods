@@ -54,7 +54,7 @@ namespace MoreFood_KFC
                 return 0f;
             }
             float scaled = v * scale;
-            // ★ 吃掉 float32 误差：分值在 1e-3 量级上抖一下就会被截成"少一分"（2970.99−2827.75=143.23999→143.23）
+            // 吃掉 float32 误差：分值在 1e-3 量级上抖一下就会被截成"少一分"（2970.99−2827.75=143.23999→143.23）
             float snapped = Mathf.Round(scaled);
             if (Mathf.Abs(scaled - snapped) < 0.0001f + 0.000001f * Mathf.Abs(scaled))
             {
@@ -85,7 +85,7 @@ namespace MoreFood_KFC
         internal string id;
         internal float cooldownEnd;
         internal int refreshCount;
-        internal float currency;       // ★ 站点星币库存（参与结算）
+        internal float currency;       // 站点星币库存（参与结算）
         internal float pirateClosedUntil;
         internal float nextPirateRoll;
         internal readonly List<TradeStockEntry> shelf = new List<TradeStockEntry>();
@@ -136,7 +136,7 @@ namespace MoreFood_KFC
             if (add > 0) Currency = TradeNumber.Money(Mathf.Max(0f, Currency) + add);
         }
 
-        // ★ 本会话是否见过猎人协会站（不存档）：读档恢复会覆盖 Flags/Currency，
+        // 本会话是否见过猎人协会站（不存档）：读档恢复会覆盖 Flags/Currency，
         internal static bool HunterStationSeen;
 
         // 成就/通知每个会话只发一次（恢复补发时不重复弹通知）
@@ -163,7 +163,7 @@ namespace MoreFood_KFC
             TradeDb.Load();
             TradeValuation.Init();
             TradeCatalog.Invalidate();
-            // ★ 只有"进程内第一次"才写初始星币。
+            // 只有"进程内第一次"才写初始星币。
             if (!sessionBegun)
             {
                 sessionBegun = true;
@@ -171,12 +171,12 @@ namespace MoreFood_KFC
             }
             MFLog.Verbose(LogCat.Trade,"[Space] 贸易初始化：星币=" + Currency + " 声望=" + RankName() + "(" + Rep + ")"
                 + " 站点配置=" + TradeDb.Stations.Count);
-            // ★ 读档恢复的第二触发点：开星图/开贸易窗都会走 Init。
+            // 读档恢复的第二触发点：开星图/开贸易窗都会走 Init。
             SpaceRestoreGate.RunDeferredRestores();
             SpaceAchievements.CheckMilestones();
         }
 
-        /// <summary>新会话（SaveGame.OnPrefabInit）调用：运行时状态复位。
+        // 新会话（SaveGame.OnPrefabInit）调用：运行时状态复位。
         internal static void BeginSession()
         {
             inited = false;                 // 让下一次 Init 重跑一次 DB 检查（幂等）
@@ -284,7 +284,7 @@ namespace MoreFood_KFC
             ChannelPoints[key] = ChannelPointsOf(key) + pts;
         }
 
-        /// <summary>按品质找"能装下这份食材"的 food 渠道（渠道按配置顺序取第一个未满的）。</summary>
+        // 按品质找"能装下这份食材"的 food 渠道（渠道按配置顺序取第一个未满的）。
         internal static DonationChannelDef PickFoodChannel(int quality)
         {
             List<DonationChannelDef> chs = TradeDb.DonationChannels(TradeDb.Config.hunter_station_id);
@@ -389,7 +389,7 @@ namespace MoreFood_KFC
             SpaceAchievements.CheckMilestones();
         }
 
-        /// <summary>猎人首见奖励（800 星币 + 成就/通知）。幂等：
+        // 猎人首见奖励（800 星币 + 成就/通知）。幂等：
         internal static void GrantHunterFirstContact()
         {
             if ((Flags & FlagsHunterGift) != 0)
@@ -412,7 +412,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>读档恢复后补发猎人首见奖励（存档早于首见时）。</summary>
+        // 读档恢复后补发猎人首见奖励（存档早于首见时）。
         internal static void RestoreHunterGiftIfMissed()
         {
             if (HunterStationSeen)
@@ -602,7 +602,7 @@ namespace MoreFood_KFC
             st.currency = TradeNumber.Money(st.currency * ModOptions.Current.TraderCreditsMultiplier);
         }
 
-        // ★ 与 MoreFood 的唯一代码接入点（其余全走 YAML）：这张配方卷轴对应的配方是否已查阅。
+        // 与 MoreFood 的唯一代码接入点（其余全走 YAML）：这张配方卷轴对应的配方是否已查阅。
         internal static bool IsRetiredRecipeScroll(string itemId)
         {
             try
@@ -656,7 +656,7 @@ namespace MoreFood_KFC
                 + " 下次冷却结束=" + Mathf.RoundToInt(st.cooldownEnd) + "秒");
         }
 
-        // ★ 两层抽：先按 rarity_weight 掷稀有度，再在该档里均匀抽一条（用户拍板）。
+        // 两层抽：先按 rarity_weight 掷稀有度，再在该档里均匀抽一条（用户拍板）。
         private sealed class DrawPool
         {
             private readonly Dictionary<TradeRarity, List<TradeItemValue>> buckets =
@@ -677,7 +677,7 @@ namespace MoreFood_KFC
                     {
                         continue;
                     }
-                    // ★ 配方卷轴：对应的配方已经"查阅"过 ⇒ 本次刷新不再抽它
+                    // 配方卷轴：对应的配方已经"查阅"过 ⇒ 本次刷新不再抽它
                     List<TradeItemValue> kept = new List<TradeItemValue>(src.Count);
                     for (int k = 0; k < src.Count; k++)
                     {
@@ -791,7 +791,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>模块抽取上限：传奇/大师按站点类型封顶（普通 1/3，黑市/走私/海盗 2/4）。</summary>
+        // 模块抽取上限：传奇/大师按站点类型封顶（普通 1/3，黑市/走私/海盗 2/4）。
         private static void CapModuleRarity(TradeStationState st, StationDef def)
         {
             int legendary = 0;
@@ -852,7 +852,7 @@ namespace MoreFood_KFC
         }
     }
 
-    // ★★ KSerialization 对没有 [SerializationConfig] 的类型只序列化 public 字段 ⇒ 必须 OptIn。
+    // KSerialization 对没有 [SerializationConfig] 的类型只序列化 public 字段 ⇒ 必须 OptIn。
     internal sealed class TradeSaveData : KMonoBehaviour, ISaveLoadable
     {
         [Serialize]
@@ -872,13 +872,13 @@ namespace MoreFood_KFC
         public int deliverLegendaryGained;
         [Serialize]
         public int donateGained;
-        // ★ 捐款改成"按渠道累计"（渠道表在 trade/donation.yaml）
+        // 捐款改成"按渠道累计"（渠道表在 trade/donation.yaml）
         [Serialize]
         public List<string> channelKeys = new List<string>();
         [Serialize]
         public List<int> channelPoints = new List<int>();
 
-        // ★ v5.8：存档版本（StationPriceCache / StationStock / StationCurrency 的失效判据）
+        // v5.8：存档版本（StationPriceCache / StationStock / StationCurrency 的失效判据）
         [Serialize]
         public int tradeVersion;
 
@@ -1113,7 +1113,7 @@ namespace MoreFood_KFC
                 int v = channelPoints != null && i < channelPoints.Count ? channelPoints[i] : 0;
                 TradeRegistry.ChannelPoints[key] = TradeRegistry.ChannelPointsOf(key) + Mathf.Max(0, v);
             }
-            // ★ 老存档迁移：只有旧计数字段、没有渠道表时，按渠道 key 名映射进来
+            // 老存档迁移：只有旧计数字段、没有渠道表时，按渠道 key 名映射进来
             if (TradeRegistry.ChannelPoints.Count == 0 && TradeRegistry.DeliverCommonGained + TradeRegistry.DeliverLegendaryGained + TradeRegistry.DonateGained > 0)
             {
                 TradeRegistry.AddChannelPoints("food_normal", TradeRegistry.DeliverCommonGained);
@@ -1124,7 +1124,7 @@ namespace MoreFood_KFC
                     + " / 星币 " + TradeRegistry.DonateGained);
             }
 
-            // ★ TRADE_VERSION 不匹配 → 丢弃 StationPriceCache / StationStock / StationCurrency，下次开窗重算
+            // TRADE_VERSION 不匹配 → 丢弃 StationPriceCache / StationStock / StationCurrency，下次开窗重算
             bool versionOk = tradeVersion == GlobalCacheVersion.TRADE_VERSION;
             if (!versionOk)
             {
@@ -1173,14 +1173,14 @@ namespace MoreFood_KFC
                     e.stock = TradeNumber.Units(GetAt(shelfStock, i, 0f));
                     e.recycleLeft = GetAt(shelfRecycle, i, 0f);
                     st.shelf.Add(e);
-                    // ★ 0 配额也要写：否则读档后 RecycleLeft() 会重新掷配额，把「已收够」复活
+                    // 0 配额也要写：否则读档后 RecycleLeft() 会重新掷配额，把「已收够」复活
                     st.recycleLeft[e.id] = Mathf.Max(0f, e.recycleLeft);
                 }
             }
 
             int questsKept = SpaceQuestRuntime.Restore(this);
             int revealedKept = SpaceReveal.Restore(revealQ, revealR);
-            // ★ 站点 OnSpawn 早于本恢复：先把存档的旧星币/flag 写回，再补发错过的首见奖励
+            // 站点 OnSpawn 早于本恢复：先把存档的旧星币/flag 写回，再补发错过的首见奖励
             TradeRegistry.RestoreHunterGiftIfMissed();
             int bad = (stationIds.Count - stationsKept) + shelfDropped;
             if (bad > 0)

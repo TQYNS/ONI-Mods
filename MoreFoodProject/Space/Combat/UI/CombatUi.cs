@@ -99,7 +99,7 @@ namespace MoreFood_KFC
             WarpMode = false;
         }
 
-        /// <returns>true = 交回原版；false = 已接管</returns>
+        // true = 交回原版；false = 已接管
         internal static bool HandleSelectHex(ClusterMapScreen screen, ClusterMapHex hex)
         {
             Clustercraft craft = TargetingCraft;
@@ -133,7 +133,7 @@ namespace MoreFood_KFC
             if (monster != null)
             {
                 CombatRuntime.OrderAttack(craft, monster);
-                // ★ Bug2：不再自绘攻击箭头（原版选点模式自带箭头/高亮）。
+                // Bug2：不再自绘攻击箭头（原版选点模式自带箭头/高亮）。
                 ForceExitSelectMode(screen);
                 ExitTargeting("已下令攻击 " + monster.Name);
                 return false;
@@ -152,7 +152,7 @@ namespace MoreFood_KFC
             return false;
         }
 
-        /// <summary>SetMode 是私有方法且参数是私有枚举 → 反射调 Default（比 TryHandleCancel 更干净，不触发额外事件）。</summary>
+        // SetMode 是私有方法且参数是私有枚举 → 反射调 Default（比 TryHandleCancel 更干净，不触发额外事件）。
         private static void ForceExitSelectMode(ClusterMapScreen screen)
         {
             try
@@ -237,7 +237,7 @@ namespace MoreFood_KFC
 
         internal static void ShowCraftBar(Clustercraft craft)
         {
-            HideAllBars();   // ★ 统一隐藏（问题7/8）
+            HideAllBars();   // 统一隐藏（问题7/8）
             if (craft == null)
             {
                 return;
@@ -257,7 +257,7 @@ namespace MoreFood_KFC
             rt.pivot = new Vector2(0.5f, 0f);
             rt.anchoredPosition = new Vector2(0f, CombatDb.Shared.uiBarY);
             rt.sizeDelta = new Vector2(730f, h);
-            bar.transform.SetAsLastSibling();   // ★ 层级置顶（问题7/8）
+            bar.transform.SetAsLastSibling();   // 层级置顶（问题7/8）
 
             Button attackBtn = TradeUi.MakeButton("攻 击", bar.transform, 0f, 0f, 110f, h, TradeUi.Panel, TradeUi.Accent,
                 TradeUi.TextMain, delegate
@@ -265,7 +265,7 @@ namespace MoreFood_KFC
                     CombatTargeting.Begin(barCraft);
                     RefreshBar();
                 });
-            AddAttackTooltip(attackBtn.gameObject);   // ★ 问题11：攻击按钮 tooltip 显示攻击距离
+            AddAttackTooltip(attackBtn.gameObject);   // 问题11：攻击按钮 tooltip 显示攻击距离
             warpBtn = TradeUi.MakeButton("跃 迁", bar.transform, 120f, 0f, 110f, h, TradeUi.Panel, TradeUi.Accent,
                 TradeUi.TextMain, delegate
                 {
@@ -285,7 +285,7 @@ namespace MoreFood_KFC
                     RocketEmergencyExit.TryTrigger(barCraft, false);   // 条件不满足时内部会给提示
                     RefreshBar();
                 });
-            // ★ 显示前现算一次：没有相邻站点就**直接做成灰色且不可点**（不是点了才提示）
+            // 显示前现算一次：没有相邻站点就**直接做成灰色且不可点**（不是点了才提示）
             SpaceStation near = FindAdjacentStation(craft);
             bool canTrade = near != null;
             bool canRefuel = near != null && TradeUi.RefuelConfigured(near);
@@ -327,7 +327,7 @@ namespace MoreFood_KFC
             RefreshBar();   // 只刷新攻击/跃迁/紧急脱离（交易/加油已在上面定好）
         }
 
-        /// <summary>★ 问题11：攻击按钮 tooltip —— 显示攻击距离（不再沿用原版"行程"文案）。</summary>
+        // 问题11：攻击按钮 tooltip —— 显示攻击距离（不再沿用原版"行程"文案）。
         private static void AddAttackTooltip(GameObject go)
         {
             try
@@ -399,7 +399,7 @@ namespace MoreFood_KFC
                 return;
             }
             bool on = WarpRuntime.CanUse(craft);
-            // ★ 与「捕获」「紧急脱离」一致 —— 恒 interactable=true，灰显只靠颜色；
+            // 与「捕获」「紧急脱离」一致 —— 恒 interactable=true，灰显只靠颜色；
             btn.interactable = true;
             Image body = btn.targetGraphic as Image;
             if (body != null)
@@ -431,7 +431,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>与「捕获」占位按钮同款灰：底 PanelAlt / 描边 TextOff / 文字 TextOff。</summary>
+        // 与「捕获」占位按钮同款灰：底 PanelAlt / 描边 TextOff / 文字 TextOff。
         private static void SetEnabled(Button btn, bool on)
         {
             if (btn == null)
@@ -464,7 +464,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>刷新按钮可用性（只在火箭移动 / 受击 / 恢复 / 触发 / 冷却到点时调用，不轮询）。</summary>
+        // 刷新按钮可用性（只在火箭移动 / 受击 / 恢复 / 触发 / 冷却到点时调用，不轮询）。
         internal static void RefreshBar()
         {
             if (bar == null)
@@ -481,16 +481,16 @@ namespace MoreFood_KFC
                 SetEnabled(emergencyBtn, RocketEmergencyExit.CanTriggerActive(barCraft));
             }
             SetWarpButton(warpBtn, barCraft);
-            // ★ 设计变更：交易/加油不在这里刷新。它们的可用态只在 ShowCraftBar（显示前）现算，
+            // 设计变更：交易/加油不在这里刷新。它们的可用态只在 ShowCraftBar（显示前）现算，
             //   点击时再校验一次；本方法只维护与"位置/站点"无关的按钮（攻击/跃迁/紧急脱离）。
         }
 
-        // ★ Bug5：火箭 → 交易站目标的记忆（火箭 instanceID → 站点 Key）。
+        // Bug5：火箭 → 交易站目标的记忆（火箭 instanceID → 站点 Key）。
         private static readonly Dictionary<int, string> tradeTargetByCraft = new Dictionary<int, string>();
 
         internal static SpaceStation FindAdjacentStation(Clustercraft craft)
         {
-            // ★ 设计变更：火箭必须在星图中（InFlight）且已停止飞行，落在地表的火箭不参与交易/加油
+            // 设计变更：火箭必须在星图中（InFlight）且已停止飞行，落在地表的火箭不参与交易/加油
             if (!TradeUtil.InStarmap(craft))
             {
                 return null;
@@ -525,7 +525,7 @@ namespace MoreFood_KFC
                 for (int i = 0; i < list.Count; i++)
                 {
                     SpaceStation s = list[i] as SpaceStation;
-                    // ★ 修订：cellContents 可能残留站点在旧格的陈旧条目（改位置只走事件增减），
+                    // 修订：cellContents 可能残留站点在旧格的陈旧条目（改位置只走事件增减），
                     //   必须回验站点当前真实位置，否则"相邻"判定会把远处站点算进来。
                     if (s != null && s.Location == c && !found.Contains(s))
                     {
@@ -571,10 +571,10 @@ namespace MoreFood_KFC
             emergencyBtn = null;
             tradeBtn = null;
             refuelBtn = null;
-            CombatArrow.Hide();   // ★ 问题11：关星图/收按钮排时一并收起自绘攻击箭头
+            CombatArrow.Hide();   // 问题11：关星图/收按钮排时一并收起自绘攻击箭头
         }
 
-        /// <summary>★ 统一隐藏底部所有条（问题7/8）：战斗按钮排 + TradeUi 的条，避免互相遮盖。</summary>
+        // 统一隐藏底部所有条（问题7/8）：战斗按钮排 + TradeUi 的条，避免互相遮盖。
         internal static void HideAllBars()
         {
             HideBar();
@@ -588,7 +588,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>星图关闭时清理（挂 ClusterMapShowPatch 的关闭分支）。</summary>
+        // 星图关闭时清理（挂 ClusterMapShowPatch 的关闭分支）。
         internal static void OnMapClosed()
         {
             HideBar();

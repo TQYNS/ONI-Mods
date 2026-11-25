@@ -13,9 +13,9 @@ namespace EventFramework
 
         public static bool Active
         {
-            // ★ 必须同时"存在且真的在层级里可见"：面板被 KScreen.Show(false) 隐藏时，
+            // 必须同时"存在且真的在层级里可见"：面板被 KScreen.Show(false) 隐藏时，
             //   遮罩作为它的子节点只是失活、引用还在 ⇒ 只看 != null 会把整张星图的六角格
-            //   射线永久关掉（悬停/提示/点选全废）。2026-11-12 实测事故。
+            //   射线永久关掉（悬停/提示/点选全废）。实测事故。
             get { return root != null && root.activeInHierarchy; }
         }
 

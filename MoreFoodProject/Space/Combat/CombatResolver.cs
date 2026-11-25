@@ -35,7 +35,7 @@ namespace MoreFood_KFC
             public float overflow;
         }
 
-        /// <summary>唯一伤害公式（§10.2 逐字）。</summary>
+        // 唯一伤害公式（§10.2 逐字）。
         internal static Result ApplyDamage(IDamageTarget target, DamageSource src)
         {
             Result r = new Result();
@@ -89,7 +89,7 @@ namespace MoreFood_KFC
             return r;
         }
 
-        /// <summary>K9：乘员同步——火箭 HP% 低于阈值时，把这次命中伤害的一部分分给舱内乘员，乘员血最多降到地板上。</summary>
+        // K9：乘员同步——火箭 HP% 低于阈值时，把这次命中伤害的一部分分给舱内乘员，乘员血最多降到地板上。
         internal static void ApplyCrewSync(Clustercraft craft, RocketCombatState st, float hitDamage)
         {
             try

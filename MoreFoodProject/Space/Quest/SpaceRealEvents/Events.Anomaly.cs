@@ -112,7 +112,7 @@ namespace MoreFood_KFC
                         continue;
                     }
 
-                    // ★ 逐座 try：一座失败不能连累其余（原实现整段 try 会让后面的座全部跳过）
+                    // 逐座 try：一座失败不能连累其余（原实现整段 try 会让后面的座全部跳过）
                     try
                     {
                         recharge.Invoke(g, null);

@@ -18,7 +18,7 @@ namespace MoreFood_KFC
         private GameObject leftRoot;
         internal Clustercraft selected;
 
-        // ★ 性能修复：缓存 selected → RocketCombatState，避免每帧 GetComponent
+        // 性能修复：缓存 selected → RocketCombatState，避免每帧 GetComponent
         private Clustercraft cachedSelCraft;
         private RocketCombatState cachedSelState;
 
@@ -33,7 +33,7 @@ namespace MoreFood_KFC
         private bool dirty = true;
         private bool built;
 
-        // ★ 局部刷新委托 —— 每次全量重建时登记"血量条/弹药灰条/文字"的更新闭包；
+        // 局部刷新委托 —— 每次全量重建时登记"血量条/弹药灰条/文字"的更新闭包；
         private readonly List<System.Action> liveUpdaters = new List<System.Action>();
 
         private enum Page
@@ -78,7 +78,7 @@ namespace MoreFood_KFC
             {
                 // expected: 遮罩可能已关闭，重复关闭抛异常可忽略，随后继续关面板
             }
-            // ★ 问题2：不再 CloseAll（会把星图一起关掉 → 背景跳转回非星图界面）；只关本面板
+            // 问题2：不再 CloseAll（会把星图一起关掉 → 背景跳转回非星图界面）；只关本面板
             if (screen == null || screen.gameObject == null)
             {
                 return;
@@ -124,7 +124,7 @@ namespace MoreFood_KFC
             base.OnShow(show);
             if (!show)
             {
-                // ★ 面板隐藏时复位悬停计数 —— 鼠标可能停在条目上，但面板已不可见，
+                // 面板隐藏时复位悬停计数 —— 鼠标可能停在条目上，但面板已不可见，
                 PanelHoverGuard.Open = 0;
                 try
                 {
@@ -159,13 +159,13 @@ namespace MoreFood_KFC
             bool combat = stCur != null && stCur.inCombat;
             if (dirty)
             {
-                // ★ 用户操作 / 结构变化 → 全量重建。必须放在"暂停判断"之前，
+                // 用户操作 / 结构变化 → 全量重建。必须放在"暂停判断"之前，
                 nextRefresh = Time.unscaledTime + (combat ? 0.2f : 2f);
                 dirty = false;
                 Refresh();
                 return;
             }
-            // ★ 暂停只停"自动节拍刷新"（不影响上面的用户操作刷新）。
+            // 暂停只停"自动节拍刷新"（不影响上面的用户操作刷新）。
             if (Time.timeScale <= 0f)
             {
                 return;
@@ -175,14 +175,14 @@ namespace MoreFood_KFC
             {
                 return;
             }
-            // ★ 战斗节拍只做"局部刷新"（血量/装甲/燃料条、弹药灰条、文字），
+            // 战斗节拍只做"局部刷新"（血量/装甲/燃料条、弹药灰条、文字），
             nextRefresh = Time.unscaledTime + 0.2f;
             RunLiveUpdaters();
             }
             catch (System.Exception e) { MFLog.HotFail("update:RocketPanelScreen", e); }
         }
 
-        // ★ 性能修复：selected → RocketCombatState 缓存（仅当 selected 变化或缓存失效时重取）
+        // 性能修复：selected → RocketCombatState 缓存（仅当 selected 变化或缓存失效时重取）
         private RocketCombatState GetSelectedState()
         {
             if (selected == null)
@@ -199,7 +199,7 @@ namespace MoreFood_KFC
             return cachedSelState;
         }
 
-        /// <summary>执行登记过的局部刷新闭包（不重建任何 GameObject）。</summary>
+        // 执行登记过的局部刷新闭包（不重建任何 GameObject）。
         private void RunLiveUpdaters()
         {
             for (int i = 0; i < liveUpdaters.Count; i++)
@@ -225,7 +225,7 @@ namespace MoreFood_KFC
             return es != null && es.IsPointerOverGameObject();
         }
 
-        /// <summary>★ 第十八轮-2/8：外部事件（交战开始/结束、怪物结算、开火消耗弹药）请求面板全量重建一次。
+        // 第十八轮-2/8：外部事件（交战开始/结束、怪物结算、开火消耗弹药）请求面板全量重建一次。
         internal static void RequestRebuild()
         {
             if (instance != null)
@@ -240,7 +240,7 @@ namespace MoreFood_KFC
             dirty = true;
         }
 
-        /// <summary>★ 问题2：打开面板但【不 PushScreen】——避免顶替星图活动屏（背景跳转回非星图）。
+        // 问题2：打开面板但【不 PushScreen】——避免顶替星图活动屏（背景跳转回非星图）。
         internal void Open(Clustercraft craft)
         {
             Select(craft != null && RocketValidity.IsValidCraft(craft) ? craft : null);
@@ -285,7 +285,7 @@ namespace MoreFood_KFC
             {
                 return;
             }
-            liveUpdaters.Clear();   // ★ 第十八轮-2：全量重建前清空旧闭包（旧控件已随重建销毁）
+            liveUpdaters.Clear();   // 第十八轮-2：全量重建前清空旧闭包（旧控件已随重建销毁）
             PruneSelected();
             RebuildLeft();
             RebuildRight();

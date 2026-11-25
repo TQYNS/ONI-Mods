@@ -20,7 +20,7 @@ namespace MoreFood_KFC
                 TradeUi.Text("blocked", body.transform, 24f, 100f, 700f, 60f, blockReason, 18f, TradeUi.Warn, false);
                 return;
             }
-            // ★ 计量口径统一：交易全链路以「份」为单位（食物 1 份 = 1kg，单件物品 1 份 = 1 件）
+            // 计量口径统一：交易全链路以「份」为单位（食物 1 份 = 1kg，单件物品 1 份 = 1 件）
             TradeUi.Text("h1", body.transform, 16f, 8f, 176f, 26f, "物品", 14f, TradeUi.TextDim, false);
             TradeUi.Text("h2", body.transform, 196f, 8f, 76f, 26f, "售价/份", 13f, TradeUi.TextDim, true);
             TradeUi.Text("h3", body.transform, 280f, 8f, 68f, 26f, "库存", 13f, TradeUi.TextDim, true);
@@ -40,7 +40,7 @@ namespace MoreFood_KFC
                 TradeUi.MakeButton(">", body.transform, 682f, 566f, 44f, 30f, TradeUi.TabOff, TradeUi.Border,
                     TradeUi.TextMain, delegate { TurnPage(1); });
             }
-            // ★ 筛选标签（仅售卖 / 仅购买）：只影响本窗口的显示，重开窗口即复位
+            // 筛选标签（仅售卖 / 仅购买）：只影响本窗口的显示，重开窗口即复位
             TradeUi.MakeButton(filterSellOnly ? "仅售卖 ✓" : "仅售卖", body.transform, 14f, 566f, 104f, 30f,
                 filterSellOnly ? TradeUi.TabOn : TradeUi.TabOff,
                 filterSellOnly ? TradeUi.Accent : TradeUi.Border,
@@ -63,7 +63,7 @@ namespace MoreFood_KFC
                 });
         }
 
-        /// <summary>只重建行区（表头/筛选/整窗保持不动），页号已按当前行数钳好。</summary>
+        // 只重建行区（表头/筛选/整窗保持不动），页号已按当前行数钳好。
         private void BuildRows()
         {
             if (rowsRoot == null || state == null)
@@ -94,7 +94,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>行清单缓存（同一轮显示只算一次；整窗重建或库存变化时由 Rebuild/EnsureFresh 作废）。</summary>
+        // 行清单缓存（同一轮显示只算一次；整窗重建或库存变化时由 Rebuild/EnsureFresh 作废）。
         private List<string> Rows()
         {
             if (rowCache == null)
@@ -104,7 +104,7 @@ namespace MoreFood_KFC
             return rowCache;
         }
 
-        /// <summary>★ 翻页：只换行，不销毁整窗（原来每次翻页都整窗 Rebuild ⇒ 一帧内新旧两套 UI 并存，明显卡顿）。</summary>
+        // 翻页：只换行，不销毁整窗（原来每次翻页都整窗 Rebuild ⇒ 一帧内新旧两套 UI 并存，明显卡顿）。
         private void TurnPage(int delta)
         {
             int next = Mathf.Clamp(page + delta, 0, Mathf.Max(0, pageCount - 1));
@@ -159,7 +159,7 @@ namespace MoreFood_KFC
                     }
                 }
             }
-            // ★ 二次排序 —— 先按稀有度（传奇→极差）降序，同档内按"价格"从高到低。
+            // 二次排序 —— 先按稀有度（传奇→极差）降序，同档内按"价格"从高到低。
             rows.Sort(delegate(string a, string b)
             {
                 int ra, rb;
@@ -176,7 +176,7 @@ namespace MoreFood_KFC
                 }
                 return string.CompareOrdinal(a, b);
             });
-            // ★ 筛选（仅售卖 / 仅购买）：只改显示，不动数据；两个都勾 = 不过滤
+            // 筛选（仅售卖 / 仅购买）：只改显示，不动数据；两个都勾 = 不过滤
             if (filterSellOnly != filterBuyOnly)
             {
                 List<string> kept = new List<string>(rows.Count);
@@ -189,7 +189,7 @@ namespace MoreFood_KFC
                 }
                 rows = kept;
             }
-            // ★ 零库存分块：有库存的排前面、无库存的统一排到后面（两块各自保留上面的排序）
+            // 零库存分块：有库存的排前面、无库存的统一排到后面（两块各自保留上面的排序）
             List<string> stocked = new List<string>(rows.Count);
             List<string> empty = new List<string>(rows.Count);
             for (int i = 0; i < rows.Count; i++)
@@ -224,7 +224,7 @@ namespace MoreFood_KFC
             return ValueOf(id) != null && CarriedOf(id) > 0.0001f;
         }
 
-        /// <summary>★ 第十九轮-5：排序键 =（稀有度, 价格）；价格取实际成交单价（买价/回收价取大）。</summary>
+        // 第十九轮-5：排序键 =（稀有度, 价格）；价格取实际成交单价（买价/回收价取大）。
         private void SortInfo(string id, out int rarity, out float price)
         {
             rarity = 0;
@@ -250,10 +250,10 @@ namespace MoreFood_KFC
             float buyUnit = v != null ? TradeRegistry.BuyUnit(def, v) : 1f;
             float sellUnit = v != null ? TradeRegistry.SellUnit(def, v) : 1f;
             float stock = TradeNumber.Units(e != null ? e.stock : 0f);
-            // ★ 新增「持有」列：与结算校验同一口径（仓内 + 内舱地面 + 单件物品运输仓），
+            // 新增「持有」列：与结算校验同一口径（仓内 + 内舱地面 + 单件物品运输仓），
             //   数值来自本轮唯一的持有量快照，逐行复用，不再每行重扫全舱
             float carried = TradeNumber.Units(CarriedOf(id));
-            // ★ 列名只叫「售价」：本站卖给你的按站方售价显示；只有回收价的（船上带来的）显示回收价
+            // 列名只叫「售价」：本站卖给你的按站方售价显示；只有回收价的（船上带来的）显示回收价
             float shown = stock > 0f ? buyUnit : sellUnit;
             TradeRarity rar = v != null ? v.rarity : TradeRarity.Common;
             return Row(y, id, TradeUtil.DisplayName(id), shown, stock, carried, rar);
@@ -283,7 +283,7 @@ namespace MoreFood_KFC
                 TradeUi.TextMain, true);
             TradeUi.Text("stock", row.transform, 280f, 0f, 68f, 34f,
                 stock.ToString("0"), 13f, TradeUi.TextDim, true);
-            // ★ 持有量：火箭上可交易的总数（与结算校验同源），为 0 时灰色提示
+            // 持有量：火箭上可交易的总数（与结算校验同源），为 0 时灰色提示
             TradeUi.Text("hold", row.transform, 352f, 0f, 68f, 34f,
                 carried.ToString("0"), 13f,
                 carried > 0f ? TradeUi.Pos : TradeUi.TextOff, true);

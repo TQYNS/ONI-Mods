@@ -10,7 +10,7 @@ namespace EventFramework
     public enum EventTriggerMode { scheduled, branch_only }
     //   scheduled   = 进抽取池（也可被父级调取 / 手动触发）
 
-    // ★同 id 被"承诺"再次调取时的策略（见《事件框架规划.md》§17.4）；allow = 允许并存，直接新建一份
+    // 同 id 被"承诺"再次调取时的策略（见《事件框架规划.md》§17.4）；allow = 允许并存，直接新建一份
     public enum EventDuplicatePolicy { reject, allow }
     public enum EventNotifyLevel { info, warning, critical, hidden }
 
@@ -30,7 +30,7 @@ namespace EventFramework
         public string world_id { get; set; } = "any";
     }
 
-    // ★ 统一的【预检条件块】：所有条件都在这里，不再有第二套语义。
+    // 统一的【预检条件块】：所有条件都在这里，不再有第二套语义。
     //   A 历史（框架自动记录） / C 游戏世界（O(1) 字典） / D 自定义函数 / E 并发互斥
     //   全部 AND；任一不满足 ⇒ 抽取阶段拦下（跳过本轮，不推通知）
     public class EventConditionBlock
@@ -78,13 +78,13 @@ namespace EventFramework
     {
         // 只触发一次（触发后不再抽取）
         public bool one_shot { get; set; } = false;
-        public float min_interval { get; set; } = 12000f;      // ★v2：单位【秒】（原 20 周期）
+        public float min_interval { get; set; } = 12000f;      // v2：单位【秒】（原 20 周期）
         public float max_interval { get; set; } = 24000f;      // 原 40 周期
     }
 
     public class EventDurationBlock
     {
-        public float min { get; set; } = 0f;                 // ★v2：单位【秒】（原 1.0 周期）
+        public float min { get; set; } = 0f;                 // v2：单位【秒】（原 1.0 周期）
         public float max { get; set; } = 0f;                  // 默认一次性：不配置 duration 即无持续期
     }
 
@@ -103,10 +103,10 @@ namespace EventFramework
         public string status_custom { get; set; } = null;
         // 通知等级（决定图标与配色）
         public EventNotifyLevel level { get; set; } = EventNotifyLevel.info;
-        public string tier { get; set; } = null;               // ★v3.2 通知外观档位（purple/yellow/blue/red/alert）；不写 ⇒ 按 level 推断
+        public string tier { get; set; } = null;               // v3.2 通知外观档位（purple/yellow/blue/red/alert）；不写 ⇒ 按 level 推断
         // 根级通知正文（支持富文本 / [id] 贴图 / {占位符}）；不写 ⇒ 回落 description
         public string tooltip { get; set; } = null;
-        public string status_tier { get; set; } = null;        // ★v3.2 常驻状态行的档位；不写 ⇒ 跟 tier 同档
+        public string status_tier { get; set; } = null;        // v3.2 常驻状态行的档位；不写 ⇒ 跟 tier 同档
 
  // 推送开关（统一语义：true = 推）
         public bool notify { get; set; } = true;
@@ -119,7 +119,7 @@ namespace EventFramework
         // 常驻状态行正文；不写 ⇒ 用 status_text
         public string status_tooltip { get; set; } = null;
 
-        // ★ 分支变体表（键名自定，无数量上限）：运行时由 EventInstance.notifyVariant 选择。
+        // 分支变体表（键名自定，无数量上限）：运行时由 EventInstance.notifyVariant 选择。
         //   未命中 ⇒ 回落上面的 tooltip / status_tooltip（不报错）。
         public Dictionary<string, EventNotifyVariant> variants { get; set; } = null;
 
@@ -135,7 +135,7 @@ namespace EventFramework
         // 驻留到期是否强制弹窗
         public bool resident_popup { get; set; } = false;
 
-        // ★ 只通知不弹窗：为真且该事件【没有任何选项】时，点击事件通知不弹窗（极简事件，如气候变换）。默认 false。
+        // 只通知不弹窗：为真且该事件【没有任何选项】时，点击事件通知不弹窗（极简事件，如气候变换）。默认 false。
         public bool notify_only { get; set; } = false;
     }
 
@@ -187,7 +187,7 @@ namespace EventFramework
         // 是否打详细日志
         public bool verbose_log { get; set; } = false;
 
-        // ★ 验证用：> 0 时，调度器不再按 cycle_min/max 计算，
+        // 验证用：> 0 时，调度器不再按 cycle_min/max 计算，
         public float test_interval_seconds { get; set; } = 0f;
     }
 
@@ -215,7 +215,7 @@ namespace EventFramework
         public float next_delay_min { get; set; } = 0f;        // 秒：分支最早触发（从表态时刻起算）
         // 秒：分支最晚触发（从表态时刻起算）
         public float next_delay_max { get; set; } = 0f;
-        public bool next_allow_repeat { get; set; } = false;   // ★v3.2：允许回到本链已访问节点
+        public bool next_allow_repeat { get; set; } = false;   // v3.2：允许回到本链已访问节点
 
  // 新增：提交材料 + 奖励下发 + 警告开关
 //   语义见《提交奖励施工文档》§5 / §7
@@ -284,13 +284,13 @@ namespace EventFramework
         public string name { get; set; } = null;               // LocString key 或直接文本
         public string description { get; set; } = null;                         // 面板上显示的说明文字
         public string ai_summary { get; set; } = null;                          // 给 AI 桥接 / 调试用的一句话摘要
-        // ★ 文案变体：同一条事件多组「名字 + 正文」，实例创建时等概率抽一组并冻结
+        // 文案变体：同一条事件多组「名字 + 正文」，实例创建时等概率抽一组并冻结
         //   与根级 name/description 并存时以 variants 为准（根级仅作兜底）
         public List<EventVariantDef> variants { get; set; } = null;
-        // ★ 狩猎规格：由宿主（内容 Mod）读取，框架只做读取与校验，不解释玩法
+        // 狩猎规格：由宿主（内容 Mod）读取，框架只做读取与校验，不解释玩法
         public HuntSpec hunt { get; set; } = null;
         public string handler { get; set; } = null;                             // 代码端处理器键（EventHandlerRegistry 注册）
-        public string pool { get; set; } = null;                                // ★ 事件池类型（YAML: pool:），未写 = normal
+        public string pool { get; set; } = null;                                // 事件池类型（YAML: pool:），未写 = normal
         public int version { get; set; } = 1;                                   // 事件模板版本号
 
         public EventTriggerMode trigger_mode { get; set; } = EventTriggerMode.scheduled;   // 触发方式（默认 scheduled = 定时抽取）
@@ -305,7 +305,7 @@ namespace EventFramework
         public EventRepeatBlock repeat { get; set; } = new EventRepeatBlock();
         public EventDurationBlock duration { get; set; } = new EventDurationBlock();
 
-        // ---- ★ 驻留时间（秒）：事件等玩家做选择等多久。与 duration 完全解耦 ----
+        // ---- 驻留时间（秒）：事件等玩家做选择等多久。与 duration 完全解耦 ----
         public float resident_time { get; set; } = -1f;                         // 驻留秒数；<= 0 ⇒ 用默认 2 周期
 
  // ---- 根级：事件本体的开始/结束钩子 + 默认走向（见 §16.5 / §16.8）----

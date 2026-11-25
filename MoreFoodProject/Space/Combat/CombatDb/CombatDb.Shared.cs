@@ -143,7 +143,7 @@ namespace MoreFood_KFC
                 c.spawnCountMin = d.spawnCountMin;
                 c.spawnCountMax = d.spawnCountMax;
             }
-            // ★ 抽取器间隔硬下限：yaml 写多小都不许突破（防"测试用 1 秒"这类配置把抽取器变成高频轮询）
+            // 抽取器间隔硬下限：yaml 写多小都不许突破（防"测试用 1 秒"这类配置把抽取器变成高频轮询）
             if (r.spawn_interval != null && r.spawn_interval.Length >= 2 && r.spawn_interval[1] > 0f)
             {
                 c.spawnIntervalMin = Mathf.Max(SpawnerCfg.MinSpawnIntervalSeconds, r.spawn_interval[0]);

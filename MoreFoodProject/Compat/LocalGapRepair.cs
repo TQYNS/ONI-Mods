@@ -270,7 +270,7 @@ namespace MoreFood_KFC
                     if (!IsBad(cur)) continue;
 
                     string text = ls.text;
-                    if (IsBad(text)) continue;        // ★ 绝不把 MISSING 烤进表
+                    if (IsBad(text)) continue;        // 绝不把 MISSING 烤进表
 
                     if (!_defaults.ContainsKey(key)) _defaults[key] = text;
                     Strings.Add(key, text);

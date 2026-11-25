@@ -14,13 +14,13 @@ namespace EventFramework
 
         // 读档恢复完成回调：实例已恢复（EventSaveBridge.Restore）、闹钟已重排之后触发。
         // 宿主（如持续 buff）借此重建纯运行时效果——框架本身不重跑 handler。
-        // ★ 用回调而不是让宿主 Harmony 硬挂框架方法：框架方法签名变动不会拖垮宿主 mod 加载。
+        // 用回调而不是让宿主 Harmony 硬挂框架方法：框架方法签名变动不会拖垮宿主 mod 加载。
         public static System.Action OnRestored;
 
  // eventId → 上次触发时刻（游戏秒；负数 = 从未触发）单位由周期改为秒
         private static readonly Dictionary<string, float> _lastTriggerTime = new Dictionary<string, float>();
 
-        // ★ 每个事件的冷却结束时刻（游戏秒）。成功执行时 roll 一次 [min,max] 并固定；
+        // 每个事件的冷却结束时刻（游戏秒）。成功执行时 roll 一次 [min,max] 并固定；
         //   冷却期间不重掷，下次成功执行再重掷。随存档保存。
         private static readonly Dictionary<string, float> _cooldownUntil = new Dictionary<string, float>();
 
@@ -46,7 +46,7 @@ namespace EventFramework
             public string instanceId;
             public int choiceIndex = -1;   // 玩家选了哪个选项（-1 = 未选）
             public bool isKey;              // def.key_event
-            // ★ 与通知同一套解析渲染好的正文（变体 + 占位符 + 富文本）；老档为空 ⇒ 回退显示名称
+            // 与通知同一套解析渲染好的正文（变体 + 占位符 + 富文本）；老档为空 ⇒ 回退显示名称
             public string tip;
         }
 
@@ -56,7 +56,7 @@ namespace EventFramework
 
         private static readonly List<HistoryEntry> _events = new List<HistoryEntry>();
         private static readonly List<HistoryEntry> _keys = new List<HistoryEntry>();
-        // ★ 第二十二轮-3：被"清空"标记过的实例（instanceId）—— 其结束时不再写入「事件」页（防清完立刻回填）
+        // 第二十二轮-3：被"清空"标记过的实例（instanceId）—— 其结束时不再写入「事件」页（防清完立刻回填）
         private static readonly HashSet<string> _suppressHistory = new HashSet<string>(StringComparer.Ordinal);
 
         public static IList<HistoryEntry> History { get { return _events; } }
@@ -72,7 +72,7 @@ namespace EventFramework
             return null;
         }
 
-        // ★ 第二十二轮-3：在「历史」页（关键节点）里按 instanceId 查
+        // 第二十二轮-3：在「历史」页（关键节点）里按 instanceId 查
         private static HistoryEntry FindKeyHistory(string instId)
         {
             if (string.IsNullOrEmpty(instId)) return null;
@@ -90,7 +90,7 @@ namespace EventFramework
                 bool suppressed = !string.IsNullOrEmpty(instId) && _suppressHistory.Contains(instId);
                 if (e == null && suppressed)
                 {
-                    e = FindKeyHistory(instId);   // ★ 清空后仍复用「历史」页里已有的关键节点条目
+                    e = FindKeyHistory(instId);   // 清空后仍复用「历史」页里已有的关键节点条目
                 }
                 if (e != null)
                 {
@@ -115,7 +115,7 @@ namespace EventFramework
                     choiceIndex = choiceIndex,
                     isKey = isKey,
                 };
-                // ★ 第二十二轮-3：被"清空"标记过的实例不再写入「事件」页（关键节点仍照常记入「历史」页）
+                // 第二十二轮-3：被"清空"标记过的实例不再写入「事件」页（关键节点仍照常记入「历史」页）
                 if (!suppressed)
                 {
                     _events.Insert(0, e);
@@ -160,7 +160,7 @@ namespace EventFramework
         public static bool Inited { get { return _inited; } }
         public static IList<EventInstance> ActiveInstances { get { return _active; } }
 
-        // ★ 该实例是否仍「进行中」——判据与「事件」屏上方"进行中 N 个事件"严格同源：
+        // 该实例是否仍「进行中」——判据与「事件」屏上方"进行中 N 个事件"严格同源：
         public static bool IsOngoing(string instId)
         {
             if (string.IsNullOrEmpty(instId)) return false;
@@ -175,7 +175,7 @@ namespace EventFramework
             return false;
         }
 
-        // ★ 抽取频率硬下限（游戏秒）：叙事者/槽/事件自己怎么配都不得低于它。
+        // 抽取频率硬下限（游戏秒）：叙事者/槽/事件自己怎么配都不得低于它。
         public const float MinDrawIntervalSeconds = 5f;
 
         // 是否有事件在跑（互斥检查用）
@@ -204,7 +204,7 @@ namespace EventFramework
         {
             // 要接的下一个事件 id
             public string nextEventId;
-            public float triggerAtTime;      // ★v2：绝对游戏秒（不再是周期）
+            public float triggerAtTime;      // v2：绝对游戏秒（不再是周期）
             public List<string> visited = new List<string>();
  // ：正在排队等互斥窗口释放（存盘）
             public bool waitingForMutex;
@@ -234,10 +234,10 @@ namespace EventFramework
                 EventAudioTrigger.Shutdown();
                 EventNarratorSelection.ResetForSession();
                 EventMediaPlayer.Clear();
-                EventNotifier.Clear();        // ★v3.5：清左侧通知栏残留（换局 / 二次读档时旧通知不残留）
-                AudioSwitch.Clear();          // ★ 音频开关是运行态（不存盘）：换局/读档一律归零
+                EventNotifier.Clear();        // v3.5：清左侧通知栏残留（换局 / 二次读档时旧通知不残留）
+                AudioSwitch.Clear();          // 音频开关是运行态（不存盘）：换局/读档一律归零
                 EventHistory.Clear();
-                _suppressHistory.Clear();     // ★ 第二十二轮-3：换局/读档清掉"清空标记"
+                _suppressHistory.Clear();     // 第二十二轮-3：换局/读档清掉"清空标记"
                 // 0) 奖励池必须先于事件加载：事件 yaml 的 grant_rewards 可用 [[池id]] 引用
                 RewardBoxLoader.LoadAll();
 
@@ -252,9 +252,9 @@ namespace EventFramework
                 // 3) 校验 handler 绑定 + yaml 前置条件键
                 ValidateHandlers();
                 EventConditionRegistry.Validate(EventRegistry.All);
-                EventHookRegistry.Validate(EventRegistry.All);   // ★v2 start_fn / end_fn 是否都注册了
-                ValidateBranchOnly();                            // ★v3.2 branch_only 孤儿检查
-                ReportMutexCoverage();                           // ★v3.2 未声明互斥的事件数（Info）
+                EventHookRegistry.Validate(EventRegistry.All);   // v2 start_fn / end_fn 是否都注册了
+                ValidateBranchOnly();                            // v3.2 branch_only 孤儿检查
+                ReportMutexCoverage();                           // v3.2 未声明互斥的事件数（Info）
 
  // 3d) 叙事状态层：条件编译 + 引用扫描 + 双向自检（必须在存档恢复之前）
                 EventHistoryScanner.RunAll(EventRegistry.All);
@@ -265,7 +265,7 @@ namespace EventFramework
                 EventMediaPlayer.ValidateAll();
                 EventAudioLibrary.ValidateVariants();
                 EventMediaPlayer.ValidateYamlRefs(EventRegistry.All);
-                EventAudioTrigger.EnsureBuilt();   // ★音效库的 fire_on / flag 绑定（信号与开关）
+                EventAudioTrigger.EnsureBuilt();   // 音效库的 fire_on / flag 绑定（信号与开关）
 
                 // 3c) 全局 ID 命名空间提醒（不阻断）
                 EventNamingConvention.Check();
@@ -513,7 +513,7 @@ namespace EventFramework
                 _active.Add(inst);
                 _firedThisFrame.Add(def.id);
                 _lastTriggerTime[def.id] = GetGameTime();
-                // ★ 成功执行 ⇒ 进入本次冷却（roll 一次区间值）
+                // 成功执行 ⇒ 进入本次冷却（roll 一次区间值）
                 ArmCooldown(def);
                 _runCounter++;
 
@@ -562,7 +562,7 @@ namespace EventFramework
                 Debug.Log("[MoreFood/Event] ★ 触发事件 '" + def.id + "'（" + inst.instanceId + "）"
                           + " cycle=" + cycle + " reason=" + (reason ?? "-"));
 
-                // ★ 标题取实例冻结的变体名（未配 variants 时回落根级 name）：与通知/面板同一口径
+                // 标题取实例冻结的变体名（未配 variants 时回落根级 name）：与通知/面板同一口径
                 AddHistory(def.id, inst.GetShownName(), cycle,
                            "触发（" + (reason ?? "-") + "）", inst.instanceId,
                            -1, def.key_event);
@@ -571,7 +571,7 @@ namespace EventFramework
                 EventHandlerRegistry.SafeCallTrigger(handler, inst, def.id);
                 EventHandlerRegistry.SafeCallStart(handler, inst, def.id);
 
-                // ★ 历史正文必须在 handler 之后补写：无时长事件会在 handler 之前就 TryFinalize，
+                // 历史正文必须在 handler 之后补写：无时长事件会在 handler 之前就 TryFinalize，
                 //   那时 NoticeArgs 还空（占位符解析不出来），历史条目也可能尚未建立。
                 RefreshHistoryTip(inst, def);
 
@@ -1132,7 +1132,7 @@ namespace EventFramework
                                              "option.end_fn");
 
                     Debug.Log("[MoreFood/Event] ⏱ 决策效果结束 | " + AxisText(inst));
-                    EventNotifier.RemoveStatus(inst, true);   // ★v3.8 选项级状态行随决策效果结束而撤
+                    EventNotifier.RemoveStatus(inst, true);   // v3.8 选项级状态行随决策效果结束而撤
                 }
                 else
                 {
@@ -1237,10 +1237,10 @@ namespace EventFramework
             {
                 var sb = Branches[i];
                 if (sb == null) continue;
-                if (sb.waitingForMutex) ScheduleBranchTimeoutAlarm(sb);   // ★v3.2 恢复排队超时
+                if (sb.waitingForMutex) ScheduleBranchTimeoutAlarm(sb);   // v3.2 恢复排队超时
                 else ScheduleBranchAlarm(sb);
             }
-            WakeWaitingBranches();                                        // ★v3.2 读档后尝试唤醒
+            WakeWaitingBranches();                                        // v3.2 读档后尝试唤醒
 
             if (n > 0 || Branches.Count > 0)
                 Debug.Log("[MoreFood/Event][Sched] 读档后重排闹钟：实例 " + n + " 个，链式 "
@@ -1441,7 +1441,7 @@ namespace EventFramework
                 inst.playerChoices.Add(idx);
                 inst.chosenIndex = idx;
                 inst.chosenByDefault = isDefault;
-                DecideBranch(inst, def, GetGameTime());   // ★v2：表态那一刻就决定走向
+                DecideBranch(inst, def, GetGameTime());   // v2：表态那一刻就决定走向
 
                 string picked = EventDef.ResolveText(opt != null ? opt.label : null, "选项 " + idx);
                 Debug.Log("[MoreFood/Event] " + (isDefault ? "⏰ 超时默认" : "玩家选择")
@@ -1491,7 +1491,7 @@ namespace EventFramework
                 EventSaveBridge.Capture();
                 TryFinalize(inst);
 
-                return true;   // ★v3.5：成功
+                return true;   // v3.5：成功
             }
             catch (Exception e)
             {
@@ -1574,7 +1574,7 @@ namespace EventFramework
                            GetCycle(), "已结束", inst.instanceId,
                            -1, def != null && def.key_event);
 
-                // ★ 历史页正文：与通知走同一套解析（变体 → 模板 → 占位符 → 富文本），在结束时定稿
+                // 历史页正文：与通知走同一套解析（变体 → 模板 → 占位符 → 富文本），在结束时定稿
                 if (def != null)
                 {
                     try
@@ -1638,7 +1638,7 @@ namespace EventFramework
                 return;
             }
 
-            float secs = sc.triggerAtTime - GetGameTime();   // ★v2：已经是秒
+            float secs = sc.triggerAtTime - GetGameTime();   // v2：已经是秒
             if (secs < 0.01f) secs = 0.01f;
 
             try
@@ -1660,7 +1660,7 @@ namespace EventFramework
             public List<EventBranch> branches;
             // 触发延迟范围（秒）
             public float delayMin, delayMax;
-            public bool allowRepeat;      // ★v3.2：本来源的分支是否允许回到已访问节点
+            public bool allowRepeat;      // v3.2：本来源的分支是否允许回到已访问节点
             // 来源描述文本（日志用）
             public string text;
         }
@@ -1808,7 +1808,7 @@ namespace EventFramework
             {
                 nextEventId = next,
                 triggerAtTime = at,
-                visited = new List<string>(inst.participantIds),   // ★v3.2 只带父链；目标实例会自己 AddVisited
+                visited = new List<string>(inst.participantIds),   // v3.2 只带父链；目标实例会自己 AddVisited
             };
             Branches.Add(sb);
             ScheduleBranchAlarm(sb);
@@ -1913,7 +1913,7 @@ namespace EventFramework
             return true;
         }
 
-        // ★ 进入冷却：仅在事件【成功执行】后调用。随机 roll 一次 [min_interval, max_interval]，
+        // 进入冷却：仅在事件【成功执行】后调用。随机 roll 一次 [min_interval, max_interval]，
         //   本次冷却固定为该值（不随查询重掷）；下次成功执行时再重掷。
         private static void ArmCooldown(EventDef def)
         {
@@ -1979,7 +1979,7 @@ namespace EventFramework
                 d.instRemaining.Add(a.GetDurationRemaining());
                 d.instState.Add((int)a.state);
 
-                // ★ 驻留计时 + 两个计时器的完成标志
+                // 驻留计时 + 两个计时器的完成标志
                 d.instResident.Add(a.GetResidentRemaining());
                 d.instChoiceEffect.Add(a.GetChoiceEffectRemaining());
                 d.instChoiceEffectDone.Add(a.choiceEffectDone);
@@ -2156,7 +2156,7 @@ namespace EventFramework
                 return;
             }
 
-            // ★ 关键：只是警告，不阻止恢复
+            // 关键：只是警告，不阻止恢复
             Debug.LogWarning("[MoreFood/Event][存档] 有 " + problems
                              + " 处并行表长度不一致 ⇒ 缺失的位置按默认值处理，恢复继续。\n"
                              + sb.ToString());
@@ -2327,7 +2327,7 @@ namespace EventFramework
                     Debug.LogWarning("[MoreFood/Event][读档兼容] 重推通知失败（不影响事件本体）: " + e);
                 }
 
-                // ★ 读档重接：事件还在跑，但它起的【持续类】音频（循环 / 曲目 / 快照）不会自己回来
+                // 读档重接：事件还在跑，但它起的【持续类】音频（循环 / 曲目 / 快照）不会自己回来
                 try
                 {
                     int again = 0;

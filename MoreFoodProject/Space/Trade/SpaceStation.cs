@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MoreFood_KFC
 {
-    [SerializationConfig(MemberSerialization.OptIn)]   // ★ KSerialization OptOut 只认 public 字段，必须 OptIn
+    [SerializationConfig(MemberSerialization.OptIn)]   // KSerialization OptOut 只认 public 字段，必须 OptIn
     public class SpaceStation : ClusterGridEntity
     {
         [Serialize]
@@ -19,11 +19,11 @@ namespace MoreFood_KFC
         [Serialize]
         internal bool subMap;
 
-        // ★ v5.8：动画状态在这里定一次（站点 yaml 可单配、可配一组随机、也可不配走全局组），之后随存档不变
+        // v5.8：动画状态在这里定一次（站点 yaml 可单配、可配一组随机、也可不配走全局组），之后随存档不变
         [Serialize]
         internal string animState;
 
-        // ★ 卫星贴图：每站固定一个 kanim 文件（组内尽量不重复），选定后随存档不变
+        // 卫星贴图：每站固定一个 kanim 文件（组内尽量不重复），选定后随存档不变
         [Serialize]
         internal string animFile;
 
@@ -104,7 +104,7 @@ namespace MoreFood_KFC
 
         public override ClusterRevealLevel IsVisibleInFOW
         {
-            // ★ 语义修正：IsVisibleInFOW=Visible 在原版 GetRevealLevel 里等于
+            // 语义修正：IsVisibleInFOW=Visible 在原版 GetRevealLevel 里等于
             get { return ClusterRevealLevel.Peeked; }
         }
 
@@ -308,7 +308,7 @@ namespace MoreFood_KFC
             if (stationId == TradeDb.Config.hunter_station_id && !string.IsNullOrEmpty(stationId))
             {
                 TradeRegistry.HunterStationSeen = true;
-                // ★ 读档时站点先于 TradeSaveData.Restore 生成：先记 Seen，等恢复后再发，
+                // 读档时站点先于 TradeSaveData.Restore 生成：先记 Seen，等恢复后再发，
                 if (SpaceRestoreGate.Pending && SpaceRestoreGate.Deserialized)
                 {
                     MFLog.Info(LogCat.Space, "[Space] 猎人协会已生成（读档中）：首见奖励等存档恢复后结算");
@@ -337,7 +337,7 @@ namespace MoreFood_KFC
             GameObject go = EntityTemplates.CreateEntity(id, displayName, true);
             go.AddOrGet<SaveLoadRoot>();
             go.AddOrGet<SpaceStation>();
-            // ★ 移除原生侧屏按钮「交易（打开独立窗口）」——已有自建交易 UI（底部按钮排）。
+            // 移除原生侧屏按钮「交易（打开独立窗口）」——已有自建交易 UI（底部按钮排）。
             go.AddOrGet<InfoDescription>();
             go.SetActive(false);
             Assets.AddPrefab(go.GetComponent<KPrefabID>());

@@ -477,7 +477,7 @@ namespace MoreFood_KFC
             return Revealed.Contains(cell);
         }
 
-        /// <summary>撤销主动揭示（小行星带采空销毁时调用，避免留下常亮的空格）。</summary>
+        // 撤销主动揭示（小行星带采空销毁时调用，避免留下常亮的空格）。
         internal static void Forget(AxialI cell)
         {
             Revealed.Remove(cell);

@@ -28,7 +28,7 @@ namespace MoreFood_KFC
         public List<BeltTierRaw> tiers { get; set; }
         public List<string> exclude_groups { get; set; }
         public bool? allow_liquid { get; set; }
-        // ★ 只给怪物掉落用：true = 子图物资带散布时跳过该组（否则加弹药组会让子图带也掉弹药）
+        // 只给怪物掉落用：true = 子图物资带散布时跳过该组（否则加弹药组会让子图带也掉弹药）
         public bool? monster_only { get; set; }
     }
 
@@ -57,7 +57,7 @@ namespace MoreFood_KFC
         private static AsteroidBeltRaw cfg;
         private static bool loaded;
 
-        /// <summary>加载期解析（CombatDb.Load 调用），运行时解析会污染原版本地化。</summary>
+        // 加载期解析（CombatDb.Load 调用），运行时解析会污染原版本地化。
         internal static void Load(string root)
         {
             if (loaded)
@@ -94,7 +94,7 @@ namespace MoreFood_KFC
                 }
                 ValidateComposition(cfg, path);
                 BuildGroupIndex(cfg);
-                // ★ 怪物掉落按组名展开：注入构建器（静态字段，命中路径零分配）
+                // 怪物掉落按组名展开：注入构建器（静态字段，命中路径零分配）
                 SpaceLootPools.groupBuilder = BuildGroupCandidates;
                 int subGroups = 0;
                 int monsterGroups = 0;
@@ -176,7 +176,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>运行时只读缓存，不解析 YAML。</summary>
+        // 运行时只读缓存，不解析 YAML。
         private static AsteroidBeltRaw Cfg()
         {
             if (!loaded)
@@ -214,7 +214,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>按组名取组定义（找不到返回 null）。</summary>
+        // 按组名取组定义（找不到返回 null）。
         internal static BeltGroupRaw FindGroup(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -225,7 +225,7 @@ namespace MoreFood_KFC
             return groupMap.TryGetValue(name.Trim(), out g) ? g : null;
         }
 
-        /// <summary>子星图散布生成（每档一次；读档不重生）。</summary>
+        // 子星图散布生成（每档一次；读档不重生）。
         internal static void EnsureSubSpawn(ClusterGrid grid, SpaceZones zones)
         {
             try
@@ -338,7 +338,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>未配置 / random / 解析失败 → 全随机外观。</summary>
+        // 未配置 / random / 解析失败 → 全随机外观。
         private static BeltStyle ResolveStyle(string want)
         {
             BeltStyle style;
@@ -351,7 +351,7 @@ namespace MoreFood_KFC
             return AsteroidBeltFactory.RollAnyStyle();
         }
 
-        /// <summary>子图内是否已有小行星带（熔断用）。</summary>
+        // 子图内是否已有小行星带（熔断用）。
         private static bool HasSubBelt(SpaceZones zones)
         {
             if (zones == null || !zones.valid)
@@ -394,10 +394,10 @@ namespace MoreFood_KFC
                 }
                 if (grp.monster_only == true)
                 {
-                    // ★ 只给怪物掉落的组（弹药/模块/传奇…），子图物资带不参与
+                    // 只给怪物掉落的组（弹药/模块/传奇…），子图物资带不参与
                     continue;
                 }
-                // ★ GroupCandidates 返回的是缓存 List（只读）→ 这里要抽签删除，必须先复制
+                // GroupCandidates 返回的是缓存 List（只读）→ 这里要抽签删除，必须先复制
                 List<string> pool = new List<string>(GroupCandidates(grp));
                 HashSet<string> banned = new HashSet<string>();
                 if (grp.exclude_groups != null)
@@ -460,7 +460,7 @@ namespace MoreFood_KFC
             return ids.Count > 0;
         }
 
-        /// <summary>怪物掉落按组展开：抽 N 种（不重复）每种一个 kg，异常吞掉不冒到击杀流程。</summary>
+        // 怪物掉落按组展开：抽 N 种（不重复）每种一个 kg，异常吞掉不冒到击杀流程。
         internal static bool ComposeGroup(string group, int picksLo, int picksHi,
             float kgLo, float kgHi, bool hasRange, out List<string> ids, out List<float> kgs)
         {
@@ -546,7 +546,7 @@ namespace MoreFood_KFC
             return false;
         }
 
-        /// <summary>取组内第一个候选 id（图鉴图标用；只读缓存，不触发构建）。</summary>
+        // 取组内第一个候选 id（图鉴图标用；只读缓存，不触发构建）。
         internal static string FirstCandidate(string group)
         {
             try
@@ -566,7 +566,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>组默认抽几种（yaml 没写 picks 时图鉴用）。</summary>
+        // 组默认抽几种（yaml 没写 picks 时图鉴用）。
         internal static void GroupPicks(string group, out int lo, out int hi)
         {
             lo = 0;
@@ -635,7 +635,7 @@ namespace MoreFood_KFC
             }
         }
 
-        /// <summary>供 SpaceLootPools 的构建委托调用（按组名）。异常在此吞掉，不能让它冒到开火/击杀流程。</summary>
+        // 供 SpaceLootPools 的构建委托调用（按组名）。异常在此吞掉，不能让它冒到开火/击杀流程。
         internal static List<string> BuildGroupCandidates(string group)
         {
             try
@@ -671,7 +671,7 @@ namespace MoreFood_KFC
 
         private static List<string> BuildGroupCandidates(BeltGroupRaw grp)
         {
-            // ★ 开关：only_ours=true → 只从本 Mod 自己登记的总表抽，忽略 pool（清单按组名推断）
+            // 开关：only_ours=true → 只从本 Mod 自己登记的总表抽，忽略 pool（清单按组名推断）
             if (grp.only_ours.HasValue && grp.only_ours.Value)
             {
                 return OursCandidates(grp.group);
@@ -715,7 +715,7 @@ namespace MoreFood_KFC
             return result;
         }
 
-        /// <summary>按组名取本 Mod 自建总表（food=食物表 / drink=饮品表）。</summary>
+        // 按组名取本 Mod 自建总表（food=食物表 / drink=饮品表）。
         private static List<string> OursCandidates(string group)
         {
             List<string> ids = new List<string>();

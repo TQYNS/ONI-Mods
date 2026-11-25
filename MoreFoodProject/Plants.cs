@@ -126,7 +126,7 @@ namespace MoreFood_KFC{
         }
 
 
-        // ★ 植物定义区域（生成器在此插入/替换/删除 ITEM:xxx:PLANT 块）
+        // 植物定义区域（生成器在此插入/替换/删除 ITEM:xxx:PLANT 块）
 
         // ==[ZONE:PLANT_DEFS]BEGIN==
         // ==[ZONE:PLANT_DEFS]END==

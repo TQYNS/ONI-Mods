@@ -29,7 +29,7 @@ namespace MoreFood_KFC
             {
                 if (_inst != null && _inst.gameObject != null) return _inst;
 
-                // ★ 克隆源优先用 ScheduledUIInstantiation.UIElements 里的【真 prefab】——
+                // 克隆源优先用 ScheduledUIInstantiation.UIElements 里的【真 prefab】——
                 var srcGO = FindConsumablesTablePrefab();
                 string srcFrom = "UIElements.prefabs";
 
@@ -55,7 +55,7 @@ namespace MoreFood_KFC
                 }
                 catch { /* expected: 诊断打印失败不影响克隆流程 */ }
 
-                // ★ 克隆：把 prefab 引用全部带过来
+                // 克隆：把 prefab 引用全部带过来
                 var parent = srcGO.transform.parent;   // 与原版同级
                 var go = UnityEngine.Object.Instantiate(srcGO, parent, false);
                 if (go == null)
@@ -66,7 +66,7 @@ namespace MoreFood_KFC
                 go.name = "MoreFood_DrinkTableScreen";
                 go.SetActive(false);
 
-                // ★★★ 关键顺序（上一版就是这里错了）：先取克隆体上的原版 ConsumablesTableScreen，再挂 DrinkTableScreen
+                // 关键顺序（上一版就是这里错了）：先取克隆体上的原版 ConsumablesTableScreen，再挂 DrinkTableScreen
                 var old = go.GetComponent<ConsumablesTableScreen>();
                 if (old == null)
                 {
@@ -141,7 +141,7 @@ namespace MoreFood_KFC
             }
         }
 
-        // ★ 从 ScheduledUIInstantiation.UIElements[].prefabs[] 里找「饮食」屏的【真 prefab】。
+        // 从 ScheduledUIInstantiation.UIElements[].prefabs[] 里找「饮食」屏的【真 prefab】。
         private static GameObject FindConsumablesTablePrefab()
         {
             try
@@ -199,7 +199,7 @@ namespace MoreFood_KFC
             }
         }
 
-        // ★ 把旧脚本上的字段搬到新脚本（字段属于组件，删了组件就丢了）
+        // 把旧脚本上的字段搬到新脚本（字段属于组件，删了组件就丢了）
         private static int CopyFields(Component from, Component to, Type declaring)
         {
             int n = 0;
@@ -290,7 +290,7 @@ namespace MoreFood_KFC
             }
         }
 
-        // ★ 诊断：把 TableScreen 的全部 prefab 引用字段打印出来
+        // 诊断：把 TableScreen 的全部 prefab 引用字段打印出来
         private static readonly string[] RequiredFields =
         {
             "prefab_row_empty", "prefab_row_header", "prefab_world_divider", "prefab_scroller_border",
@@ -406,7 +406,7 @@ namespace MoreFood_KFC
                     var finc = typeof(TableScreen).GetField("incubating", BF);
                     if (finc != null) finc.SetValue(this, true);
 
-                    // ★ 照抄原版：进"孵化中"状态。
+                    // 照抄原版：进"孵化中"状态。
                     var rtr = transform.rectTransform();
                     if (rtr != null) rtr.localScale = Vector3.zero;
 
@@ -431,7 +431,7 @@ namespace MoreFood_KFC
                     return;
                 }
 
-                // ④ ★ 行/表头全部交给原版流程建（不再手动 AddRow）
+                // ④ 行/表头全部交给原版流程建（不再手动 AddRow）
                 try
                 {
                     MarkRowsDirty();
@@ -464,7 +464,7 @@ namespace MoreFood_KFC
                     }
                     catch { /* expected: 自检统计失败按 0 计，不影响后续输出 */ }
 
-                    // ★ 尺寸对比：把原版「饮食」屏的 RectTransform 也打出来
+                    // 尺寸对比：把原版「饮食」屏的 RectTransform 也打出来
                     string vanillaSize = "?";
                     try
                     {
@@ -511,7 +511,7 @@ namespace MoreFood_KFC
 
         protected override void OnDeactivate() { }
 
-        // ★★ 每帧守卫（必须！）
+        // 每帧守卫（必须！）
         private bool _fieldsOk;
 
         // 每帧刷新：字段不齐时直接跳过（防克隆体字段未初始化时崩），齐了才走原版刷新
@@ -539,7 +539,7 @@ namespace MoreFood_KFC
             catch (Exception e) { MFLog.Warn(LogCat.Drink,"[MoreFood/Drink][UI/Table] Deactivate 异常: " + e); }
         }
 
-        // ★★★ 原版回调反射句柄
+        // 原版回调反射句柄
         private static MethodInfo _miOnLoad, _miGetValue, _miOnClick, _miSetValue,
                                 _miTooltip, _miSortTooltip, _miCompare, _miTooltipSuper;
 
@@ -590,7 +590,7 @@ namespace MoreFood_KFC
             }
         }
 
-        // ★ 饮品专属 tooltip
+        // 饮品专属 tooltip
         private void OnTooltipDrink(IAssignableIdentity minion, GameObject widget_go, ToolTip tooltip)
         {
             try
@@ -657,12 +657,12 @@ namespace MoreFood_KFC
 
                 if (data == null) return;
 
-                // ★ 补水值（去掉 "/单位" 后缀，简化）
+                // 补水值（去掉 "/单位" 后缀，简化）
                 tooltip.AddMultiStringTooltip(
                     "补水：" + data.hydrationPerKg.ToString("0.#"),
                     null);
 
-                // ★ 士气（照抄原版 FOOD_MORALE 的文案与符号格式）
+                // 士气（照抄原版 FOOD_MORALE 的文案与符号格式）
                 if (!Mathf.Approximately(data.moraleBonus, 0f))
                 {
                     tooltip.AddMultiStringTooltip(
@@ -672,7 +672,7 @@ namespace MoreFood_KFC
                         null);
                 }
 
-                // ★ 效果（buff 名）
+                // 效果（buff 名）
                 if (!string.IsNullOrEmpty(data.effectId))
                 {
                     string effName = data.effectId;
@@ -727,7 +727,7 @@ namespace MoreFood_KFC
             try { StartScrollableContent("consumableScroller"); }
             catch (Exception e) { MFLog.Exc(LogCat.Drink, e, "[MoreFood/Drink][UI/Table] StartScrollableContent 异常"); }
 
-            // ★ 每个饮品一列（对应原版每样食物一列）
+            // 每个饮品一列（对应原版每样食物一列）
             var addCol = typeof(ConsumablesTableScreen).GetMethod(
                 "AddConsumableInfoColumn", BF);          // ⚠ non-public，实测 CS0122
             if (addCol == null)
@@ -737,7 +737,7 @@ namespace MoreFood_KFC
                 return;
             }
 
-            // ★ 从 Drinks.CollectItems() 取清单
+            // 从 Drinks.CollectItems() 取清单
             var entries = Drinks.CollectItems();
             MFLog.Verbose(LogCat.Drink,"[MoreFood/Drink][UI/Table] ── 从 Drinks.CollectItems() 取到 "
                       + entries.Count + " 项饮品（仅物品，不含建筑货源）");
@@ -761,14 +761,14 @@ namespace MoreFood_KFC
                 {
                     var item = new DrinkConsumableItem { tag = tag, data = entry.data };
 
-                    // ★ 7 个回调全部走原版（反射）—— 表头图标 / 勾选框状态 / 点击 / tooltip / 排序
+                    // 7 个回调全部走原版（反射）—— 表头图标 / 勾选框状态 / 点击 / tooltip / 排序
                     var col = addCol.Invoke(this, new object[]
                     {
                         "Drink_" + tag,
                         item,
-                        // ★ 加载：原版（图标/BG色）+ 覆盖小人行勾选框（读我们的 tracker）
+                        // 加载：原版（图标/BG色）+ 覆盖小人行勾选框（读我们的 tracker）
                         new Action<IAssignableIdentity, GameObject>(OnLoadDrink),
-                        // ★ 取值/设值：全部走我们自己的 tracker，不碰 ConsumableConsumer
+                        // 取值/设值：全部走我们自己的 tracker，不碰 ConsumableConsumer
                         new Func<IAssignableIdentity, GameObject, TableScreen.ResultValues>(GetValue),
                         new Action<GameObject>(OnClickDrink),
                         new Action<GameObject, TableScreen.ResultValues>(SetValue),
@@ -778,7 +778,7 @@ namespace MoreFood_KFC
                                 var r = CallMI(_miCompare, a, b);
                                 return (r is int) ? (int)r : 0;
                             }),
-                        // ★ tooltip：表头行显示饮品详情（补水/士气/效果），其余行仍走原版
+                        // tooltip：表头行显示饮品详情（补水/士气/效果），其余行仍走原版
                         new Action<IAssignableIdentity, GameObject, ToolTip>(OnTooltipDrink),
                         new Action<IAssignableIdentity, GameObject, ToolTip>(
                             (id, w, t) => CallMI(_miSortTooltip, id, w, t)),
@@ -813,7 +813,7 @@ namespace MoreFood_KFC
             MFLog.Verbose(LogCat.Drink,"[MoreFood/Drink][UI/Table] 建列结果：成功 " + built + " / 失败 " + failed
                       + "，_cols.Count=" + _cols.Count);
 
-            // ★ scroller 占位锚（必须！撤掉会直接抛异常）
+            // scroller 占位锚（必须！撤掉会直接抛异常）
             try
             {
                 RegisterColumn("DrinkScrollerAnchor", new DividerColumn(() => true, "consumableScroller"));
@@ -823,12 +823,12 @@ namespace MoreFood_KFC
                 MFLog.Exc(LogCat.Drink, e, "[MoreFood/Drink][UI/Table] 注册 scroller 占位锚失败");
             }
 
-            // 最右「全选」列（★ 全部用 TableScreen 基类的原版回调）
+            // 最右「全选」列（全部用 TableScreen 基类的原版回调）
             try
             {
                 AddSuperCheckboxColumn("SuperDrink", _cols.ToArray(),
                     new Action<IAssignableIdentity, GameObject>(base.on_load_value_checkbox_column_super),
-                    // ★ 取值/设值走我们的 tracker（否则全选列读的仍是原版状态）
+                    // 取值/设值走我们的 tracker（否则全选列读的仍是原版状态）
                     new Func<IAssignableIdentity, GameObject, TableScreen.ResultValues>(GetSuperValue),
                     new Action<GameObject>(base.on_press_checkbox_column_super),
                     new Action<GameObject, TableScreen.ResultValues>(SetSuperValue),
@@ -847,7 +847,7 @@ namespace MoreFood_KFC
         private static void OnLoadCell(IAssignableIdentity id, GameObject widget) { }
         private static int CompareRows(IAssignableIdentity a, IAssignableIdentity b) { return 0; }
 
-        // 取值：★ 读【我们自己的】tracker，不碰原版 ConsumableConsumer
+        // 取值：读【我们自己的】tracker，不碰原版 ConsumableConsumer
         private TableScreen.ResultValues GetValue(IAssignableIdentity id, GameObject widget_go)
         {
             try
@@ -1042,7 +1042,7 @@ namespace MoreFood_KFC
             catch (Exception e) { MFLog.Warn(LogCat.Drink,"[MoreFood/Drink][UI/Table] SetSuperValue 异常: " + e); }
         }
 
-        // ★ 加载单元格：先跑原版（图标/BG色/默认行），再覆盖小人行勾选框
+        // 加载单元格：先跑原版（图标/BG色/默认行），再覆盖小人行勾选框
         private void OnLoadDrink(IAssignableIdentity minion, GameObject widget_go)
         {
             CallMI(_miOnLoad, minion, widget_go);

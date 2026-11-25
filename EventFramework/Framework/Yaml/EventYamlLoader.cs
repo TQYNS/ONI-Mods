@@ -116,7 +116,7 @@ namespace EventFramework
                 return null;
             }
 
-            // ★ 核心：吃字符串不吃路径；ErrorHandler 由 YamlLoad 接管，失败原因进 ContentDiag
+            // 核心：吃字符串不吃路径；ErrorHandler 由 YamlLoad 接管，失败原因进 ContentDiag
             EventDef def = YamlLoad.Parse<EventDef>(file.text, path, "event");
             if (def == null)
             {
@@ -147,7 +147,7 @@ namespace EventFramework
                 return null;
             }
 
-            // ★ 预制池语义（不可由 yaml 覆盖）：pool == "preset" ⇒ one_shot + 无冷却。
+            // 预制池语义（不可由 yaml 覆盖）：pool == "preset" ⇒ one_shot + 无冷却。
             //   触发一次成功即熔断；失败/过期由顺序槽降级进常规池。
             if (!string.IsNullOrEmpty(def.pool) && def.pool == "preset")
             {

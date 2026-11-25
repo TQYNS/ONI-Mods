@@ -173,7 +173,7 @@ namespace MoreFood_KFC
                     var ls = f.GetValue(null) as LocString;
                     if (ls == null || string.IsNullOrEmpty(ls.text)) continue;
 
-                    // ★ 绝不把 MISSING 占位串写进 Strings 表：一旦烤进去，
+                    // 绝不把 MISSING 占位串写进 Strings 表：一旦烤进去，
                     //   反向修复（ManagementMenuLocGuard）连可用的文本源都会失去。
                     // 根因修复：此前这里只判了空，没判 MISSING。
                     if (ls.text.StartsWith("MISSING", StringComparison.OrdinalIgnoreCase)) continue;

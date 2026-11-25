@@ -130,7 +130,7 @@ namespace MoreFood_KFC
             }
             finally
             {
-                // ★ 外部复位期间禁止落盘，否则会清空存档里未用的 buff 快照
+                // 外部复位期间禁止落盘，否则会清空存档里未用的 buff 快照
                 suppressPersist = false;
             }
         }

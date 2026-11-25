@@ -1,7 +1,7 @@
 ﻿
 namespace MoreFood_KFC
 {
-    // ★ 通用缓存机制第二层：脏标记（单条缓存）
+    // 通用缓存机制第二层：脏标记（单条缓存）
     internal sealed class CachedValue<T>
     {
         internal T value;

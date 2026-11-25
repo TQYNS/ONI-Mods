@@ -16,7 +16,7 @@ namespace MoreFood_KFC
         {
             try
             {
-                // ★【探针定案】：不再挂 SaveGame —— SPACEDBG 探针实证 SaveGame
+                // 【探针定案】：不再挂 SaveGame —— SPACEDBG 探针实证 SaveGame
                 SpaceSaveHost.RegisterPrefab();
                 MFLog.Info(LogCat.Combat,"[Space] 存档宿主 prefab 已在 SaveGame.OnPrefabInit 注册（实体承载，随档保存）");
             }
@@ -597,9 +597,9 @@ namespace MoreFood_KFC
                 string text = string.Format(tmpl, shown, GameUtil.GetFormattedRocketRange(rangeForTip, true));
                 if (!string.IsNullOrEmpty(text))
                 {
-                    text = text.Replace("行程", "射程");   // ★ 文案：行程 → 射程（数值 = 到该格距离 / 攻击距离）
+                    text = text.Replace("行程", "射程");   // 文案：行程 → 射程（数值 = 到该格距离 / 攻击距离）
                 }
-                bool overRange = pathLength > rangeForTip;   // ★ 超出射程 → 红字
+                bool overRange = pathLength > rangeForTip;   // 超出射程 → 红字
                 tip.ClearMultiStringTooltip();
                 tip.AddMultiStringTooltip(text,
                     overRange ? __instance.invalidDestinationTooltipStyle : __instance.informationTooltipStyle);

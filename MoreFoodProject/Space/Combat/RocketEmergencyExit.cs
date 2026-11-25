@@ -131,7 +131,7 @@ namespace MoreFood_KFC
             return hold != null && RocketAmmoDictionary.IsAmmoSource(hold.prefabId);
         }
 
-        /// <summary>只丢弹药白名单货舱里的货（漏洞48），按各货舱各物品质量比例扣。</summary>
+        // 只丢弹药白名单货舱里的货（漏洞48），按各货舱各物品质量比例扣。
         private static void DropCargoAsLootField(Clustercraft craft, float pct)
         {
             if (pct <= 0f || !CombatDb.Shared.dropAsLootField)

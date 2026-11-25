@@ -789,13 +789,13 @@ namespace MoreFood_KFC{
             return list;
         }
 
-        // ★ 标准散落物创建的唯一入口。
+        // 标准散落物创建的唯一入口。
         //   IngredientConfigs 的 37 个原料 / FoodConfigs 之外的散落物、
         //   以及 Space 的模块 / 弹药物品统一走这里，保证
         //   sceneLayer、碰撞形状与尺寸、EntitySplitter 完全一致。
         //   标准口径写死为 Front 层 + RECTANGLE 0.8×0.4 + EntitySplitter，
         //   仅 id/名/描述/动画/tags 与尺寸类参数可覆盖。
-        //   ★ 禁止开放 collisionShape / unitMass / EntitySplitter 开关：
+        // 禁止开放 collisionShape / unitMass / EntitySplitter 开关：
         //     《战斗.md》§3.7 已实证 CIRCLE 0.35 会把 transform 抬高 0.36 格造成
         //     散落物悬空，卷轴曾因「保持旧行为」回退该参数而复发。碰撞形状一律
         //     RECTANGLE，任何散落物都不得例外。

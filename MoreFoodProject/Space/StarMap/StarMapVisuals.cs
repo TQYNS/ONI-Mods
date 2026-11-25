@@ -32,14 +32,14 @@ namespace MoreFood_KFC
         private static float fitScale = 100f;
         private static float zoomTarget = 100f;
 
-        // ★ 迷你条被动重排——记录上次通知过的地图缩放值
+        // 迷你条被动重排——记录上次通知过的地图缩放值
         private static float lastNotifiedScale = -1f;
 
-        // ★ 问题9：抑制本次刷新的全图 Trigger（RefreshNow 用）+ 节流（OnScreenUpdate 用）
+        // 问题9：抑制本次刷新的全图 Trigger（RefreshNow 用）+ 节流（OnScreenUpdate 用）
         private static bool suppressFullRefresh;
         private static float lastFullRefreshAt;
 
-        // ★ 性能修复：每帧路径对象缓存（引用变化即失效；ResetForLoad 清空）
+        // 性能修复：每帧路径对象缓存（引用变化即失效；ResetForLoad 清空）
         private static ClusterMapScreen cachedScreen;                          // 当前缓存的屏幕实例
         private static Dictionary<AxialI, ClusterMapVisualizer> cachedCells;   // == screen.m_cellVisByLocation
         private static ScrollRect cachedScroll;                                // == screen.mapScrollRect
@@ -79,7 +79,7 @@ namespace MoreFood_KFC
             lastNotifiedScale = -1f;
             suppressFullRefresh = false;
             lastFullRefreshAt = 0f;
-            // ★ 性能修复：清空每帧缓存（屏幕重建/读档后旧对象全部失效）
+            // 性能修复：清空每帧缓存（屏幕重建/读档后旧对象全部失效）
             cachedScreen = null;
             cachedCells = null;
             cachedScroll = null;
@@ -256,12 +256,12 @@ namespace MoreFood_KFC
             userZoomed = false;
             framesLeft = 12;
             settleTicks = 3;
-            lastNotifiedScale = -1f;   // ★ 重开星图，先复位（下一帧第一次比较一定会触发一次通知）
+            lastNotifiedScale = -1f;   // 重开星图，先复位（下一帧第一次比较一定会触发一次通知）
         }
 
         internal static void OnScreenUpdate(ClusterMapScreen screen)
         {
-            // ★ 迷你条被动重排——每帧只做一次 float 比较，
+            // 迷你条被动重排——每帧只做一次 float 比较，
             try
             {
                 float scale = GetMapScale(screen);
@@ -275,7 +275,7 @@ namespace MoreFood_KFC
             {
                 // expected: 缩放读取失败时本帧不通知迷你条重排
             }
-            // ★ hover 检测（唯一的每帧调用点；纯 float 距离判断，不重排、不建对象）
+            // hover 检测（唯一的每帧调用点；纯 float 距离判断，不重排、不建对象）
             try
             {
                 CombatBars.UpdateHover();
@@ -374,7 +374,7 @@ namespace MoreFood_KFC
             ClusterMapScreen screen = ClusterMapScreen.Instance;
             if (screen != null)
             {
-                // ★ 问题9：采集/落地等主动刷新不触发全图 Trigger（会整屏重绘→短黑屏）；
+                // 问题9：采集/落地等主动刷新不触发全图 Trigger（会整屏重绘→短黑屏）；
                 suppressFullRefresh = true;
                 try
                 {
@@ -388,7 +388,7 @@ namespace MoreFood_KFC
             }
         }
 
-        // ★ 怪物死亡/离场：立刻摘掉该实体的星图 visualizer（原版 UpdateVis 事件驱动，不每帧）
+        // 怪物死亡/离场：立刻摘掉该实体的星图 visualizer（原版 UpdateVis 事件驱动，不每帧）
         internal static void DropEntityVisual(ClusterGridEntity entity)
         {
             if (entity == null) return;
@@ -505,7 +505,7 @@ namespace MoreFood_KFC
 
                 if (fow != null)
                 {
-                    // ★ 开图一次性统计（仅本次遍历，不新增扫描）：确认揭示数据是 Visible / Peeked / Hidden 各多少格。
+                    // 开图一次性统计（仅本次遍历，不新增扫描）：确认揭示数据是 Visible / Peeked / Hidden 各多少格。
                     switch (fow.GetCellRevealLevel(cell))
                     {
                         case ClusterRevealLevel.Visible: visibleCells++; break;
@@ -557,7 +557,7 @@ namespace MoreFood_KFC
                 {
                     continue;
                 }
-                ClusterMapHex hex = GetHexCached(cell, vis);   // ★ 缓存，消除每帧 GetComponent
+                ClusterMapHex hex = GetHexCached(cell, vis);   // 缓存，消除每帧 GetComponent
                 if (hex != null)
                 {
                     UpdateDangerTint(hex, cell, fow);
@@ -565,7 +565,7 @@ namespace MoreFood_KFC
             }
         }
 
-        // ★ 原版迷雾贴图是半透明的：只要在下面垫任何颜色，未揭示格都会透出"影子"，
+        // 原版迷雾贴图是半透明的：只要在下面垫任何颜色，未揭示格都会透出"影子"，
         private static void UpdateDangerTint(ClusterMapHex hex, AxialI cell, ClusterFogOfWarManager.Instance fow)
         {
             bool revealed = fow != null && fow.GetCellRevealLevel(cell) == ClusterRevealLevel.Visible;
@@ -577,9 +577,9 @@ namespace MoreFood_KFC
             SetOverlay(hex, SpaceCfg.DangerColor);
         }
 
-        // ★ 原版「完全揭示」的点数门槛：GetRevealCompleteFraction = min(揭示点数 / 此值, 1)，
+        // 原版「完全揭示」的点数门槛：GetRevealCompleteFraction = min(揭示点数 / 此值, 1)，
         //   即 Visible ⇔ 点数 >= 此值（TUNING.ROCKETRY.CLUSTER_FOW.POINTS_TO_REVEAL，当前 100f）。
-        //   ★ 必须读常量，不能按「1f = 点亮」写点：1f 只有 0.01 揭示分数 ⇒ 判成 Peeked（黑幕 + 问号），
+        // 必须读常量，不能按「1f = 点亮」写点：1f 只有 0.01 揭示分数 ⇒ 判成 Peeked（黑幕 + 问号），
         //     而且挡光判定若也按 1f 算，格子会被当成「已点亮」不再修正，错误状态还会随档保存。
         private static float VisiblePoints
         {
@@ -625,7 +625,7 @@ namespace MoreFood_KFC
                 {
                     inVision = true;
                 }
-                // ★ 点亮 = 写满原版门槛点数（100f），不是 1f：残留的 1 分格在这里会被判成未点亮，
+                // 点亮 = 写满原版门槛点数（100f），不是 1f：残留的 1 分格在这里会被判成未点亮，
                 //   再按 inVision 重写成 100 / 0 ⇒ 旧档里被写成 1 分的格子可自愈。
                 float threshold = VisiblePoints;
                 float cur;
@@ -646,7 +646,7 @@ namespace MoreFood_KFC
                 {
                     continue;
                 }
-                ClusterMapHex hex = GetHexCached(cell, vis);   // ★ 缓存，消除每帧 GetComponent
+                ClusterMapHex hex = GetHexCached(cell, vis);   // 缓存，消除每帧 GetComponent
                 if (hex == null)
                 {
                     continue;
@@ -654,7 +654,7 @@ namespace MoreFood_KFC
                 hex.SetRevealed(inVision ? ClusterRevealLevel.Visible : ClusterRevealLevel.Hidden);
                 if (!inVision && hex.fogOfWar != null)
                 {
-                    // ★ 颜色为纯函数（SpaceCfg.MosaicColor），仅变化时写，避免每帧重新着色/重绘
+                    // 颜色为纯函数（SpaceCfg.MosaicColor），仅变化时写，避免每帧重新着色/重绘
                     Color want = SpaceCfg.MosaicColor(cell);
                     Color prev;
                     if (!lastMaskColor.TryGetValue(cell, out prev) || prev != want)
@@ -665,7 +665,7 @@ namespace MoreFood_KFC
                 }
             }
 
-            // ★ 问题9：整图刷新 Trigger 会整屏重绘 → 短黑屏。
+            // 问题9：整图刷新 Trigger 会整屏重绘 → 短黑屏。
             if (changed && !suppressFullRefresh && Game.Instance != null
                 && Time.unscaledTime - lastFullRefreshAt >= 2f)
             {
@@ -674,14 +674,14 @@ namespace MoreFood_KFC
             }
         }
 
-        // ★ 性能修复：改 struct + 复用缓冲
+        // 性能修复：改 struct + 复用缓冲
         private struct CraftVision
         {
             internal AxialI cell;
             internal int radius;
         }
 
-        // ★ 性能修复：填充并返回静态复用缓冲（调用点仅 UpdateSubMapMask，每帧一次）
+        // 性能修复：填充并返回静态复用缓冲（调用点仅 UpdateSubMapMask，每帧一次）
         private static List<CraftVision> GetCraftCellsInSub(SpaceZones z)
         {
             craftVisionBuffer.Clear();
@@ -730,14 +730,14 @@ namespace MoreFood_KFC
             Image img = GetOverlay(hex);
             if (img != null)
             {
-                if (!img.enabled) img.enabled = true;      // ★ 仅在变化时设置
+                if (!img.enabled) img.enabled = true;      // 仅在变化时设置
                 if (img.color != color) img.color = color;
             }
         }
 
         private static void ClearOverlay(ClusterMapHex hex)
         {
-            // ★ 性能修复：走缓存。从未建过底色 ⇒ 无事可做（原实现是每帧 Find+enabled=false）
+            // 性能修复：走缓存。从未建过底色 ⇒ 无事可做（原实现是每帧 Find+enabled=false）
             Image img;
             if (hex != null && overlayCache.TryGetValue(hex, out img) && img != null)
             {
@@ -770,7 +770,7 @@ namespace MoreFood_KFC
                 {
                     return null;
                 }
-                // ★ 底色要垫在"迷雾"下面：未揭示的格子应当整格是迷雾，不能透出区域色。
+                // 底色要垫在"迷雾"下面：未揭示的格子应当整格是迷雾，不能透出区域色。
                 Transform parent = hex.fogOfWar != null ? hex.fogOfWar.transform.parent : hex.transform;
                 GameObject go = new GameObject(OverlayName, typeof(RectTransform));
                 go.transform.SetParent(parent, false);
@@ -898,7 +898,7 @@ namespace MoreFood_KFC
             }
         }
 
-        // ★ 性能修复：屏幕实例变化才刷新缓存（m_cellVisByLocation 仅 OnSpawn 建立，存活期稳定）
+        // 性能修复：屏幕实例变化才刷新缓存（m_cellVisByLocation 仅 OnSpawn 建立，存活期稳定）
         private static void EnsureScreenCached(ClusterMapScreen screen)
         {
             if (screen == cachedScreen)
@@ -969,7 +969,7 @@ namespace MoreFood_KFC
             return cachedCells;
         }
 
-        // ★ 性能修复：迷雾点字典缓存（fow 单例，引用变才反射）
+        // 性能修复：迷雾点字典缓存（fow 单例，引用变才反射）
         private static Dictionary<AxialI, float> GetRevealPoints(ClusterFogOfWarManager.Instance fow)
         {
             if (fRevealPoints == null || fow == null)
@@ -988,7 +988,7 @@ namespace MoreFood_KFC
             return cachedReveal;
         }
 
-        // ★ 性能修复：格子 → ClusterMapHex 缓存（消除每帧 GetComponent；cells 引用变即失效）
+        // 性能修复：格子 → ClusterMapHex 缓存（消除每帧 GetComponent；cells 引用变即失效）
         private static ClusterMapHex GetHexCached(AxialI cell, ClusterMapVisualizer vis)
         {
             if (vis == null)
@@ -1012,7 +1012,7 @@ namespace MoreFood_KFC
 
         // 战斗特效尺寸工具（CombatFx 用；K6：不新增反射，复用本类现有缓存）
 
-        /// <summary>星图内容层缩放（特效挂在缩放内容下，像素钳制要除以它）。</summary>
+        // 星图内容层缩放（特效挂在缩放内容下，像素钳制要除以它）。
         internal static float GetMapScale(ClusterMapScreen screen)
         {
             try
@@ -1034,7 +1034,7 @@ namespace MoreFood_KFC
             return 1f;
         }
 
-        /// <summary>格子宽度（公开方法 GetClusterMapHexAtLocation，已实证）。</summary>
+        // 格子宽度（公开方法 GetClusterMapHexAtLocation，已实证）。
         internal static float GetHexWidth(ClusterMapScreen screen, AxialI cell)
         {
             try
@@ -1060,7 +1060,7 @@ namespace MoreFood_KFC
             return 0f;
         }
 
-        /// <summary>实体图标宽度（公开方法 GetEntityVisAnim，已实证）。</summary>
+        // 实体图标宽度（公开方法 GetEntityVisAnim，已实证）。
         internal static float GetEntityWidth(ClusterMapScreen screen, ClusterGridEntity entity)
         {
             try
