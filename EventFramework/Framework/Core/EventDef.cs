@@ -306,7 +306,7 @@ namespace EventFramework
         public EventDurationBlock duration { get; set; } = new EventDurationBlock();
 
         // ---- ★ 驻留时间（秒）：事件等玩家做选择等多久。与 duration 完全解耦 ----
-        public float resident_time { get; set; } = -1f;                         // 驻留秒数；<= 0 ⇒ 用默认 0.5 周期
+        public float resident_time { get; set; } = -1f;                         // 驻留秒数；<= 0 ⇒ 用默认 2 周期
 
  // ---- 根级：事件本体的开始/结束钩子 + 默认走向（见 §16.5 / §16.8）----
         public string start_fn { get; set; } = null;           // 本体效果开始钩子（函数键）
@@ -447,10 +447,10 @@ namespace EventFramework
             Debug.LogWarning("[MoreFood/Event] next_event 第 " + idx + " 项无效（" + owner + "）：" + why);
         }
 
-        // 未配 resident_time 时的默认驻留：0.5 周期 = 300 游戏秒（1 周期 = 600 秒）
-        public const float RESIDENT_DEFAULT_SECONDS = 300f;                     // 驻留时间默认值（0.5 周期 = 300 秒）
+        // 未配 resident_time 时的默认驻留：2 周期 = 1200 游戏秒（1 周期 = 600 秒）
+        public const float RESIDENT_DEFAULT_SECONDS = 1200f;                    // 驻留时间默认值（2 周期 = 1200 秒）
 
-        // 本事件的驻留秒数（未配则取默认 0.5 周期）
+        // 本事件的驻留秒数（未配则取默认 2 周期）
         public float GetResidentSeconds()
         {
             return resident_time > 0f ? resident_time : RESIDENT_DEFAULT_SECONDS;

@@ -156,10 +156,32 @@ namespace MoreFood_KFC
             return data as string ?? "";
         }
 
-        private static Notifier FindNotifier()
+        // worldId 指定通知落到哪个世界的通知栏；-1 走原逻辑（起始世界 → 任意可用 Notifier）
+        internal static void NotifyInWorld(int worldId, string title, string text)
+        {
+            if (PushVanillaNotification(worldId, title, text, null, null))
+            {
+                return;
+            }
+            MFLog.Info(LogCat.Trade,"[Space] 通知 " + title + "：" + text);
+        }
+
+        private static Notifier FindNotifier(int worldId)
         {
             try
             {
+                if (worldId >= 0 && ClusterManager.Instance != null)
+                {
+                    WorldContainer target = ClusterManager.Instance.GetWorld(worldId);
+                    if (target != null)
+                    {
+                        Notifier tn = target.gameObject.GetComponent<Notifier>();
+                        if (tn != null)
+                        {
+                            return tn;
+                        }
+                    }
+                }
                 WorldContainer w = ClusterManager.Instance != null ? ClusterManager.Instance.GetStartWorld() : null;
                 if (w != null)
                 {
@@ -187,9 +209,14 @@ namespace MoreFood_KFC
 
         private static bool PushVanillaNotification(string title, string text, string jumpInstId, string tier)
         {
+            return PushVanillaNotification(-1, title, text, jumpInstId, tier);
+        }
+
+        private static bool PushVanillaNotification(int worldId, string title, string text, string jumpInstId, string tier)
+        {
             try
             {
-                Notifier notifier = FindNotifier();
+                Notifier notifier = FindNotifier(worldId);
                 if (notifier == null)
                 {
                     return false;

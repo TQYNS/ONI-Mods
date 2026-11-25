@@ -1,4 +1,4 @@
-﻿// EventSaveData.cs — MoreFood · 持续 buff 快照载体：只装宿主自己的 Space buff，挂载与补写全走宿主补丁（见 叙事者.md §5.2）
+﻿// EventSaveData.cs — MoreFood · 宿主随档载体：持续 buff 快照 + 灾星闸口，挂载与补写全走宿主补丁（见 叙事者.md §5.2）
 
 using System.Collections.Generic;
 using KSerialization;
@@ -13,6 +13,9 @@ namespace MoreFood_KFC
         [Serialize] public List<string> buffId = new List<string>();
         [Serialize] public List<float> buffValue = new List<float>();
         [Serialize] public List<float> buffRemain = new List<float>();
+
+        // 任意来源的灾星已发生；置位即作废大灭绝，不再进抽取池（事件.md §17.6）
+        [Serialize] public bool impactorGateUsed;
 
         // 当前宿主对象（= SaveGame.gameObject），换宿主时重新取
         private static EventSaveData cached;

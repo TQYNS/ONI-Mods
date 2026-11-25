@@ -1268,7 +1268,7 @@ namespace MoreFood_KFC
         }
 
         internal static bool TrySell(Clustercraft craft, StationDef def, TradeStationState st,
-            string itemId, float amount, out float gained, out string reason)
+            string itemId, float amount, out float gained, out string reason, bool moveMoney, float credit)
         {
             gained = 0f;
             reason = null;
@@ -1299,10 +1299,10 @@ namespace MoreFood_KFC
             }
             float unit = TradeRegistry.SellUnit(def, v);
             float pay = TradeNumber.Money(unit * amount);
-            if (st.currency + 0.0001f < pay)
+            if (st.currency + credit + 0.0001f < pay)
             {
                 reason = "本店剩余星币 " + st.currency.ToString("0.00") + "，本次回收应付 "
-                    + pay.ToString("0.00") + "，超出 " + (pay - st.currency).ToString("0.00");
+                    + pay.ToString("0.00") + "，超出 " + (pay - st.currency - credit).ToString("0.00");
                 return false;
             }
             float taken = TradeNumber.Units(RocketInventory.Consume(craft, tag, amount));
@@ -1319,8 +1319,11 @@ namespace MoreFood_KFC
                 return false;
             }
             gained = pay;
-            st.currency = TradeNumber.Money(Mathf.Max(0f, st.currency - pay));
-            TradeRegistry.AddCurrency(pay);
+            if (moveMoney)
+            {
+                st.currency = TradeNumber.Money(Mathf.Max(0f, st.currency - pay));
+                TradeRegistry.AddCurrency(pay);
+            }
             TradeRegistry.OnFoodDelivered(itemId);
 
             // 卖出去了就是对方的：站点库存增加，下次刷新前可以重新买回（按正常买价）
@@ -1333,14 +1336,22 @@ namespace MoreFood_KFC
                 st.shelf.Add(e);
             }
             e.stock = TradeNumber.Units(e.stock + amount);
-            MFLog.Info(LogCat.Trade, "[Space] 卖出 " + itemId + " " + amount + " × " + unit.ToString("0.00")
-                + " = +" + pay.ToString("0.00") + " 星币（站点 " + def.id + " 星币余 "
-                + st.currency.ToString("0.00") + "，玩家余额 " + TradeRegistry.Currency.ToString("0.00") + "）");
+            if (moveMoney)
+            {
+                MFLog.Info(LogCat.Trade, "[Space] 卖出 " + itemId + " " + amount + " × " + unit.ToString("0.00")
+                    + " = +" + pay.ToString("0.00") + " 星币（站点 " + def.id + " 星币余 "
+                    + st.currency.ToString("0.00") + "，玩家余额 " + TradeRegistry.Currency.ToString("0.00") + "）");
+            }
+            else
+            {
+                MFLog.Info(LogCat.Trade, "[Space] 卖出 " + itemId + " " + amount + " × " + unit.ToString("0.00")
+                    + " = +" + pay.ToString("0.00") + " 星币（并入本次净额结算）");
+            }
             return true;
         }
 
         internal static bool TryBuy(Clustercraft craft, StationDef def, TradeStationState st,
-            string itemId, float amount, out float cost, out string reason)
+            string itemId, float amount, out float cost, out string reason, bool moveMoney, float credit)
         {
             cost = 0f;
             reason = null;
@@ -1385,9 +1396,11 @@ namespace MoreFood_KFC
             }
             float unit = TradeRegistry.BuyUnit(def, v);
             cost = TradeNumber.Money(unit * amount);
-            if (TradeRegistry.Currency + 0.0001f < cost)
+            if (TradeRegistry.Currency + credit + 0.0001f < cost)
             {
-                reason = "星币不足：需要 " + cost.ToString("0.00") + "，只有 " + TradeRegistry.Currency.ToString("0.00");
+                reason = "星币不足：需要 " + cost.ToString("0.00") + "，只有 "
+                    + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00")
+                    + (credit > 0.0001f ? "（含卖出 " + TradeNumber.Money(credit).ToString("0.00") + "）" : "");
                 return false;
             }
             // ★ 交易默认入库位置 = 火箭内部（控制台位 → 人员站位）；工艺品优先运输仓、其次内舱
@@ -1398,15 +1411,26 @@ namespace MoreFood_KFC
                 return false;
             }
             entry.stock = Mathf.Max(0f, TradeNumber.Units(entry.stock - amount));
-            st.currency = TradeNumber.Money(st.currency + cost);
-            TradeRegistry.AddCurrency(-cost);
+            if (moveMoney)
+            {
+                st.currency = TradeNumber.Money(st.currency + cost);
+                TradeRegistry.AddCurrency(-cost);
+            }
             if (entry.stock <= 0f)
             {
                 st.shelf.Remove(entry);
             }
-            MFLog.Info(LogCat.Trade, "[Space] 买入 " + itemId + " " + amount + " = -" + cost.ToString("0.00")
-                + " 星币（站点 " + def.id + " 星币余 " + st.currency.ToString("0.00")
-                + "，玩家余额 " + TradeRegistry.Currency.ToString("0.00") + "）");
+            if (moveMoney)
+            {
+                MFLog.Info(LogCat.Trade, "[Space] 买入 " + itemId + " " + amount + " = -" + cost.ToString("0.00")
+                    + " 星币（站点 " + def.id + " 星币余 " + st.currency.ToString("0.00")
+                    + "，玩家余额 " + TradeRegistry.Currency.ToString("0.00") + "）");
+            }
+            else
+            {
+                MFLog.Info(LogCat.Trade, "[Space] 买入 " + itemId + " " + amount + " = -" + cost.ToString("0.00")
+                    + " 星币（并入本次净额结算）");
+            }
             return true;
         }
 
@@ -1448,21 +1472,28 @@ namespace MoreFood_KFC
                 reason = "星币不足：补 " + amount.ToString("0.0") + "kg 需要 " + cost.ToString("0.00");
                 return false;
             }
-            int stored = StoreFuel(craft, engine.fuelTag, amount);
-            if (stored <= 0)
+            float stored = TradeNumber.FuelKg(StoreFuel(craft, engine.fuelTag, amount));
+            if (stored <= 0f)
             {
                 reason = "燃料没存进燃料仓（燃料仓类型不匹配？）";
                 return false;
             }
-            storedKg = amount;   // 按请求量扣款，完成提示也用同一数值
+            // 只按真正入库的质量收费（同氧化剂口径），避免装不满时按请求量多扣
+            cost = TradeNumber.Money(pricePerKg * stored);
+            if (TradeRegistry.Currency + 0.0001f < cost)
+            {
+                reason = "星币不足：补 " + stored.ToString("0.0") + "kg 需要 " + cost.ToString("0.00");
+                return false;
+            }
+            storedKg = stored;
             TradeRegistry.AddCurrency(-cost);
             if (st != null)
             {
                 st.currency = TradeNumber.Money(st.currency + cost);   // 与买入同口径：玩家付的星币进本店账上
             }
-            MFLog.Info(LogCat.Trade, "[Space] 补充燃料 " + engine.fuelTag.Name + " " + amount.ToString("0.0") + "kg × "
+            MFLog.Info(LogCat.Trade, "[Space] 补充燃料 " + engine.fuelTag.Name + " " + stored.ToString("0.0") + "kg × "
                 + pricePerKg.ToString("0.00") + " = -" + cost.ToString("0.00") + " 星币"
-                + "（燃料 " + Mathf.Round(mi.FuelRemaining + amount) + "/" + Mathf.Round(mi.FuelCapacity) + "kg）");
+                + "（燃料 " + Mathf.Round(mi.FuelRemaining) + "/" + Mathf.Round(mi.FuelCapacity) + "kg）");
             return true;
         }
 
@@ -1671,6 +1702,8 @@ namespace MoreFood_KFC
                     continue;
                 }
                 float put = Mathf.Min(room, amount);
+                float before = concrete.MassStored();
+                GameObject spawned = null;
                 if (element.IsLiquid)
                 {
                     concrete.AddLiquid(element.id, put, element.defaultValues.temperature, 0, 0, false, true);
@@ -1683,36 +1716,46 @@ namespace MoreFood_KFC
                         MFLog.Warn(LogCat.Trade, "[Space] 找不到氧化剂 prefab：" + tag.Name);
                         continue;
                     }
-                    GameObject go = Util.KInstantiate(prefab, null, null);
-                    if (go == null)
+                    spawned = Util.KInstantiate(prefab, null, null);
+                    if (spawned == null)
                     {
                         continue;
                     }
-                    PrimaryElement pe = go.GetComponent<PrimaryElement>();
+                    PrimaryElement pe = spawned.GetComponent<PrimaryElement>();
                     if (pe != null)
                     {
                         pe.Mass = put;
                     }
-                    go.SetActive(true);
-                    concrete.Store(go, true, false, true, false);
+                    spawned.SetActive(true);
+                    concrete.Store(spawned, true, false, true, false);
                 }
-                amount -= put;
-                stored += put;
+                float actually = Mathf.Max(0f, concrete.MassStored() - before);   // 按真正入库的质量记账
+                if (actually <= 0.0001f)
+                {
+                    if (spawned != null)
+                    {
+                        Util.KDestroyGameObject(spawned);   // 没进去就别留孤儿物体
+                    }
+                    continue;
+                }
+                amount -= actually;
+                stored += actually;
             }
             return stored;
         }
 
-        private static int StoreFuel(Clustercraft craft, Tag fuelTag, float amount)
+        // 逐舱加注，返回真正入库的质量（kg）—— 按质量收费，不能按请求量收费
+        private static float StoreFuel(Clustercraft craft, Tag fuelTag, float amount)
         {
             GameObject prefab = Assets.TryGetPrefab(fuelTag);
             if (prefab == null)
             {
                 MFLog.Warn(LogCat.Trade, "[Space] 找不到燃料 prefab：" + fuelTag.Name);
-                return 0;
+                return 0f;
             }
             CraftModuleInterface mi = craft.ModuleInterface;
             IList<Ref<RocketModuleCluster>> mods = mi.ClusterModules;
-            int stored = 0;
+            float stored = 0f;
             for (int i = 0; i < mods.Count && amount > 0.0001f; i++)
             {
                 RocketModuleCluster m = mods[i].Get();
@@ -1747,9 +1790,16 @@ namespace MoreFood_KFC
                     pe.Mass = put;
                 }
                 go.SetActive(true);
+                float before = concrete.MassStored();
                 concrete.Store(go, true, false, true, false);
-                amount -= put;
-                stored++;
+                float actually = Mathf.Max(0f, concrete.MassStored() - before);
+                if (actually <= 0.0001f)
+                {
+                    Util.KDestroyGameObject(go);   // 没进去就别留孤儿物体
+                    continue;
+                }
+                amount -= actually;
+                stored += actually;
             }
             return stored;
         }

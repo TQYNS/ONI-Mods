@@ -166,14 +166,57 @@ namespace MoreFood_KFC
             }
         }
 
+        // 单价只认结算用的那一份估值：卖出取 accept、买入取货架条目（缺失回落 sell），与 TrySell/TryBuy 同源
         private float UnitOf(string id, float amount)
         {
-            TradeItemValue v = ValueOf(id);
+            TradeItemValue v = amount < 0f ? AcceptValueOf(id) : SellValueOf(id);
             if (v == null)
             {
                 return 1f;
             }
             return amount < 0f ? TradeRegistry.SellUnit(def, v) : TradeRegistry.BuyUnit(def, v);
+        }
+
+        private TradeItemValue AcceptValueOf(string id)
+        {
+            StationCatalog c = Cat();
+            TradeItemValue v;
+            return c != null && c.accept.TryGetValue(id, out v) ? v : null;
+        }
+
+        private TradeItemValue SellValueOf(string id)
+        {
+            TradeStockEntry e = state != null ? state.Find(id) : null;
+            if (e != null && e.value != null)
+            {
+                return e.value;
+            }
+            StationCatalog c = Cat();
+            TradeItemValue v;
+            return c != null && c.sell.TryGetValue(id, out v) ? v : null;
+        }
+
+        // 交易合计：cost=买入总额、gain=出售总额；侧栏预测、确认校验、结算三处共用同一口径
+        private void ComputeTotals(out float cost, out float gain)
+        {
+            cost = 0f;
+            gain = 0f;
+            foreach (KeyValuePair<string, float> kv in amounts)
+            {
+                float a = TradeNumber.SignedUnits(kv.Value);
+                if (a == 0)
+                {
+                    continue;
+                }
+                if (a > 0)
+                {
+                    cost = TradeNumber.Money(cost + TradeNumber.Money(UnitOf(kv.Key, 1f) * a));
+                }
+                else
+                {
+                    gain = TradeNumber.Money(gain + TradeNumber.Money(UnitOf(kv.Key, -1f) * (-a)));
+                }
+            }
         }
 
         private void RefreshSide()
@@ -187,8 +230,6 @@ namespace MoreFood_KFC
                 RefreshDonateSide();
                 return;
             }
-            float cost = 0f;
-            float gain = 0f;
             List<string> sellLines = new List<string>();
             List<string> buyLines = new List<string>();
             foreach (KeyValuePair<string, float> kv in amounts)
@@ -200,21 +241,23 @@ namespace MoreFood_KFC
                 if (kv.Value < 0f)
                 {
                     float v = TradeNumber.Money(UnitOf(kv.Key, -1f) * (-kv.Value));
-                    gain = TradeNumber.Money(gain + v);
                     sellLines.Add(TradeUtil.DisplayName(kv.Key) + "   ×" + Mathf.Round(-kv.Value)
                         + "   " + v.ToString("0.00"));
                 }
                 else
                 {
                     float v = TradeNumber.Money(UnitOf(kv.Key, 1f) * kv.Value);
-                    cost = TradeNumber.Money(cost + v);
                     buyLines.Add(TradeUtil.DisplayName(kv.Key) + "   ×" + Mathf.Round(kv.Value)
                         + "   " + v.ToString("0.00"));
                 }
             }
+            float cost, gain;
+            ComputeTotals(out cost, out gain);
             SetSideText("shop", "本店星币   " + (state != null ? TradeNumber.Money(state.currency).ToString("0.00") : "—"));
             // ★ 原来这里是"我的星币 + 净变化 + 预期结余"三行，实测溢出面板 ⇒
-            float keep = TradeNumber.Money(TradeRegistry.Currency + gain - cost);
+            // 与结算同式：结余 = 余额 −（买入总额 − 卖出总额），避免两条路径各自截断出 0.01 的差
+            float net = TradeNumber.Money(cost - gain);
+            float keep = TradeNumber.Money(TradeRegistry.Currency - net);
             SetSideText("cash", "预期结余   " + keep.ToString("0.00"));
             SetSideColor("cash", keep < -0.0001f ? TradeUi.Neg : TradeUi.TextMain);
             for (int i = 0; i < 7; i++)

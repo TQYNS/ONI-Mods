@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MoreFood_KFC
@@ -117,26 +118,68 @@ namespace MoreFood_KFC
             return true;
         }
 
-        internal static bool CanRemoveComponent(Clustercraft craft, string componentPrefabId, out string reason)
+        internal static bool CanRemoveComponent(Clustercraft craft, RocketModuleCluster target, out string reason)
         {
-            RocketLoadout lo = RocketLoadout.Get(craft);
-            if (lo == null)
+            reason = null;
+            if (target == null)
             {
-                reason = "火箭装配组件缺失";
+                reason = "找不到要拆除的舱段";
                 return false;
             }
-            RocketCombatState st = RocketCombatState.Ensure(craft);
+            // 原版照常拆、材料原地掉；槽位不足不拦，装不下的模块在拆完后原地掉落（C-45）
+            RocketCombatState st = craft != null ? craft.GetComponent<RocketCombatState>() : null;
             if (st != null && st.inCombat)
             {
                 reason = "战斗中禁止拆除组件";
                 return false;
             }
-            if (!lo.HasControlStation(craft))
+            return true;
+        }
+
+        // 舱段拆掉后槽位缩水：装不下的模块原地掉落，保留集按「容量最大且优先留大」挑（C-45）
+        internal static void EvictOverflow(Clustercraft craft, Vector3 pos)
+        {
+            try
             {
-                reason = "改装锁定：需要火箭控制台";
-                return false;
+                RocketLoadout lo = RocketLoadout.Get(craft);
+                if (lo == null)
+                {
+                    return;
+                }
+                List<string> gone = lo.EvictToFit(craft);
+                if (gone == null || gone.Count == 0)
+                {
+                    return;
+                }
+                ControlStationModuleReceiver receiver = FindReceiver(craft);
+                string names = "";
+                for (int i = 0; i < gone.Count; i++)
+                {
+                    ModuleDef def = CombatDb.FindModule(gone[i]);
+                    try
+                    {
+                        bool hadItem = receiver != null && receiver.RemoveModuleItem(gone[i]);
+                        // 与手动卸下同口径：拿到实物才掉；控制台已没了（实物随之销毁）则补一个
+                        if (hadItem || receiver == null)
+                        {
+                            SpawnModuleItem(pos, def);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // 单件失败不拖累整批：其余模块照常掉
+                        MFLog.Exc(LogCat.Combat, e, "[Space] 掉落模块失败：" + gone[i]);
+                    }
+                    names += (i > 0 ? "、" : "") + (def != null ? def.name : gone[i]);
+                }
+                TradeUi.NotifyInWorld(ClusterUtil.GetMyWorldId(craft), "舱段拆除：模块掉落",
+                    "槽位不足，" + gone.Count + " 个模块已掉落在原地：" + names);
+                MFLog.Info(LogCat.Combat, "[Space] 拆除后槽位不足，原地掉落 " + gone.Count + " 个模块：" + names);
             }
-            return lo.CanRemoveComponent(craft, componentPrefabId, out reason);
+            catch (Exception e)
+            {
+                MFLog.Exc(LogCat.Combat, e, "[Space] 掉落超出槽位的模块失败");
+            }
         }
 
         internal static void RecalcStats(Clustercraft craft)

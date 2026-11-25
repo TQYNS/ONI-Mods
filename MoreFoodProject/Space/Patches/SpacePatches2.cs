@@ -38,6 +38,7 @@ namespace MoreFood_KFC
                 SpaceRestoreGate.Pending = true;
                 SpaceRestoreGate.Deserialized = false;
                 SpaceSaveHost.LoadFinished = false;   // 新会话重新等心跳第一拍
+                ImpactorGate.ResetSession();          // 闸口镜像不跨会话（随档值由 EventSaveData 恢复）
                 TradeRegistry.Init();
                 SpaceTestRuntime.RegisterPrefabs();
                 // ★【探针定案】：不再挂 SaveGame（它不在存档对象列表里，写了也不落盘）。
@@ -906,6 +907,7 @@ namespace MoreFood_KFC
             {
                 SpaceQuestWorldFlags.NormalizeAll();
                 SpaceSaveHost.LoadFinished = true;
+                ImpactorGate.SyncWorldState();   // 装载对账：在途灾星补记闸口（事件.md §17.6）
                 SpaceSaveHost.FindOrCreate();
                 SpaceRestoreGate.RunDeferredRestores();
                 SpaceQuestRuntime.CleanupOrphanSites();

@@ -309,61 +309,137 @@ namespace MoreFood_KFC
             return true;
         }
 
-        internal bool CanRemoveComponent(Clustercraft craft, string componentPrefabId, out string reason)
+        // 槽位缩水后把装不下的模块卸下（保留集按容量最大 + 优先留大），返回被卸下的模块 ID（C-45）
+        internal List<string> EvictToFit(Clustercraft craft)
         {
-            reason = null;
-            List<RocketModuleInfo> mods = RocketInventory.GetModules(craft);
-            bool found = false;
-            Dictionary<string, int> remainCount = new Dictionary<string, int>(StringComparer.Ordinal);
-            Dictionary<string, int> remainCap = new Dictionary<string, int>(StringComparer.Ordinal);
-            for (int i = 0; i < mods.Count; i++)
+            List<string> gone = new List<string>();
+            if (!CombatDb.built)
             {
-                RocketComponentSlots comp = CombatDb.FindComponent(mods[i].prefabId);
-                if (comp == null)
-                {
-                    continue;
-                }
-                if (mods[i].prefabId == componentPrefabId)
-                {
-                    found = true;
-                    continue;
-                }
-                foreach (KeyValuePair<string, SlotEntry> kv in comp.slots)
-                {
-                    int c, cap;
-                    remainCount.TryGetValue(kv.Key, out c);
-                    remainCap.TryGetValue(kv.Key, out cap);
-                    remainCount[kv.Key] = c + kv.Value.count;
-                    remainCap[kv.Key] = cap + kv.Value.capacity;
-                }
+                return gone;
             }
-            if (!found)
-            {
-                reason = "火箭上没有这个组件";
-                return false;
-            }
+            InvalidateSlots();
             string[] types = { "weapon", "defense", "utility", "sensor" };
-            for (int t = 0; t < types.Length; t++)
+            for (int i = 0; i < types.Length; i++)
             {
-                int usedCount, usedCost;
-                GetSlotUsed(types[t], out usedCount, out usedCost);
-                int c, cap;
-                remainCount.TryGetValue(types[t], out c);
-                remainCap.TryGetValue(types[t], out cap);
-                if (usedCount > c)
+                EvictType(craft, types[i], gone);
+            }
+            if (gone.Count == 0)
+            {
+                return gone;
+            }
+            // 掉落清单已定，状态重算出错也不能影响调用方取件（C-45）
+            try
+            {
+                RebuildWeapons();
+                InvalidateSlots();
+                RocketCombatState st = RocketCombatState.Ensure(craft);
+                if (st != null)
                 {
-                    reason = "拆除后 " + SlotName(types[t]) + "挂点不足（已装 " + usedCount
-                        + "，剩余 " + c + "）";
-                    return false;
-                }
-                if (usedCost > cap)
-                {
-                    reason = "拆除后 " + SlotName(types[t]) + "容量不足（已用 " + usedCost
-                        + "，剩余 " + cap + "）";
-                    return false;
+                    st.Recalc();
+                    CombatBars.PushCraft(craft, st);
                 }
             }
-            return true;
+            catch (Exception e)
+            {
+                MFLog.Exc(LogCat.Combat, e, "[Space] 拆舱后重算战斗状态失败（掉落照常）");
+            }
+            return gone;
+        }
+
+        private void EvictType(Clustercraft craft, string type, List<string> gone)
+        {
+            SlotEntry slot = GetSlots(craft, type);
+            int cap = Mathf.Max(0, slot.capacity);
+            int limit = Mathf.Max(0, slot.count);
+            List<int> index = new List<int>();
+            List<int> cost = new List<int>();
+            int sumCost = 0;
+            for (int i = 0; i < equippedModules.Count; i++)
+            {
+                ModuleDef def = CombatDb.FindModule(equippedModules[i]);
+                if (def == null || def.slotType != type)
+                {
+                    continue;
+                }
+                int c = Mathf.Max(1, def.slotCost);
+                index.Add(i);
+                cost.Add(c);
+                sumCost += c;
+            }
+            int n = index.Count;
+            if (n == 0 || (cap >= sumCost && n <= limit))
+            {
+                return;
+            }
+            // 从小到大排：回溯从后往前挑，等价于优先保留大的
+            List<int> order = new List<int>();
+            for (int i = 0; i < n; i++)
+            {
+                order.Add(i);
+            }
+            order.Sort(delegate (int a, int b)
+            {
+                int d = cost[a] - cost[b];
+                return d != 0 ? d : index[a] - index[b];
+            });
+            int width = Mathf.Min(cap, sumCost);
+            int[,] f = new int[n + 1, width + 1];
+            for (int i = 1; i <= n; i++)
+            {
+                int c = cost[order[i - 1]];
+                for (int w = 0; w <= width; w++)
+                {
+                    f[i, w] = f[i - 1, w];
+                    if (c <= w && f[i - 1, w - c] + c > f[i, w])
+                    {
+                        f[i, w] = f[i - 1, w - c] + c;
+                    }
+                }
+            }
+            bool[] keep = new bool[n];
+            int room = width;
+            for (int i = n; i >= 1; i--)
+            {
+                int c = cost[order[i - 1]];
+                if (room >= c && f[i, room] == f[i - 1, room - c] + c)
+                {
+                    keep[order[i - 1]] = true;
+                    room -= c;
+                }
+            }
+            // 再压挂点数量：留下的里面从最小的开始丢
+            List<int> kept = new List<int>();
+            for (int i = 0; i < n; i++)
+            {
+                if (keep[i])
+                {
+                    kept.Add(i);
+                }
+            }
+            kept.Sort(delegate (int a, int b)
+            {
+                int d = cost[a] - cost[b];
+                return d != 0 ? d : index[a] - index[b];
+            });
+            while (kept.Count > limit)
+            {
+                keep[kept[0]] = false;
+                kept.RemoveAt(0);
+            }
+            List<int> drop = new List<int>();
+            for (int i = 0; i < n; i++)
+            {
+                if (!keep[i])
+                {
+                    drop.Add(index[i]);
+                }
+            }
+            drop.Sort();
+            for (int i = drop.Count - 1; i >= 0; i--)
+            {
+                gone.Add(equippedModules[drop[i]]);
+                equippedModules.RemoveAt(drop[i]);
+            }
         }
 
         internal bool Equip(Clustercraft craft, string moduleId, out string reason)

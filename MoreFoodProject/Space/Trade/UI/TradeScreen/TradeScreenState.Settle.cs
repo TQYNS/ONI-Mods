@@ -64,39 +64,24 @@ namespace MoreFood_KFC
                 }
             }
 
-            float cost = 0f;
-            float gain = 0f;
-            for (int i = 0; i < ids.Count; i++)
-            {
-                float a = TradeNumber.SignedUnits(amounts[ids[i]]);
-                if (a == 0f)
-                {
-                    continue;
-                }
-                if (a > 0f)
-                {
-                    cost = TradeNumber.Money(cost + TradeNumber.Money(UnitOf(ids[i], 1f) * a));
-                }
-                else
-                {
-                    gain = TradeNumber.Money(gain + TradeNumber.Money(UnitOf(ids[i], -1f) * (-a)));
-                }
-            }
+            float cost, gain;
+            ComputeTotals(out cost, out gain);
             if (TradeRegistry.Currency + gain + 0.0001f < cost)
             {
                 Fail(null, "星币不足：需要 " + cost.ToString("0.00") + "，只有 "
                     + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00") + "（含卖出 " + TradeNumber.Money(gain).ToString("0.00") + "）");
                 return;
             }
-            if (gain > 0f && TradeNumber.Money(state.currency) + 0.0001f < gain)
+            // 本店可用星币 = 现有 + 本次买入收入（净额口径）：净结余够就不该拒绝
+            if (gain > 0f && TradeNumber.Money(state.currency) + cost + 0.0001f < gain)
             {
-                ShowPartialDialog(gain);
+                ShowPartialDialog(gain, cost);
                 return;
             }
             Settle(false);
         }
 
-        private void ShowPartialDialog(float gain)
+        private void ShowPartialDialog(float gain, float cost)
         {
             CloseDialog();
             Transform parent = root != null ? root.transform : TradeUi.OverlayParent();
@@ -104,22 +89,26 @@ namespace MoreFood_KFC
             {
                 return;
             }
-            dialog = TradeUi.Node("partialDialog", parent, 250f, 210f, 680f, 300f).gameObject;
+            float pool = TradeNumber.Money(state.currency + cost);
+            float over = TradeNumber.Money(gain - pool);
+            dialog = TradeUi.Node("partialDialog", parent, 250f, 200f, 680f, 320f).gameObject;
             dialog.transform.SetAsLastSibling();   // 弹窗永远最上层
-            TradeUi.RoundPanel("bg", dialog.transform, 0f, 0f, 680f, 300f, 14, TradeUi.Panel);
+            TradeUi.RoundPanel("bg", dialog.transform, 0f, 0f, 680f, 320f, 14, TradeUi.Panel);
             TradeUi.HLine("top", dialog.transform, 0f, 0f, 680f, TradeUi.Gold);
             TradeUi.Text("t", dialog.transform, 28f, 22f, 624f, 34f, "本店星币不足", 22f, TradeUi.Gold, false);
-            TradeUi.Text("l1", dialog.transform, 28f, 74f, 624f, 28f,
-                "本店剩余星币：" + TradeNumber.Money(state.currency).ToString("0.00"), 16f, TradeUi.TextMain, false);
-            TradeUi.Text("l2", dialog.transform, 28f, 106f, 624f, 28f,
-                "本次回收应付：" + TradeNumber.Money(gain).ToString("0.00"), 16f, TradeUi.TextMain, false);
-            TradeUi.Text("l3", dialog.transform, 28f, 138f, 624f, 28f,
-                "超出：" + TradeNumber.Money(gain - state.currency).ToString("0.00"), 16f, TradeUi.Neg, false);
-            TradeUi.Text("l4", dialog.transform, 28f, 176f, 624f, 24f,
-                "部分结算：按物品列表顺序逐条结算，直到本店星币耗尽", 14f, TradeUi.TextDim, false);
-            TradeUi.MakeButton("部分结算", dialog.transform, 260f, 228f, 180f, 48f,
+            TradeUi.Text("l1", dialog.transform, 28f, 66f, 624f, 26f,
+                "本店剩余星币：" + TradeNumber.Money(state.currency).ToString("0.00")
+                + "　+　本次买入收入：" + TradeNumber.Money(cost).ToString("0.00"), 15f, TradeUi.TextMain, false);
+            TradeUi.Text("l2", dialog.transform, 28f, 96f, 624f, 26f,
+                "本次回收应付：" + TradeNumber.Money(gain).ToString("0.00")
+                + "　（可用合计 " + pool.ToString("0.00") + "）", 15f, TradeUi.TextMain, false);
+            TradeUi.Text("l3", dialog.transform, 28f, 126f, 624f, 26f,
+                "超出：" + over.ToString("0.00"), 15f, TradeUi.Neg, false);
+            TradeUi.Text("l4", dialog.transform, 28f, 168f, 624f, 46f,
+                "部分结算：先完成买入，再按可用星币逐条回收，直到本店星币耗尽", 14f, TradeUi.TextDim, false);
+            TradeUi.MakeButton("部分结算", dialog.transform, 260f, 232f, 180f, 48f,
                 TradeUi.TabOn, TradeUi.Accent, TradeUi.Accent, delegate { Settle(true); });
-            TradeUi.MakeButton("取消交易", dialog.transform, 456f, 228f, 180f, 48f,
+            TradeUi.MakeButton("取消交易", dialog.transform, 456f, 232f, 180f, 48f,
                 TradeUi.PanelAlt, TradeUi.Border, TradeUi.TextMain, delegate { CloseDialog(); });
         }
 
@@ -199,6 +188,44 @@ namespace MoreFood_KFC
             }
         }
 
+        // 卖出预估：本店按可用星币最多能收下多少钱（不动物品），作为买入阶段的信用额度
+        private float SimulateSellGain(Clustercraft craft, List<string> ids, float pool)
+        {
+            float gain = 0f;
+            for (int i = 0; i < ids.Count; i++)
+            {
+                float a = TradeNumber.SignedUnits(amounts[ids[i]]);
+                if (a >= 0f)
+                {
+                    continue;
+                }
+                float want = -a;
+                float have = TradeNumber.Units(RocketInventory.Available(craft, new Tag(ids[i])));
+                if (want > have)
+                {
+                    want = have;
+                }
+                if (!(want > 0f))
+                {
+                    break;
+                }
+                float unit = UnitOf(ids[i], -1f);
+                float affordable = unit > 0f ? Mathf.Floor(pool / unit) : 0f;
+                if (affordable <= 0f)
+                {
+                    break;
+                }
+                if (affordable < want)
+                {
+                    want = affordable;
+                }
+                float pay = TradeNumber.Money(unit * want);
+                gain = TradeNumber.Money(gain + pay);
+                pool = TradeNumber.Money(Mathf.Max(0f, pool - pay));
+            }
+            return gain;
+        }
+
         private void SettleCore(bool allowPartial)
         {
             CloseDialog();
@@ -212,6 +239,35 @@ namespace MoreFood_KFC
             int done = 0;
             string reason = null;
             float totalGain = 0f;
+            float totalCost = 0f;
+            float planCost, planGain;
+            ComputeTotals(out planCost, out planGain);
+            // 卖出预估：本店最多能付多少（现有 + 本次买入收入）。买入先付钱，靠它做信用额度
+            float simGain = SimulateSellGain(craft, ids, TradeNumber.Money(state.currency + planCost));
+            // 买入优先：货款先付进本店，回收时本店才有钱可付
+            string retryId = null;
+            float retryAmount = 0f;
+            for (int i = 0; i < ids.Count; i++)
+            {
+                float a = TradeNumber.SignedUnits(amounts[ids[i]]);
+                if (a <= 0f)
+                {
+                    continue;
+                }
+                float c = 0f;
+                if (!TradeExecutor.TryBuy(craft, def, state, ids[i], a, out c, out reason, false, simGain))
+                {
+                    MFLog.Warn(LogCat.Trade,"[Space] 交易中止于 " + ids[i] + "：" + reason + "（已成交 " + done + " 项不回滚）");
+                    retryId = ids[i];   // 可能是"内舱已满"，卖出腾出地方后再试一次
+                    retryAmount = a;
+                    break;
+                }
+                totalCost = TradeNumber.Money(totalCost + c);
+                done++;
+            }
+            // 本店本轮可用星币 = 现有 + 已收进货款（卖出按这个额度校验，部分结算再按它砍量）
+            float pool = TradeNumber.Money(state.currency + totalCost);
+            bool sellOk = true;
             for (int i = 0; i < ids.Count; i++)
             {
                 float a = TradeNumber.SignedUnits(amounts[ids[i]]);
@@ -230,15 +286,16 @@ namespace MoreFood_KFC
                 if (!(want > 0f))
                 {
                     reason = TradeUtil.DisplayName(ids[i]) + " 可卖 0（船上持有 " + Mathf.Floor(haveNow) + "）";
+                    sellOk = false;
                     break;
                 }
                 if (allowPartial)
                 {
                     float unit = UnitOf(ids[i], -1f);
-                    float affordable = unit > 0f ? Mathf.Floor(TradeNumber.Money(state.currency) / unit) : 0f;
+                    float affordable = unit > 0f ? Mathf.Floor(pool / unit) : 0f;
                     if (affordable <= 0f)
                     {
-                        MFLog.Info(LogCat.Trade,"[Space] 部分结算：本店星币耗尽，余下收购项跳过");
+                        MFLog.Info(LogCat.Trade,"[Space] 部分结算：本店可用星币耗尽，余下收购项跳过");
                         break;
                     }
                     if (affordable < want)
@@ -247,29 +304,69 @@ namespace MoreFood_KFC
                     }
                 }
                 float g = 0f;
-                if (!TradeExecutor.TrySell(craft, def, state, ids[i], want, out g, out reason))
+                if (!TradeExecutor.TrySell(craft, def, state, ids[i], want, out g, out reason, false, totalCost))
                 {
                     MFLog.Warn(LogCat.Trade,"[Space] 交易中止于 " + ids[i] + "：" + reason + "（已成交 " + done + " 项不回滚）");
+                    sellOk = false;
                     break;
                 }
-                totalGain += g;
+                totalGain = TradeNumber.Money(totalGain + g);
+                pool = TradeNumber.Money(Mathf.Max(0f, pool - g));
                 done++;
             }
-            for (int i = 0; i < ids.Count; i++)
+            // 卖出已腾出内舱空间/补上余额：把刚才中止的买入再试一次
+            if (retryId != null)
             {
-                float a = TradeNumber.SignedUnits(amounts[ids[i]]);
-                if (a <= 0f)
+                float rc = 0f;
+                if (TradeExecutor.TryBuy(craft, def, state, retryId, retryAmount, out rc, out reason, false, totalGain))
                 {
-                    continue;
+                    totalCost = TradeNumber.Money(totalCost + rc);
+                    done++;
+                    if (sellOk)
+                    {
+                        reason = null;   // 卖出侧没出错才清，别把卖出失败的原因盖掉
+                    }
+                    MFLog.Info(LogCat.Trade, "[Space] 卖出后重试买入成功：" + retryId);
                 }
-                float c = 0f;
-                if (!TradeExecutor.TryBuy(craft, def, state, ids[i], a, out c, out reason))
-                {
-                    MFLog.Warn(LogCat.Trade,"[Space] 交易中止于 " + ids[i] + "：" + reason + "（已成交 " + done + " 项不回滚）");
-                    break;
-                }
-                done++;
             }
+            // 净额一次转账：玩家应付 = 买入总额 - 卖出总额；为负则由本店付给玩家
+            float wallet = TradeNumber.Money(TradeRegistry.Currency);
+            float net = TradeNumber.Money(totalCost - totalGain);
+            if (net > 0.0001f)
+            {
+                if (wallet + 0.0001f < net)
+                {
+                    reason = "星币不足：本次净付 " + net.ToString("0.00") + "，只有 "
+                        + wallet.ToString("0.00");
+                    MFLog.Warn(LogCat.Trade, "[Space] 净额结算失败（玩家余额不足）：" + reason);
+                }
+                else
+                {
+                    TradeRegistry.AddCurrency(-net);
+                }
+            }
+            else if (net < -0.0001f)
+            {
+                float back = TradeNumber.Money(-net);
+                if (state.currency + 0.0001f < back)
+                {
+                    reason = "本店星币不足：应付 " + back.ToString("0.00") + "，只有 "
+                        + TradeNumber.Money(state.currency).ToString("0.00");
+                    MFLog.Warn(LogCat.Trade, "[Space] 净额结算失败（本店星币不足）：" + reason);
+                }
+                else
+                {
+                    TradeRegistry.AddCurrency(back);
+                }
+            }
+            // 本店账目按玩家实际入账倒推，逐笔四舍五入不再留一分钱的缺口
+            float moved = TradeNumber.Money(TradeRegistry.Currency - wallet);
+            if (moved != 0f)
+            {
+                state.currency = TradeNumber.Money(state.currency - moved);
+            }
+            MFLog.Info(LogCat.Trade, "[Space] 净额结算 " + net.ToString("0.00") + " 星币（买入 "
+                + totalCost.ToString("0.00") + " − 卖出 " + totalGain.ToString("0.00") + "）");
             MFLog.Info(LogCat.Trade,"[Space] 本次交易完成 " + done + " 项，卖出收入 " + totalGain.ToString("0.00")
                 + "，余额 " + TradeNumber.Money(TradeRegistry.Currency).ToString("0.00")
                 + "，本店星币 " + state.currency.ToString("0.00"));

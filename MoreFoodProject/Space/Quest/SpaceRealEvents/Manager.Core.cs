@@ -65,6 +65,7 @@ namespace MoreFood_KFC
             }
             doomTemplate = null;
             doomTried = false;
+            ImpactorGate.ResetSession();   // 闸口镜像不跨会话；随档值由 EventSaveData 自行恢复（事件.md §17.6）
         }
         private static bool impactorPatchTried;
         private static object pendingImpactorSmi;
@@ -74,6 +75,12 @@ namespace MoreFood_KFC
         internal static bool HasPendingImpactor;
         internal static int PendingImpactorWorldId;
         internal static float PendingImpactorStartedAt;
+
+        // 灾星广播订阅者：任意来源的灾星生成即消耗一次闸口（事件.md §17.6）
+        private static void OnImpactorOccurred(string source)
+        {
+            ImpactorGate.MarkUsed();
+        }
 
         // 前置条件返回 false 时框架直接判定"本次不通过"并跳过本轮抽取（不注册、不通知；失败计数与退避已移除）
 
@@ -221,6 +228,14 @@ namespace MoreFood_KFC
                 if (GameplayEventManager.Instance == null) return false;
                 if (GameplayEventManager.Instance.IsGameplayEventActive(Db.Get().GameplayEvents.LargeImpactor)) return false;
                 if (Assets.TryGetPrefab(new Tag("LargeImpactor")) == null) return false;
+                // 灾星已发生 ⇒ 大灭绝失去意义：作废它的一次性资格，本轮失败且此后不进池
+                if (ImpactorGate.IsSet())
+                {
+                    ImpactorGate.VoidExtinction("闸口已消耗");
+                    MFLog.Info(LogCat.Event, "[Space] 大灭绝：灾星已发生 ⇒ 作废（不再进池）");
+                    return false;
+                }
+                MFLog.Verbose(LogCat.Event, "[Space] 大灭绝：闸口空闲 ⇒ 放行");
                 return true;
             }
             catch (Exception e) { MFLog.Verbose(LogCat.Event, e, "[Space] 大灭绝前置条件异常"); return false; }
@@ -296,6 +311,9 @@ namespace MoreFood_KFC
         // 预检条件集中注册：key = 事件 yaml 的 id（condition.function 同值）
         internal static void RegisterConditions()
         {
+            // 灾星闸口广播只订一次（Subscribe 内部去重），先于条件注册（事件.md §17.6）
+            ImpactorGate.Subscribe(OnImpactorOccurred);
+
             // 一、需要活体目标（殖民地上有可作用的实体）
             Cond("animal_taming",        AnimalTamingPrecondition);
             Cond("epiphany",             EpiphanyPrecondition);

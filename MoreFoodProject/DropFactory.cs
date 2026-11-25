@@ -145,42 +145,42 @@ namespace MoreFood_KFC
             // ════ Pacu 的掉落（1 项，动物产物管理生成）════
             // ==[GROUP:family=Pacu]==
             new CreatureDropFactory("Pacu",
-                new DropEntry("FishBone", 0.3f));  // ==[ERR:0]==
+                new DropEntry("FishBone", 0.6f));  // ==[ERR:0]==
 // ==[ITEM:Pacu:DROP]END==
 
 // ==[ITEM:PacuCleaner:DROP]BEGIN==
             // ════ PacuCleaner 的掉落（1 项，动物产物管理生成）════
             // ==[GROUP:family=Pacu]==
             new CreatureDropFactory("PacuCleaner",
-                new DropEntry("FishBone", 0.3f));  // ==[ERR:0]==
+                new DropEntry("FishBone", 0.6f));  // ==[ERR:0]==
 // ==[ITEM:PacuCleaner:DROP]END==
 
 // ==[ITEM:PacuTropical:DROP]BEGIN==
             // ════ PacuTropical 的掉落（1 项，动物产物管理生成）════
             // ==[GROUP:family=Pacu]==
             new CreatureDropFactory("PacuTropical",
-                new DropEntry("FishBone", 0.3f));  // ==[ERR:0]==
+                new DropEntry("FishBone", 0.6f));  // ==[ERR:0]==
 // ==[ITEM:PacuTropical:DROP]END==
 
 // ==[ITEM:PacuBaby:DROP]BEGIN==
             // ════ PacuBaby 的掉落（1 项，动物产物管理生成）════
             // ==[GROUP:family=Pacu]==
             new CreatureDropFactory("PacuBaby",
-                new DropEntry("FishBone", 0.3f));  // ==[ERR:0]==
+                new DropEntry("FishBone", 0.6f));  // ==[ERR:0]==
 // ==[ITEM:PacuBaby:DROP]END==
 
 // ==[ITEM:PacuCleanerBaby:DROP]BEGIN==
             // ════ PacuCleanerBaby 的掉落（1 项，动物产物管理生成）════
             // ==[GROUP:family=Pacu]==
             new CreatureDropFactory("PacuCleanerBaby",
-                new DropEntry("FishBone", 0.3f));  // ==[ERR:0]==
+                new DropEntry("FishBone", 0.6f));  // ==[ERR:0]==
 // ==[ITEM:PacuCleanerBaby:DROP]END==
 
 // ==[ITEM:PacuTropicalBaby:DROP]BEGIN==
             // ════ PacuTropicalBaby 的掉落（1 项，动物产物管理生成）════
             // ==[GROUP:family=Pacu]==
             new CreatureDropFactory("PacuTropicalBaby",
-                new DropEntry("FishBone", 0.3f));  // ==[ERR:0]==
+                new DropEntry("FishBone", 0.6f));  // ==[ERR:0]==
 // ==[ITEM:PacuTropicalBaby:DROP]END==
 
 // ==[ITEM:PrehistoricPacu:DROP]BEGIN==

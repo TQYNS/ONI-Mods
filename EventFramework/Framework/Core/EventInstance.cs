@@ -215,7 +215,7 @@ namespace EventFramework
             // 狩猎规格不随机，直接引用模板；读档时同样从 def 取回
             inst.hunt = def.hunt;
 
-            // 驻留计时：未配则默认 0.5 周期（300 游戏秒）
+            // 驻留计时：未配则默认 2 周期（1200 游戏秒）
             inst.hasResident = true;
             inst.residentRemaining = def.GetResidentSeconds();
             inst.residentEndsAt = nowSeconds + inst.residentRemaining;

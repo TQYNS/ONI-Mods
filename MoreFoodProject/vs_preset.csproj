@@ -153,6 +153,7 @@
     <Compile Include="Space\Quest\SpaceRealEvents\Runtime.World.cs" />
     <Compile Include="Space\Quest\SpaceRealEvents\Runtime.Freighter.cs" />
     <Compile Include="Space\Quest\SpaceRealEvents\Manager.Core.cs" />
+    <Compile Include="Space\Quest\SpaceRealEvents\ImpactorGate.cs" />
     <Compile Include="Space\Quest\SpaceRealEvents\Manager.Helpers.cs" />
     <Compile Include="Space\Quest\SpaceRealEvents\Manager.Geyser.cs" />
     <Compile Include="Space\Quest\SpaceRealEvents\Events.Story.cs" />

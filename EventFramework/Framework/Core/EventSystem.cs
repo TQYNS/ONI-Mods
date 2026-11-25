@@ -1901,6 +1901,18 @@ namespace EventFramework
             float v; return _lastTriggerTime.TryGetValue(id, out v) ? v : -1f;
         }
 
+        // 作废一次性事件的触发资格：语义等同已触发过，抽取阶段即不再进池（幂等）
+        public static bool MarkOneShotUsed(string id, string why)
+        {
+            if (string.IsNullOrEmpty(id)) return false;
+            if (GetLastTriggerTime(id) >= 0f) return false;
+
+            _lastTriggerTime[id] = GetGameTime();
+            Debug.Log("[MoreFood/Event] '" + id + "' 一次性资格作废（" + (why ?? "-")
+                      + "）→ 此后不再进抽取池");
+            return true;
+        }
+
         // ★ 进入冷却：仅在事件【成功执行】后调用。随机 roll 一次 [min_interval, max_interval]，
         //   本次冷却固定为该值（不随查询重掷）；下次成功执行时再重掷。
         private static void ArmCooldown(EventDef def)

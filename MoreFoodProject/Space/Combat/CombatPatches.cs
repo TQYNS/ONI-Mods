@@ -258,7 +258,7 @@ namespace MoreFood_KFC
     [HarmonyPatch(typeof(Deconstructable), "QueueDeconstruction", new Type[] { typeof(bool) })]
     internal static class RocketComponentDeconstructGuardPatch
     {
-        private static bool Prefix(Deconstructable __instance)
+        private static bool Prefix(Deconstructable __instance, object[] __args)
         {
             try
             {
@@ -266,21 +266,37 @@ namespace MoreFood_KFC
                 {
                     return true;
                 }
-                RocketModuleCluster module = __instance.GetComponent<RocketModuleCluster>();
-                if (module == null || module.CraftInterface == null)
+                // false = 读档恢复“已标记拆除”，按存档状态放行，不重新校验
+                if (__args != null && __args.Length > 0 && __args[0] is bool && !(bool)__args[0])
                 {
                     return true;
                 }
+                RocketModuleCluster module = __instance.GetComponent<RocketModuleCluster>();
+                if (module == null)
+                {
+                    return true;
+                }
+                if (module.CraftInterface == null)
+                {
+                    // 未挂接火箭的舱段原版 OnCleanUp 会空引用；放行并由 Finalizer 吞掉该空引用
+                    KPrefabID detachedId = __instance.GetComponent<KPrefabID>();
+                    MFLog.Warn(LogCat.Combat, "[Space] 舱段未挂接火箭，按普通建筑拆除："
+                        + (detachedId != null ? detachedId.PrefabTag.Name : "?"));
+                    return true;
+                }
                 Clustercraft craft = module.CraftInterface.GetComponent<Clustercraft>();
-                KPrefabID pid = __instance.GetComponent<KPrefabID>();
-                if (craft == null || pid == null)
+                if (craft == null)
                 {
                     return true;
                 }
                 string reason;
-                if (!CombatAssembly.CanRemoveComponent(craft, pid.PrefabTag.Name, out reason))
+                if (!CombatAssembly.CanRemoveComponent(craft, module, out reason))
                 {
-                    TradeUi.Notify("无法拆除组件", reason == null ? "槽位不足" : reason);
+                    string text = reason == null ? "无法拆除" : reason;
+                    if (DeconstructNotifyThrottle.Allow("deconstruct|" + text))
+                    {
+                        TradeUi.NotifyInWorld(ClusterUtil.GetMyWorldId(__instance), "无法拆除组件", text);
+                    }
                     return false;
                 }
             }
@@ -289,6 +305,186 @@ namespace MoreFood_KFC
                 MFLog.Exc(LogCat.Combat, e, "[Space] 组件拆除保护异常（放行）");
             }
             return true;
+        }
+    }
+
+    // 舱段 OnCleanUp：吞未挂接火箭的空引用，并在原版 RemoveModule 之后做溢出掉落（C-45）
+    [HarmonyPatch(typeof(RocketModuleCluster), "OnCleanUp")]
+    internal static class RocketModuleClusterCleanupGuardPatch
+    {
+        private static Exception Finalizer(RocketModuleCluster __instance, Exception __exception)
+        {
+            if (__exception is NullReferenceException && __instance != null && __instance.CraftInterface == null)
+            {
+                MFLog.Warn(LogCat.Combat, "[Space] 舱段未挂接火箭，跳过原版 RemoveModule 空引用");
+                return null;
+            }
+            return __exception;
+        }
+
+        // 拆除判定只能挂这里：Destroy 延迟到帧末，OnCompleteWork 返回时槽位还没缩水（C-45）
+        private static void Postfix(RocketModuleCluster __instance)
+        {
+            try
+            {
+                if (__instance == null)
+                {
+                    return;
+                }
+                Deconstructable d = __instance.GetComponent<Deconstructable>();
+                // 只认拆除完成（TriggerDestroy 置 destroyed）；读档重建、沙盒清空不补掉落
+                if (d == null || !d.HasBeenDestroyed)
+                {
+                    return;
+                }
+                CraftModuleInterface mi = __instance.CraftInterface;
+                if (mi == null || mi.ClusterModules == null || mi.ClusterModules.Count == 0)
+                {
+                    // 整艘拆光时原版已 DeleteObject 掉 Clustercraft，模块随控制台一起没了
+                    return;
+                }
+                Clustercraft craft = mi.GetComponent<Clustercraft>();
+                if (craft == null)
+                {
+                    return;
+                }
+                CombatAssembly.EvictOverflow(craft, __instance.transform.GetPosition());
+            }
+            catch (Exception e)
+            {
+                MFLog.Exc(LogCat.Combat, e, "[Space] 舱段拆除溢出判定失败");
+            }
+        }
+    }
+
+    // 一次性删几十个舱时同一条拦拆提示会刷屏：同文案 5 秒内只弹一条（C-45）
+    internal static class DeconstructNotifyThrottle
+    {
+        private static string lastKey;
+        private static float lastAt;
+
+        internal static bool Allow(string key)
+        {
+            float now = Time.unscaledTime;
+            if (key == lastKey && now - lastAt < 5f)
+            {
+                return false;
+            }
+            lastKey = key;
+            lastAt = now;
+            return true;
+        }
+    }
+
+    // allowDeconstruction=false 时原版静默忽略拆除；给火箭舱段补一条可见原因
+    [HarmonyPatch(typeof(Deconstructable), "OnDeconstruct", new Type[] { typeof(object) })]
+    internal static class RocketDeconstructLockedHintPatch
+    {
+        private static bool Prefix(Deconstructable __instance)
+        {
+            try
+            {
+                if (__instance == null || __instance.allowDeconstruction || DebugHandler.InstantBuildMode)
+                {
+                    return true;
+                }
+                if (__instance.GetComponent<RocketModuleCluster>() == null)
+                {
+                    return true;
+                }
+                if (DeconstructNotifyThrottle.Allow("locked|不在发射台"))
+                {
+                    TradeUi.NotifyInWorld(ClusterUtil.GetMyWorldId(__instance), "无法拆除组件",
+                        "火箭不在发射台（飞行或降落中），舱段暂时锁定");
+                }
+                return false;
+            }
+            catch (Exception e)
+            {
+                MFLog.Exc(LogCat.Combat, e, "[Space] 舱段锁定提示失败（交回原版）");
+                return true;
+            }
+        }
+    }
+
+    // 乘员代理目标已销毁时原版直接解引用；三处乘员查询统一按“查不到人”返回，别冒泡给 LogCatcher（C-44）
+    internal static class PassengerQueryGuard
+    {
+        private static float nextWarnAt;
+
+        internal static bool IsMissing(Exception e)
+        {
+            return e is NullReferenceException || e is MissingReferenceException;
+        }
+
+        internal static void Warn(string what)
+        {
+            if (Time.unscaledTime < nextWarnAt)
+            {
+                return;
+            }
+            nextWarnAt = Time.unscaledTime + 30f;
+            MFLog.Warn(LogCat.Combat, "[Space] 乘员代理目标已失联：" + what);
+        }
+    }
+
+    [HarmonyPatch(typeof(PassengerRocketModule), "GetDupePilot")]
+    internal static class PassengerDupePilotNullGuardPatch
+    {
+        private static Exception Finalizer(Exception __exception, ref GameObject __result)
+        {
+            if (!PassengerQueryGuard.IsMissing(__exception))
+            {
+                return __exception;
+            }
+            __result = null;
+            PassengerQueryGuard.Warn("按“未指定飞行员”处理");
+            return null;
+        }
+    }
+
+    [HarmonyPatch(typeof(PassengerRocketModule), "GetCrewBoardedFraction")]
+    internal static class PassengerCrewFractionNullGuardPatch
+    {
+        private static Exception Finalizer(Exception __exception, ref Tuple<int, int> __result)
+        {
+            if (!PassengerQueryGuard.IsMissing(__exception))
+            {
+                return __exception;
+            }
+            __result = new Tuple<int, int>(0, 0);
+            PassengerQueryGuard.Warn("登船计数按 0/0 处理");
+            return null;
+        }
+    }
+
+    [HarmonyPatch(typeof(PassengerRocketModule), "CheckPassengersBoarded")]
+    internal static class PassengerBoardedNullGuardPatch
+    {
+        private static Exception Finalizer(Exception __exception, ref bool __result)
+        {
+            if (!PassengerQueryGuard.IsMissing(__exception))
+            {
+                return __exception;
+            }
+            __result = false;
+            PassengerQueryGuard.Warn("登船检查按“未登船”处理");
+            return null;
+        }
+    }
+
+    // 乘员被瞬时销毁时，登船指令刷新会遍历到刚销毁的 MinionIdentity；跳过本轮即可（C-44）
+    [HarmonyPatch(typeof(PassengerRocketModule), "RefreshOrders")]
+    internal static class PassengerRefreshOrdersGuardPatch
+    {
+        private static Exception Finalizer(Exception __exception)
+        {
+            if (!PassengerQueryGuard.IsMissing(__exception))
+            {
+                return __exception;
+            }
+            PassengerQueryGuard.Warn("登船指令刷新跳过（乘员已销毁）");
+            return null;
         }
     }
 

@@ -39,6 +39,27 @@ namespace MoreFood_KFC
         }
     }
 
+    // 任意来源（叙事者抽取 / 地图生成 / 本 Mod）的新灾星都经此创建一次，读档走 clusterMap 不重建（事件.md §17.6）
+    [HarmonyPatch(typeof(LargeImpactorEvent), "CreateImpactorInstance")]
+    internal static class SpaceRealEventsImpactorCreatedPatch
+    {
+        private static void Postfix(LargeImpactorEvent.StatesInstance smi)
+        {
+            try
+            {
+                if (smi == null || smi.impactorInstance == null)
+                {
+                    return;
+                }
+                ImpactorGate.Broadcast("原版事件");
+            }
+            catch (Exception e)
+            {
+                MFLog.HotFail("impactor:gate", e);
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(ClusterManager), "GetRandomSurfaceCell")]
     internal static class SpaceRealEventsSurfaceWorldGuardPatch
     {

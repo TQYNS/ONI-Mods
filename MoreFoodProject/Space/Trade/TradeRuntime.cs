@@ -54,6 +54,12 @@ namespace MoreFood_KFC
                 return 0f;
             }
             float scaled = v * scale;
+            // ★ 吃掉 float32 误差：分值在 1e-3 量级上抖一下就会被截成"少一分"（2970.99−2827.75=143.23999→143.23）
+            float snapped = Mathf.Round(scaled);
+            if (Mathf.Abs(scaled - snapped) < 0.0001f + 0.000001f * Mathf.Abs(scaled))
+            {
+                scaled = snapped;
+            }
             if (scaled > 0f)
             {
                 scaled = Mathf.Floor(scaled + 0.0001f);

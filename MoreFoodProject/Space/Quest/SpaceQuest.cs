@@ -844,31 +844,48 @@ namespace MoreFood_KFC
             // ★ 先清任务地图世界：旧实现直接销毁 site（site 即世界宿主）会把被销毁的
             if (st.mapBuilt && st.worldId >= 0)
             {
-                DestroyQuestWorld(st.worldId);
+                if (!DestroyQuestWorld(st.worldId))
+                {
+                    return;   // 世界里还有乘员：世界连 site 一起留到人员撤出后再清，别把人埋进废墟
+                }
                 st.worldId = -1;
                 st.mapBuilt = false;
             }
             if (st.site != null)
             {
+                // 宿主身上就挂着 WorldContainer 时也必须先走世界清理，否则建筑会连同世界一起变孤儿
+                WorldContainer hostWorld = st.site.GetComponent<WorldContainer>();
+                if (hostWorld != null && !DestroyQuestWorld(hostWorld.id))
+                {
+                    return;
+                }
                 Util.KDestroyGameObject(st.site);
                 st.site = null;
             }
         }
 
         /// <summary>任务地图世界的正规清理（裁剪自 ClusterManager.DestoryRocketInteriorWorld，去掉火箭专属部分）。</summary>
-        internal static void DestroyQuestWorld(int worldId)
+        internal static bool DestroyQuestWorld(int worldId)
         {
             try
             {
                 ClusterManager cm = ClusterManager.Instance;
                 if (cm == null)
                 {
-                    return;
+                    return false;
                 }
                 WorldContainer w = cm.GetWorld(worldId);
                 if (w == null)
                 {
-                    return;
+                    return true;   // 世界已不在：调用方可以照常收尾
+                }
+                var crew = Components.LiveMinionIdentities.GetWorldItems(w.id, false);
+                if (crew != null && crew.Count > 0)
+                {
+                    // ★ 原版这里靠 EjectAllDupes 把人挪走，取消后仍挂在已销毁世界里 ⇒ 下次读档被销毁并连崩
+                    MFLog.Warn(LogCat.Space, "[Space] 任务地图 World#" + worldId + " 里还有 " + crew.Count
+                        + " 名复制人 ⇒ 本轮不销毁（等人员撤出后再清）");
+                    return false;
                 }
                 if (cm.activeWorldId == worldId)
                 {
@@ -926,10 +943,12 @@ namespace MoreFood_KFC
                     // expected: 兜底移除失败时前面已注销世界容器，列表不会因这一项卡死清理
                 }
                 MFLog.Info(LogCat.Space,"[Space] 任务地图 world#" + worldId + " 已清理（注销 + 释放网格 + 销毁容器）");
+                return true;
             }
             catch (Exception e)
             {
                 MFLog.Warn(LogCat.Space,"[Space] 清理任务地图世界失败: " + e);
+                return false;
             }
         }
 
@@ -980,7 +999,10 @@ namespace MoreFood_KFC
                         + " 有WorldContainer=" + (wc != null) + (wc != null ? " worldId=" + wc.id : ""));
                     if (wc != null)
                     {
-                        DestroyQuestWorld(wc.id);
+                        if (!DestroyQuestWorld(wc.id))
+                        {
+                            continue;   // 世界没清掉就别动宿主体，否则世界会失去容器变成孤儿网格
+                        }
                     }
                     Util.KDestroyGameObject(site.gameObject);
                     killed++;
